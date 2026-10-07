@@ -1,0 +1,435 @@
+---
+import Sticker from './Sticker.astro';
+
+// "Wat er allemaal in je hoofd zit": vijf kaarten met mental notes, uitgewaaierd als een hand kaarten.
+// Bij "Geef het aan Kees" schuiven ze samen tot één nette stapel en wordt alles afgevinkt.
+const kaarten = [
+  {
+    titel: 'School',
+    bg: 'var(--lime)',
+    fg: 'var(--bordeaux)',
+    r: -10,
+    y: 34,
+    punten: ['Gymtas Noor op donderdag', '€27,50 voor het schoolreisje', 'Topotoets op vrijdag', "Schoolfoto's bestellen", 'Luizencontrole'],
+  },
+  {
+    titel: 'Agenda',
+    bg: 'var(--indigo)',
+    fg: 'var(--wit)',
+    r: -4,
+    y: 8,
+    punten: ['Zwemles zaterdag 9:15', 'Tandarts Noor dinsdag', 'Wie haalt Sem woensdag?', 'Oppas zaterdagavond', 'Ouderavond groep 4'],
+  },
+  {
+    titel: 'Verjaardagen',
+    bg: 'var(--tomaat)',
+    fg: 'var(--wit)',
+    r: 1,
+    y: -4,
+    punten: ['Sem wordt 7 op donderdag', 'Feestje Daan zaterdag', 'Cadeau voor oma (82)', 'Traktatie voor de klas', 'Kaartje voor de juf'],
+  },
+  {
+    titel: 'Eten',
+    bg: 'var(--boter)',
+    fg: 'var(--bordeaux)',
+    r: 5,
+    y: 10,
+    punten: ['Wat eten we vanavond?', 'Noor eet niet thuis', 'Melk is weer op', 'Lunch voor morgen', 'Weekmenu maken'],
+  },
+  {
+    titel: 'Thuis',
+    bg: 'var(--lila)',
+    fg: 'var(--bordeaux)',
+    r: 11,
+    y: 38,
+    punten: ['Wasmachine leeghalen', 'Verzekering opzeggen', 'Cadeaupapier kopen', 'Planten water geven', 'Afval zaterdag buiten'],
+  },
+];
+
+const totaal = kaarten.reduce((n, k) => n + k.punten.length, 0);
+// Kleine draaiing per kaart in de nette stapel
+const stapelDraai = [-3, 2, -1, 3, -2];
+---
+
+<section class="sectie hoofd" aria-labelledby="hoofd-kop" data-hoofd>
+  <div class="container">
+    <div class="hoofd__vlak">
+      <div class="hoofd__kop" data-reveal>
+        <h2 class="kop-l" id="hoofd-kop">Wat er allemaal in je hoofd zit.</h2>
+        <p class="lead">Een gezin runnen is een tweede baan die nergens op papier staat. Tot nu.</p>
+      </div>
+
+      <div class="tafel">
+        <ul class="stapel" role="list" data-stapel>
+          {
+            kaarten.map((k, i) => (
+              <li
+                class="kaart"
+                style={`--bg:${k.bg};--fg:${k.fg};--r:${k.r}deg;--y:${k.y}px;--i:${i};--s:${stapelDraai[i]}deg`}
+              >
+                <div class="kaart__kop">
+                  <h3 class="kaart__titel">{k.titel}</h3>
+                </div>
+                <ul class="kaart__lijst">
+                  {k.punten.map((p, j) => (
+                    <li style={`--j:${j}`}>
+                      <span class="vink" aria-hidden="true">
+                        <svg viewBox="0 0 12 12">
+                          <path d="M2.5 6.2l2.2 2.2 4.8-5" pathLength="1" />
+                        </svg>
+                      </span>
+                      <span class="kaart__punt">{p}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="klaar" aria-hidden="true">
+          <Sticker class="klaar__sticker">{totaal} dingen<br />geregeld</Sticker>
+        </div>
+      </div>
+
+      <div class="hoofd__actie">
+        <button class="knop" data-regel aria-pressed="false">
+          <span data-label>Geef het aan Kees</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+        <p class="visually-hidden" aria-live="polite" data-klaar></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const sectie = document.querySelector<HTMLElement>('[data-hoofd]')!;
+  const stapel = sectie.querySelector<HTMLElement>('[data-stapel]')!;
+  const knop = sectie.querySelector<HTMLButtonElement>('[data-regel]')!;
+  const label = knop.querySelector('[data-label]')!;
+  const klaar = sectie.querySelector('[data-klaar]')!;
+
+  new IntersectionObserver(
+    ([e], io) => {
+      if (!e.isIntersecting) return;
+      stapel.classList.add('is-open');
+      io.disconnect();
+    },
+    { threshold: 0.3 },
+  ).observe(stapel);
+
+  knop.addEventListener('click', () => {
+    const geregeld = sectie.classList.toggle('is-geregeld');
+    knop.setAttribute('aria-pressed', String(geregeld));
+    label.textContent = geregeld ? 'Terug naar de chaos' : 'Geef het aan Kees';
+    klaar.textContent = geregeld ? 'Alles is afgevinkt. Klaar is Kees.' : '';
+  });
+</script>
+
+<style>
+  .hoofd {
+    padding-block: clamp(88px, 9vw, 120px);
+  }
+
+  .hoofd__vlak {
+    display: grid;
+    justify-items: center;
+    gap: clamp(24px, 3vw, 36px);
+    padding: clamp(40px, 5vw, 64px) clamp(20px, 3vw, 48px) clamp(36px, 4vw, 52px);
+    border-radius: 40px;
+    background: var(--hemel);
+    overflow: hidden;
+  }
+
+  .hoofd__kop {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .hoofd__kop .lead {
+    max-width: 40em;
+    color: var(--bordeaux);
+    opacity: 0.75;
+  }
+
+  /* ---------- Tafel met kaarten ---------- */
+  .tafel {
+    position: relative;
+    width: 100%;
+  }
+
+  .stapel {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    padding: 24px 0 16px;
+    list-style: none;
+  }
+
+  .kaart {
+    --breedte: clamp(190px, 16.5vw, 228px);
+    position: relative;
+    flex: none;
+    width: var(--breedte);
+    min-height: calc(var(--breedte) * 1.18);
+    margin-inline: calc(var(--breedte) * -0.03);
+    padding: 20px 18px 22px;
+    border-radius: 22px;
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.18),
+      0 2px 0 rgb(0 0 0 / 0.04),
+      0 28px 40px -24px rgb(30 30 90 / 0.5);
+    z-index: var(--i);
+    will-change: transform, translate, rotate;
+    translate: calc((2 - var(--i)) * var(--breedte) * 0.8) 40px;
+    rotate: 0deg;
+    opacity: 0;
+    transition:
+      translate 1.1s var(--uit) calc(var(--i) * 70ms),
+      rotate 1.1s var(--uit) calc(var(--i) * 70ms),
+      opacity 0.7s var(--uit) calc(var(--i) * 70ms),
+      transform 0.6s var(--uit),
+      box-shadow 0.6s var(--uit),
+      z-index 0s linear 0.6s;
+  }
+
+  .is-open .kaart {
+    translate: 0 var(--y);
+    rotate: var(--r);
+    opacity: 1;
+  }
+
+  .is-open .kaart:hover {
+    z-index: 10;
+    transform: translateY(-18px) scale(1.03);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.18),
+      0 48px 60px -28px rgb(30 30 90 / 0.5);
+    transition:
+      translate 1.1s var(--uit),
+      rotate 1.1s var(--uit),
+      opacity 0.7s var(--uit),
+      transform 0.6s var(--uit),
+      box-shadow 0.6s var(--uit),
+      z-index 0s;
+  }
+
+  /* Geregeld: alle kaarten schuiven naar het midden tot één nette stapel */
+  .is-geregeld .kaart {
+    translate: calc((2 - var(--i)) * var(--breedte) * 0.94) calc(var(--i) * -3px);
+    rotate: var(--s);
+    transition:
+      translate 1s var(--in-uit) calc((4 - var(--i)) * 60ms),
+      rotate 1s var(--in-uit) calc((4 - var(--i)) * 60ms),
+      opacity 0.7s var(--uit),
+      transform 0.6s var(--uit),
+      box-shadow 0.6s var(--uit),
+      z-index 0s;
+  }
+
+  .is-geregeld .kaart:hover {
+    transform: none;
+  }
+
+  .kaart__kop {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1.5px solid color-mix(in srgb, currentColor 35%, transparent);
+  }
+
+  .kaart__titel {
+    font-size: clamp(1.2rem, 1.6vw, 1.45rem);
+    letter-spacing: -0.035em;
+  }
+
+  .kaart__aantal {
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    translate: 0 calc(-50% - 6px);
+    display: grid;
+    place-items: center;
+    min-width: 26px;
+    height: 26px;
+    padding-inline: 7px;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 16%, transparent);
+    font-weight: 750;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kaart__lijst {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .kaart__lijst li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+  }
+
+  /* Vinkrondje: leeg, vult zich bij "geregeld" */
+  .vink {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    margin-top: 0.05em;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, currentColor 55%, transparent);
+    transition:
+      background-color 0.35s var(--uit),
+      box-shadow 0.35s var(--uit),
+      transform 0.5s var(--veer);
+    transition-delay: calc(0.9s + var(--i) * 90ms + var(--j) * 70ms);
+  }
+
+  .vink svg {
+    width: 10px;
+    height: 10px;
+    fill: none;
+    stroke: var(--bg);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .vink path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 0.35s var(--uit);
+    transition-delay: calc(1s + var(--i) * 90ms + var(--j) * 70ms);
+  }
+
+  .kaart__punt {
+    transition: opacity 0.4s var(--uit);
+    transition-delay: calc(1s + var(--i) * 90ms + var(--j) * 70ms);
+  }
+
+  .is-geregeld .vink {
+    background: currentColor;
+    box-shadow: none;
+    transform: scale(1.08);
+  }
+
+  .is-geregeld .vink path {
+    stroke-dashoffset: 0;
+  }
+
+  .is-geregeld .kaart__punt {
+    opacity: 0.55;
+  }
+
+  /* Terug naar de chaos: zonder vertraging */
+  .hoofd:not(.is-geregeld) .vink,
+  .hoofd:not(.is-geregeld) .vink path,
+  .hoofd:not(.is-geregeld) .kaart__punt {
+    transition-delay: 0s;
+  }
+
+  /* ---------- Sticker op de stapel ---------- */
+  .klaar {
+    position: absolute;
+    z-index: 20;
+    left: 50%;
+    top: 44%;
+    width: 150px;
+    translate: 70px -50%;
+    opacity: 0;
+    transform: scale(1.8) rotate(-30deg);
+    transition:
+      opacity 0.3s var(--uit),
+      transform 0.8s var(--veer);
+    pointer-events: none;
+  }
+
+  .is-geregeld .klaar {
+    opacity: 1;
+    transform: scale(1) rotate(-10deg);
+    transition-delay: 2s;
+  }
+
+  .klaar :global(.klaar__sticker) {
+    width: 100%;
+    font-size: 1.1rem;
+    filter: drop-shadow(0 16px 24px rgb(60 10 5 / 0.3));
+  }
+
+  .hoofd__actie {
+    display: grid;
+    justify-items: center;
+  }
+
+  @media (max-width: 1100px) {
+    .kaart {
+      --breedte: 176px;
+    }
+    .kaart__lijst {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .stapel {
+      flex-direction: column;
+      align-items: center;
+      padding-top: 12px;
+    }
+
+    .kaart {
+      --breedte: min(86vw, 320px);
+      min-height: 0;
+      margin: 0;
+      translate: 0 40px;
+    }
+
+    .kaart + .kaart {
+      margin-top: 14px;
+    }
+
+    .is-open .kaart {
+      translate: calc(var(--x, 0) * 1px) 0;
+      rotate: calc(var(--r) * 0.35);
+    }
+
+    .is-open .kaart:nth-child(even) {
+      --x: 12;
+    }
+
+    .is-open .kaart:nth-child(odd) {
+      --x: -10;
+    }
+
+    .is-geregeld .kaart {
+      translate: 0 0;
+      rotate: 0deg;
+    }
+
+    .klaar {
+      top: auto;
+      bottom: 10px;
+      translate: -50% 0;
+      width: 120px;
+    }
+  }
+</style>

@@ -1,0 +1,188 @@
+---
+import Logo from './Logo.astro';
+import Bloem from './Bloem.astro';
+---
+
+<section class="statement" aria-label="Waar Kees voor staat" data-statement style="--p:0">
+  <div class="container statement__grid">
+    <div class="statement__tekst">
+      <p class="statement__label">
+        Waar we voor staan
+        <Bloem kleur="var(--sticker)" lobes={10} amp={0.11} />
+      </p>
+      <p class="statement__zin">
+        Bij Kees geloven we dat een gezin runnen lichter mag voelen. Kees onthoudt, plant en regelt het huishouden, zodat jullie weer
+        tijd hebben voor elkaar.
+      </p>
+    </div>
+
+    <div class="embleem" aria-hidden="true">
+      <svg class="embleem__ring" viewBox="0 0 200 200">
+        <defs>
+          <path id="embleem-cirkel" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0"></path>
+        </defs>
+        <text>
+          <textPath href="#embleem-cirkel">KLAAR IS KEES ✦ JE GEZINSASSISTENT ✦ SINDS 2026 ✦</textPath>
+        </text>
+      </svg>
+      <Logo />
+    </div>
+  </div>
+</section>
+
+<script>
+  // De zin kleurt in terwijl je scrolt: van bijna onzichtbaar naar een verloop van bordeaux naar indigo.
+  const sectie = document.querySelector<HTMLElement>('[data-statement]')!;
+  const zin = sectie.querySelector<HTMLElement>('.statement__zin')!;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let frame = 0;
+
+  function update() {
+    const r = zin.getBoundingClientRect();
+    const vh = innerHeight;
+    const p = Math.min(1, Math.max(0, (vh * 0.9 - r.top) / (vh * 0.6 + r.height * 0.4)));
+    sectie.style.setProperty('--p', rustig ? '1' : p.toFixed(4));
+  }
+
+  addEventListener(
+    'scroll',
+    () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    },
+    { passive: true },
+  );
+  addEventListener('resize', update);
+  update();
+</script>
+
+<style>
+  .statement {
+    padding-block: clamp(80px, 9vw, 128px);
+  }
+
+  .statement__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .statement__tekst {
+    display: grid;
+    gap: 24px;
+  }
+
+  .statement__label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 750;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .statement__label :global(svg) {
+    width: 24px;
+    height: 24px;
+    animation: draai 8s linear infinite;
+  }
+
+  .statement__zin {
+    --vol: calc(var(--p) * 130% - 15%);
+    max-width: 19em;
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: var(--kop-spatiering);
+    text-wrap: pretty;
+    color: transparent;
+    background-image: linear-gradient(
+      172deg,
+      var(--bordeaux) 0%,
+      var(--indigo) calc(var(--vol) - 8%),
+      color-mix(in srgb, var(--indigo) 16%, transparent) calc(var(--vol) + 8%),
+      color-mix(in srgb, var(--bordeaux) 12%, transparent) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  /* ---------- Embleem ---------- */
+  .embleem {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(220px, 24vw, 320px);
+    aspect-ratio: 1;
+  }
+
+  .embleem__ring {
+    position: absolute;
+    inset: 6%;
+    width: 88%;
+    height: 88%;
+    overflow: visible;
+    animation: tik 4s var(--in-uit) infinite;
+  }
+
+  .embleem__ring text {
+    font-family: var(--font-tekst);
+    font-weight: 800;
+    font-size: 13.2px;
+    letter-spacing: 0.16em;
+    fill: var(--bordeaux);
+  }
+
+  .embleem :global(.logo) {
+    font-size: clamp(2.2rem, 3vw, 3rem);
+  }
+
+  /* Speels draaien: een kwartslag, kleine vering, even stil */
+  @keyframes tik {
+    0% {
+      transform: rotate(0deg);
+    }
+    12% {
+      transform: rotate(98deg);
+    }
+    18%,
+    25% {
+      transform: rotate(90deg);
+    }
+    37% {
+      transform: rotate(188deg);
+    }
+    43%,
+    50% {
+      transform: rotate(180deg);
+    }
+    62% {
+      transform: rotate(278deg);
+    }
+    68%,
+    75% {
+      transform: rotate(270deg);
+    }
+    87% {
+      transform: rotate(368deg);
+    }
+    93%,
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .statement__grid {
+      grid-template-columns: 1fr;
+    }
+    .embleem {
+      justify-self: start;
+      width: 220px;
+    }
+  }
+</style>

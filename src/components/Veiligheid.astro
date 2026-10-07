@@ -1,0 +1,276 @@
+---
+import Bloem from './Bloem.astro';
+import Sticker from './Sticker.astro';
+
+const instellingen = [
+  {
+    titel: 'Alleen met mijn akkoord',
+    tekst: 'Kees doet een voorstel en wacht op jouw ja. Pas daarna wordt er iets geregeld.',
+    vast: true,
+  },
+  {
+    titel: 'Gegevens blijven in Europa',
+    tekst: 'Opgeslagen op Europese servers. Jullie gegevens worden nooit verkocht.',
+    vast: true,
+  },
+];
+---
+
+<section class="sectie veiligheid" id="veiligheid" data-veiligheid>
+  <div class="container">
+    <div class="veiligheid__vlak">
+      <Bloem class="veiligheid__bloem" kleur="var(--hemel)" lobes={12} amp={0.07} />
+
+      <div class="veiligheid__kop" data-reveal>
+        <h2 class="kop-l">Kees doet niets zonder jouw ja.</h2>
+        <p class="lead">
+          Een gezinsassistent moet je kunnen vertrouwen. Daarom staan deze instellingen standaard aan, en kun je Kees altijd
+          met één tik pauzeren.
+        </p>
+      </div>
+
+      <div class="instellingen" data-reveal style="--d:1">
+        <div class="instellingen__kop">
+          <Sticker class="instellingen__avatar">k</Sticker>
+          <span><b>Kees</b><span>Privacy en veiligheid</span></span>
+        </div>
+        <ul role="list">
+          {
+            instellingen.map((s, i) => (
+              <li class="instelling" style={`--i:${i}`}>
+                <span class="instelling__tekst">
+                  <b>{s.titel}</b>
+                  <span>{s.tekst}</span>
+                </span>
+                <span class="schakelaar is-vast" aria-hidden="true">
+                  <span />
+                </span>
+              </li>
+            ))
+          }
+          <li class="instelling instelling--pauze" style="--i:2">
+            <span class="instelling__tekst">
+              <b id="pauze-label">Kees pauzeren</b>
+              <span data-pauze-tekst>Even geen Kees? Probeer het maar: deze schakelaar zet ook alles op deze pagina stil.</span>
+            </span>
+            <button class="schakelaar" role="switch" aria-checked="false" aria-labelledby="pauze-label" data-pauze>
+              <span />
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const sectie = document.querySelector<HTMLElement>('[data-veiligheid]')!;
+  const knop = sectie.querySelector<HTMLButtonElement>('[data-pauze]')!;
+  const tekst = sectie.querySelector('[data-pauze-tekst]')!;
+  const standaard = tekst.textContent;
+
+  // Schakelaars springen één voor één aan zodra de kaart in beeld komt
+  new IntersectionObserver(
+    ([e], io) => {
+      if (!e.isIntersecting) return;
+      sectie.classList.add('is-aan');
+      io.disconnect();
+    },
+    { threshold: 0.5 },
+  ).observe(sectie.querySelector('.instellingen')!);
+
+  knop.addEventListener('click', () => {
+    const stil = document.documentElement.classList.toggle('alles-stil');
+    knop.setAttribute('aria-checked', String(stil));
+    tekst.textContent = stil ? 'Kees staat op pauze, en deze pagina ook. Tik nog een keer om alles weer aan te zetten.' : standaard;
+  });
+</script>
+
+<style>
+  .veiligheid__vlak {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+    padding: clamp(40px, 6vw, 88px);
+    border-radius: 40px;
+    background: var(--indigo);
+    color: var(--wit);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .veiligheid__vlak :global(.veiligheid__bloem) {
+    position: absolute;
+    z-index: -1;
+    right: -12%;
+    top: 50%;
+    width: 62%;
+    height: auto;
+    aspect-ratio: 1;
+    translate: 0 -50%;
+    opacity: 0.9;
+    animation: draai 80s linear infinite;
+  }
+
+  .veiligheid__kop {
+    display: grid;
+    gap: 20px;
+    justify-items: start;
+  }
+
+  .veiligheid .lead {
+    color: rgb(255 255 255 / 0.78);
+  }
+
+  /* ---------- Instellingenkaart (iOS-stijl) ---------- */
+  .instellingen {
+    justify-self: center;
+    width: min(100%, 420px);
+    padding: 8px;
+    border-radius: 28px;
+    background: rgb(255 255 255 / 0.96);
+    color: #111;
+    box-shadow: 0 50px 80px -40px rgb(20 20 70 / 0.6);
+    rotate: -2deg;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', var(--font-tekst), sans-serif;
+  }
+
+  .instellingen__kop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px 12px;
+  }
+
+  .instellingen__kop :global(.instellingen__avatar) {
+    width: 44px;
+    font-size: 1.2rem;
+  }
+
+  .instellingen__kop > span {
+    display: grid;
+    line-height: 1.25;
+  }
+
+  .instellingen__kop b {
+    font-size: 1.05rem;
+  }
+
+  .instellingen__kop span span {
+    font-size: 0.85rem;
+    color: rgb(60 60 67 / 0.6);
+  }
+
+  .instellingen ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-radius: 20px;
+    background: #f2f2f7;
+    overflow: hidden;
+  }
+
+  .instelling {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 16px;
+    background: var(--wit);
+  }
+
+  .instelling + .instelling {
+    box-shadow: inset 0 0.5px 0 rgb(60 60 67 / 0.2);
+  }
+
+  .instelling__tekst {
+    display: grid;
+    flex: 1;
+    gap: 3px;
+    line-height: 1.3;
+  }
+
+  .instelling__tekst b {
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .instelling__tekst span {
+    font-size: 0.82rem;
+    color: rgb(60 60 67 / 0.62);
+  }
+
+  /* iOS-schakelaar */
+  .schakelaar {
+    position: relative;
+    flex: none;
+    width: 51px;
+    height: 31px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #e9e9eb;
+    cursor: pointer;
+    transition: background-color 0.35s var(--uit);
+  }
+
+  .schakelaar span {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      0 3px 8px rgb(0 0 0 / 0.15),
+      0 3px 1px rgb(0 0 0 / 0.06);
+    transition: transform 0.45s var(--veer);
+  }
+
+  .is-aan .schakelaar.is-vast {
+    background: #34c759;
+    transition-delay: calc(var(--i) * 260ms + 300ms);
+  }
+
+  .is-aan .schakelaar.is-vast span {
+    transform: translateX(20px);
+    transition-delay: calc(var(--i) * 260ms + 300ms);
+  }
+
+  .schakelaar.is-vast {
+    cursor: default;
+  }
+
+  .schakelaar[aria-checked='true'] {
+    background: var(--indigo);
+  }
+
+  .schakelaar[aria-checked='true'] span {
+    transform: translateX(20px);
+  }
+
+  .instelling--pauze {
+    background: var(--lila-zacht);
+  }
+
+  @media (max-width: 900px) {
+    .veiligheid__vlak {
+      grid-template-columns: 1fr;
+      border-radius: 28px;
+    }
+
+    .veiligheid__vlak :global(.veiligheid__bloem) {
+      width: 120%;
+      top: auto;
+      bottom: -40%;
+      right: -40%;
+      translate: none;
+    }
+
+    .instellingen {
+      rotate: 0deg;
+    }
+  }
+</style>

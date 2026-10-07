@@ -1,0 +1,93 @@
+/* =====================================================================
+   Kees · design tokens
+   Bron: src/styles/global.css. Deze waarden zijn leidend.
+   Namen zijn Nederlands, gelijk aan de codebase. Zie DESIGN.md voor uitleg.
+   ===================================================================== */
+
+/* Fonts (gratis, Google Fonts):
+   - Bricolage Grotesque (variabel: wght 200–800, opsz 12–96)  → koppen en logo
+   - Figtree (variabel: wght 300–900)                          → lopende tekst en UI
+   Installeren: npm i @fontsource-variable/bricolage-grotesque @fontsource-variable/figtree
+   of via https://fonts.google.com/specimen/Bricolage+Grotesque en /specimen/Figtree */
+
+:root {
+  /* ---------- Kleur: palet ---------- */
+  --bordeaux: #67000a;  /* tekst, logo, koppen */
+  --tomaat: #f4532c;    /* sticker, primaire knop */
+  --indigo: #4f4fc1;    /* vertrouwen, voortgang, avond */
+  --hemel: #abc9fb;     /* zachte vlakken, Kees-bloem */
+  --lime: #c4e252;      /* vrolijk accent */
+  --lila: #daa3e0;      /* speels accent */
+  --boter: #fdf8a7;     /* warm accent, highlights */
+
+  /* ---------- Kleur: zachte tinten ---------- */
+  --hemel-zacht: #dbe7fd;
+  --hemel-licht: #eef3fe;
+  --tomaat-zacht: #fde3db;
+  --lila-zacht: #f3e1f5;
+  --boter-zacht: #fefcd8;
+  --lime-zacht: #ecf5c4;
+  --indigo-zacht: #e4e4f7;
+  --indigo-diep: #2b2b6e;
+
+  /* ---------- Kleur: neutraal ---------- */
+  --achtergrond: #f6f5f2; /* pagina */
+  --licht: #fbfaf8;
+  --licht-diep: #ebe9e4;  /* lege voortgangsbalk, scheiding */
+  --wit: #ffffff;         /* kaarten */
+
+  /* ---------- Kleur: rollen ---------- */
+  --primair: var(--tomaat);
+  --primair-tekst: #e8461f;   /* tomaat iets donkerder voor tekst op licht */
+  --op-primair: var(--wit);
+  --sticker: var(--tomaat);
+  --op-sticker: var(--wit);
+  --ink: var(--bordeaux);     /* standaard tekst */
+  --ink-zacht: #924a50;       /* bodytekst, leads  (bordeaux 70% op achtergrond) */
+  --ink-stil: #b17f83;        /* labels, meta      (bordeaux 48% op achtergrond) */
+  --lijn: rgb(103 0 10 / 0.11); /* randen en scheidingslijnen */
+
+  /* ---------- Typografie ---------- */
+  --font-kop: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-tekst: 'Figtree Variable', 'Figtree', system-ui, sans-serif;
+  --kop-gewicht: 650;
+  --kop-spatiering: -0.04em;
+
+  /* Schaal (vloeiend tussen mobiel en desktop) */
+  --tekst-hero: clamp(3rem, 7vw, 6.75rem);      /* gewicht 700, lh 0.94, ls -0.055em */
+  --tekst-xl: clamp(2.6rem, 4.9vw, 4.4rem);     /* gewicht 650, lh 0.98, ls -0.05em  */
+  --tekst-l: clamp(2rem, 3.6vw, 3.25rem);       /* gewicht 650, lh 1.02, ls -0.04em  */
+  --tekst-m: clamp(1.2rem, 1.6vw, 1.4rem);      /* gewicht 650, lh 1.15, ls -0.02em  */
+  --tekst-lead: clamp(1.075rem, 1.3vw, 1.2rem); /* Figtree 400, lh 1.6               */
+  --tekst-body: 1.0625rem;                      /* Figtree 400, lh 1.6 (17px)        */
+  --tekst-klein: 0.875rem;                      /* Figtree 600                       */
+  --tekst-label: 0.76rem;                       /* Figtree 750, ls 0.09em, HOOFDLETTERS */
+
+  /* ---------- Vorm ---------- */
+  --radius-s: 12px;    /* velden, kleine blokken */
+  --radius-m: 20px;    /* kaarten in kaarten, meldingen */
+  --radius-l: 32px;    /* grote kaarten, beeld */
+  --radius-xl: 40px;   /* gekleurde sectievlakken */
+  --radius-pil: 999px; /* knoppen, chips, navigatie */
+
+  /* ---------- Schaduw ---------- */
+  --schaduw-knop: 0 4px 0 var(--bordeaux);          /* hard, het handelsmerk van de knop */
+  --schaduw-knop-hover: 0 6px 0 var(--bordeaux);
+  --schaduw-knop-actief: 0 1px 0 var(--bordeaux);
+  --schaduw-kaart: 0 30px 60px -40px rgb(43 43 110 / 0.35);
+  --schaduw-zweef: 0 30px 60px -24px rgb(43 43 110 / 0.35); /* zwevende kaartjes */
+  --schaduw-nav: 0 0 0 1px var(--lijn), 0 10px 30px -18px rgb(40 10 10 / 0.35);
+
+  /* ---------- Ruimte ---------- */
+  --container: 1180px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --sectie-ruimte: clamp(88px, 10vw, 144px); /* boven en onder elke sectie */
+
+  /* ---------- Beweging ---------- */
+  --uit: cubic-bezier(0.16, 1, 0.3, 1);       /* standaard: lang uitlopend */
+  --in-uit: cubic-bezier(0.65, 0, 0.35, 1);   /* loops en heen-en-weer */
+  --veer: cubic-bezier(0.34, 1.25, 0.64, 1);  /* alleen voor stickers en vinkjes */
+  --duur-snel: 0.25s;
+  --duur-normaal: 0.6s;
+  --duur-traag: 1.2s;
+}

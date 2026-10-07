@@ -1,0 +1,51 @@
+---
+import Bloem from './Bloem.astro';
+
+// Woordmerk: "kees" met een Kees-bloempje als punt. Klaar is Kees.
+interface Props {
+  kleur?: string;
+  punt?: string;
+  class?: string;
+}
+
+const { kleur = 'var(--bordeaux)', punt = 'var(--sticker)', class: className } = Astro.props;
+---
+
+<span class:list={['logo', className]} style={`--logo-kleur:${kleur}`}>
+  <span class="logo__woord">kees</span>
+  <Bloem class="logo__punt" kleur={punt} lobes={10} amp={0.11} />
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: baseline;
+    color: var(--logo-kleur);
+    line-height: 1;
+    font-size: 2rem;
+  }
+
+  .logo__woord {
+    font-family: var(--font-kop);
+    font-weight: 800;
+    font-variation-settings: var(--kop-variatie);
+    letter-spacing: -0.055em;
+    line-height: 0.8;
+  }
+
+  .logo :global(.logo__punt) {
+    width: 0.3em;
+    height: 0.3em;
+    margin-left: 0.05em;
+    align-self: flex-end;
+    margin-bottom: 0.01em;
+    transition:
+      rotate 0.6s var(--veer),
+      scale 0.6s var(--veer);
+  }
+
+  .logo:hover :global(.logo__punt) {
+    rotate: 90deg;
+    scale: 1.25;
+  }
+</style>

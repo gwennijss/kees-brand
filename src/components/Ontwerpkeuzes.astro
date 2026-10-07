@@ -1,0 +1,184 @@
+---
+// Tijdelijk paneel om hoofdkleur en koppenfont live te vergelijken.
+// Zichtbaar op localhost of met ?ontwerp in de URL (wordt daarna onthouden).
+const kleuren = [
+  { id: 'tomaat', naam: 'Tomaat', hex: '#f4532c' },
+  { id: 'indigo', naam: 'Indigo', hex: '#4f4fc1' },
+  { id: 'bordeaux', naam: 'Bordeaux', hex: '#67000a' },
+];
+const fonts = [
+  { id: 'bricolage', naam: 'Bricolage', stijl: "'Bricolage Grotesque Variable'" },
+  { id: 'jakarta', naam: 'Jakarta', stijl: "'Plus Jakarta Sans Variable'" },
+  { id: 'fraunces', naam: 'Fraunces', stijl: "'Fraunces Variable'" },
+];
+---
+
+<aside class="ok is-dicht" data-ontwerpkeuzes hidden aria-label="Ontwerpkeuzes">
+  <button class="ok__kop" data-ok-toggle aria-expanded="false">
+    <span>Ontwerpkeuzes</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 15l6-6 6 6"></path></svg>
+  </button>
+  <div class="ok__body">
+    <p class="ok__label">Hoofdkleur</p>
+    <div class="ok__rij">
+      {
+        kleuren.map((k) => (
+          <button class="ok__kleur" data-kleur-keuze={k.id} style={`--k:${k.hex}`} title={k.naam} aria-label={k.naam} />
+        ))
+      }
+    </div>
+    <p class="ok__label">Koppenfont</p>
+    <div class="ok__rij">
+      {
+        fonts.map((f) => (
+          <button class="ok__font" data-font-keuze={f.id} style={`font-family:${f.stijl}`}>
+            {f.naam}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</aside>
+
+<script>
+  const paneel = document.querySelector<HTMLElement>('[data-ontwerpkeuzes]')!;
+  const html = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  if (params.has('ontwerp')) localStorage.setItem('kees-ontwerp', '1');
+  const toon = ['localhost', '127.0.0.1'].includes(location.hostname) || localStorage.getItem('kees-ontwerp') === '1';
+
+  function markeer() {
+    const kleur = html.dataset.kleur ?? 'tomaat';
+    const font = html.dataset.font ?? 'bricolage';
+    paneel.querySelectorAll<HTMLElement>('[data-kleur-keuze]').forEach((b) =>
+      b.setAttribute('aria-pressed', String(b.dataset.kleurKeuze === kleur)),
+    );
+    paneel.querySelectorAll<HTMLElement>('[data-font-keuze]').forEach((b) =>
+      b.setAttribute('aria-pressed', String(b.dataset.fontKeuze === font)),
+    );
+  }
+
+  if (toon) {
+    paneel.hidden = false;
+    markeer();
+    paneel.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest('button');
+      if (!t) return;
+      if (t.dataset.kleurKeuze) {
+        html.dataset.kleur = t.dataset.kleurKeuze;
+        localStorage.setItem('kees-kleur', t.dataset.kleurKeuze);
+      } else if (t.dataset.fontKeuze) {
+        html.dataset.font = t.dataset.fontKeuze;
+        localStorage.setItem('kees-font', t.dataset.fontKeuze);
+      } else if (t.hasAttribute('data-ok-toggle')) {
+        const dicht = paneel.classList.toggle('is-dicht');
+        t.setAttribute('aria-expanded', String(!dicht));
+      }
+      markeer();
+    });
+  }
+</script>
+
+<style>
+  .ok {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 90;
+    width: 236px;
+    transition: width 0.25s var(--zacht);
+  }
+
+  .ok.is-dicht {
+    width: 168px;
+    border-radius: 18px;
+    background: var(--wit);
+    color: var(--bordeaux);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 18px 40px -12px rgb(0 0 0 / 0.25);
+    font-size: 0.85rem;
+  }
+
+  .ok__kop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 14px;
+    border: 0;
+    background: none;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .ok__kop svg {
+    width: 16px;
+    height: 16px;
+    transition: rotate 0.3s;
+  }
+
+  .ok.is-dicht .ok__kop svg {
+    rotate: 180deg;
+  }
+
+  .ok.is-dicht .ok__body {
+    display: none;
+  }
+
+  .ok__body {
+    padding: 0 14px 14px;
+  }
+
+  .ok__label {
+    margin: 4px 0 6px;
+    font-weight: 700;
+    color: var(--ink-zacht);
+  }
+
+  .ok__rij {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .ok__kleur {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--k);
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--wit), 0 0 0 3px transparent;
+    transition: box-shadow 0.2s, transform 0.2s var(--veer);
+  }
+
+  .ok__kleur[aria-pressed='true'] {
+    box-shadow: 0 0 0 2px var(--wit), 0 0 0 4px var(--bordeaux);
+    transform: scale(1.08);
+  }
+
+  .ok__font {
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--achtergrond);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .ok__font[aria-pressed='true'] {
+    background: var(--bordeaux);
+    color: var(--wit);
+  }
+
+  @media (max-width: 640px) {
+    .ok {
+      left: 8px;
+      bottom: 8px;
+      width: 210px;
+    }
+  }
+</style>

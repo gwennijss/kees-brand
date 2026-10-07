@@ -1,0 +1,332 @@
+---
+import Sticker from './Sticker.astro';
+---
+
+<section class="sectie watdoet" id="wat-kees-doet">
+  <div class="container">
+    <div class="sectie-kop" data-reveal>
+      <h2 class="kop-l">Alles wat jullie gezin draaiende houdt.</h2>
+    </div>
+
+    <div class="bento">
+      <article class="tegel tegel--agenda" data-reveal style="--d:0">
+        <div class="tegel__tekst">
+          <h3 class="kop-m">De gezinsagenda</h3>
+          <p>Gekoppeld aan Google of Apple, met verjaardagen, feestdagen en schoolvakanties erbij.</p>
+        </div>
+        <div class="mini-agenda" aria-hidden="true">
+          {
+            [
+              ['ma', 'Zwemles', 'var(--hemel)'],
+              ['wo', 'Tandarts', 'var(--wit)'],
+              ['do', 'Sem jarig', 'var(--boter)'],
+              ['za', 'Feestje Daan', 'var(--lila)'],
+            ].map(([d, t, k], i) => (
+              <div class="mini-agenda__rij" style={`--k:${k};--n:${i}`}>
+                <span class="mini-agenda__dag">{d}</span>
+                <span class="mini-agenda__item">{t}</span>
+              </div>
+            ))
+          }
+        </div>
+      </article>
+
+      <article class="tegel tegel--ochtend" data-reveal style="--d:1">
+        <Sticker class="klok" kleur="var(--boter)" tekst="var(--bordeaux)">7:00</Sticker>
+        <div class="tegel__tekst">
+          <h3 class="kop-m">Ochtendbericht</h3>
+          <p>Het dagoverzicht staat klaar voordat de eerste boterham gesmeerd is.</p>
+        </div>
+      </article>
+
+      <article class="tegel tegel--menu" data-reveal style="--d:2">
+        <div class="tegel__tekst">
+          <h3 class="kop-m">Weekmenu en boodschappen</h3>
+          <p>Een menu waar iedereen blij van wordt, met de boodschappenlijst erbij.</p>
+        </div>
+        <ul class="lijstje" aria-hidden="true">
+          <li>Pasta pesto</li>
+          <li>Wraps</li>
+          <li>Stamppot</li>
+          <li>+ 14 boodschappen</li>
+        </ul>
+      </article>
+
+      <article class="tegel tegel--herinnering" data-reveal style="--d:3">
+        <div class="tegel__tekst">
+          <h3 class="kop-m">Herinneringen met een plan</h3>
+          <p>Moederdag komt eraan? Kees heeft al een cadeau-idee klaarliggen.</p>
+        </div>
+        <p class="seintje" aria-hidden="true">Ontbijt op bed? Ik zet het op de lijst.</p>
+      </article>
+
+      <article class="tegel tegel--tiener" data-reveal style="--d:4">
+        <div class="tegel__tekst">
+          <h3 class="kop-m">Tieners appen zelf</h3>
+          <p>Noor laat het Kees weten en het weekmenu past zich meteen aan.</p>
+        </div>
+        <p class="tiener-ballon" aria-hidden="true">ik eet niet thuis</p>
+      </article>
+
+      <article class="tegel tegel--huizen" data-reveal style="--d:5">
+        <div class="huizen" aria-hidden="true">
+          <svg viewBox="0 0 64 56"><path d="M6 26 32 6l26 20v26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z" fill="#abc9fb"></path><rect x="25" y="34" width="14" height="22" rx="4" fill="#4a0007"></rect></svg>
+          <svg viewBox="0 0 64 56"><path d="M6 26 32 6l26 20v26a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4z" fill="#daa3e0"></path><rect x="25" y="34" width="14" height="22" rx="4" fill="#4a0007"></rect></svg>
+        </div>
+        <div class="tegel__tekst">
+          <h3 class="kop-m">Ook met twee huizen</h3>
+          <p>Voor samengestelde gezinnen. Kees weet wie wanneer waar is, en wat er mee moet.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .watdoet {
+    padding-block: clamp(72px, 8vw, 112px);
+  }
+
+  .watdoet .sectie-kop {
+    max-width: none;
+  }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(12px, 1.4vw, 18px);
+  }
+
+  .tegel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 0;
+    padding: clamp(20px, 1.8vw, 26px);
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -40px rgb(43 43 110 / 0.35);
+    transition:
+      transform 0.6s var(--uit),
+      box-shadow 0.6s var(--uit);
+  }
+
+  .tegel:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 40px 70px -40px rgb(43 43 110 / 0.45);
+  }
+
+  .tegel__tekst {
+    display: grid;
+    gap: 6px;
+    max-width: 24em;
+  }
+
+  .tegel__tekst p {
+    opacity: 0.8;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .tegel--agenda {
+    grid-column: span 2;
+    flex-direction: row;
+    align-items: stretch;
+    background: var(--indigo);
+    color: var(--wit);
+  }
+
+  .tegel--agenda .tegel__tekst {
+    align-self: flex-end;
+  }
+
+  .tegel--ochtend {
+    background: var(--tomaat);
+    color: var(--wit);
+  }
+
+  .tegel--menu {
+    background: var(--lime);
+    color: var(--bordeaux);
+  }
+
+  .tegel--herinnering {
+    background: var(--lila);
+    color: var(--bordeaux);
+  }
+
+  .tegel--tiener {
+    background: var(--boter);
+    color: var(--bordeaux);
+  }
+
+  .tegel--huizen {
+    grid-column: span 2;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(20px, 3vw, 40px);
+    background: var(--bordeaux);
+    color: var(--wit);
+  }
+
+  /* Agenda */
+  .mini-agenda {
+    flex: none;
+    display: grid;
+    align-content: center;
+    gap: 5px;
+    width: min(46%, 220px);
+    margin-left: auto;
+  }
+
+  .mini-agenda__rij {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateX(16px);
+    transition:
+      opacity 0.8s var(--uit),
+      transform 1s var(--uit);
+    transition-delay: calc(var(--n) * 110ms + 350ms);
+  }
+
+  .is-zichtbaar .mini-agenda__rij {
+    opacity: 1;
+    transform: none;
+  }
+
+  .mini-agenda__dag {
+    width: 24px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+
+  .mini-agenda__item {
+    flex: 1;
+    padding: 6px 11px;
+    border-radius: 9px;
+    background: var(--k);
+    color: var(--bordeaux);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .mini-agenda__item.is-donker {
+    color: var(--wit);
+  }
+
+  /* Klok-sticker */
+  .tegel--ochtend :global(.klok) {
+    width: 64px;
+    font-size: 1rem;
+    transition: transform 0.8s var(--veer);
+  }
+
+  .tegel--ochtend:hover :global(.klok) {
+    transform: rotate(-20deg) scale(1.06);
+  }
+
+  /* Lijstje */
+  .lijstje {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lijstje li {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--wit);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .lijstje li:last-child {
+    background: var(--bordeaux);
+    color: var(--wit);
+  }
+
+  /* Seintje */
+  .seintje {
+    align-self: flex-start;
+    padding: 12px 14px;
+    border-radius: 16px 16px 16px 4px;
+    background: var(--wit);
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    box-shadow: 0 12px 24px -14px rgb(0 0 0 / 0.25);
+  }
+
+  /* Tiener */
+  .tiener-ballon {
+    align-self: flex-end;
+    padding: 10px 16px;
+    border-radius: 18px 18px 4px 18px;
+    background: var(--wit);
+    color: var(--bordeaux);
+    font-weight: 600;
+    box-shadow: 0 12px 24px -14px rgb(0 0 0 / 0.3);
+    rotate: 2deg;
+  }
+
+  /* Huizen */
+  .huizen {
+    display: flex;
+    gap: 12px;
+    flex: none;
+  }
+
+  .huizen svg {
+    width: 54px;
+    height: auto;
+    animation: zweef 6s var(--in-uit) infinite;
+  }
+
+  .huizen svg:last-child {
+    animation-delay: -3s;
+  }
+
+  @keyframes zweef {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -6px;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bento {
+      grid-template-columns: 1fr;
+    }
+    .bento > .tegel {
+      grid-column: auto;
+      min-height: 0;
+    }
+    .tegel--agenda,
+    .tegel--huizen {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .mini-agenda {
+      width: 100%;
+      order: -1;
+    }
+  }
+</style>

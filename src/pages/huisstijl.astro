@@ -1,0 +1,754 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import Bloem from '../components/Bloem.astro';
+import Sticker from '../components/Sticker.astro';
+
+const kleuren = [
+  { groep: 'Basis', naam: 'Achtergrond', var: '--achtergrond', hex: '#F6F5F2', rol: 'Pagina-achtergrond. Neutraal, net niet wit.', donker: false },
+  { groep: 'Basis', naam: 'Wit', var: '--wit', hex: '#FFFFFF', rol: 'Kaarten en vlakken.', donker: false },
+  { groep: 'Basis', naam: 'Bordeaux', var: '--bordeaux', hex: '#67000A', rol: 'Tekst, logo en koppen.', donker: true },
+  { groep: 'Kleur', naam: 'Tomaat', var: '--tomaat', hex: '#F4532C', rol: 'De Kees-sticker en de belangrijkste knoppen.', donker: true },
+  { groep: 'Kleur', naam: 'Indigo', var: '--indigo', hex: '#4F4FC1', rol: 'Vertrouwen, rust en de avond. Volop gebruiken.', donker: true },
+  { groep: 'Kleur', naam: 'Hemel', var: '--hemel', hex: '#ABC9FB', rol: 'Zachte vlakken en de Kees-bloem als achtergrond.', donker: false },
+  { groep: 'Accent', naam: 'Lime', var: '--lime', hex: '#C4E252', rol: 'Alleen als klein accent, zoals de punt in het logo.', donker: false },
+];
+
+const combinaties = [
+  ['--tomaat', '--bordeaux'],
+  ['--wit', '--tomaat'],
+  ['--indigo', '--hemel'],
+  ['--hemel', '--indigo'],
+  ['--bordeaux', '--tomaat'],
+  ['--indigo', '--lime'],
+];
+
+const toon = [
+  {
+    titel: 'Nuchter en warm',
+    uitleg: 'We praten zoals een fijne buurvrouw: helder, vriendelijk en zonder poespas.',
+    wel: 'Sem is donderdag jarig. Zal ik woensdag een seintje geven?',
+    niet: 'Hey superouder! 🚀 Jouw AI-powered verjaardagsflow staat klaar!',
+  },
+  {
+    titel: 'Een knipoog mag',
+    uitleg: 'Humor zit in herkenning en gaat nooit ten koste van iemand. Dus ook geen grappen over je partner.',
+    wel: 'Vorige week bleef de badmuts thuis 😉',
+    niet: 'Want laten we eerlijk zijn: je man vergeet het tóch.',
+  },
+  {
+    titel: 'Geen techtaal',
+    uitleg: 'We zeggen geen AI. Kees is gewoon je gezinsassistent.',
+    wel: 'Kees onthoudt, plant en regelt.',
+    niet: 'Ons slimme algoritme optimaliseert je huishouden.',
+  },
+  {
+    titel: 'Kees is gewoon Kees',
+    uitleg: 'Kees kan een hij of een zij zijn. We schrijven dus altijd "Kees" in plaats van "hij" of "zij".',
+    wel: 'Kees doet een voorstel. Jij tikt op akkoord.',
+    niet: 'Hij doet een voorstel en zij regelt de rest.',
+  },
+  {
+    titel: 'Geen trucjes met tegenstellingen',
+    uitleg:
+      'Geen zinnen die met een komma twee dingen tegenover elkaar zetten. Die klinken als een reclameslogan. Zeg gewoon wat Kees doet.',
+    wel: 'Kees denkt een paar dagen vooruit.',
+    niet: 'Zeven dagen, nul vergeten gymtassen.',
+  },
+];
+---
+
+<Base title="Huisstijl · Kees" description="Huisstijl van Kees: logo, kleur, typografie, vorm en tone of voice.">
+  <section class="hs-intro">
+    <div class="container">
+      <p class="hs-label">Huisstijl v0.2 · oktober 2026</p>
+      <h1 class="kop-xl">De huisstijl van Kees.</h1>
+      <p class="lead">
+        Betrouwbaar, vrolijk voor het hele gezin en licht, met af en toe een knipoog. Alles wat je nodig hebt om Kees
+        er als Kees uit te laten zien.
+      </p>
+      <nav class="hs-index" aria-label="Onderdelen">
+        <a href="#logo">Logo</a><a href="#kleur">Kleur</a><a href="#typografie">Typografie</a><a href="#vorm">Vorm</a><a href="#toon">Tone of voice</a><a href="#componenten">Componenten</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- LOGO -->
+  <section class="hs-sectie" id="logo">
+    <div class="container">
+      <header class="hs-kop">
+        <span class="hs-nr">01</span>
+        <h2 class="kop-l">Logo</h2>
+        <p class="lead">
+          Een stevig woordmerk in kleine letters, met een Kees-bloempje als punt: kees. Klaar. Daarnaast de Kees-sticker, de
+          golvende bloem met tekst erin. Die is ons app-icoon, de avatar in WhatsApp en de beloning na elke actie.
+        </p>
+      </header>
+
+      <div class="logo-grid">
+        <div class="logo-vlak logo-vlak--groot" style="background:var(--wit)">
+          <Logo />
+        </div>
+        <div class="logo-vlak" style="background:var(--tomaat)">
+          <Logo kleur="var(--wit)" punt="var(--bordeaux)" />
+        </div>
+        <div class="logo-vlak" style="background:var(--bordeaux)">
+          <Logo kleur="var(--licht)" />
+        </div>
+        <div class="logo-vlak" style="background:var(--indigo)">
+          <Logo kleur="var(--licht)" punt="var(--lime)" />
+        </div>
+        <div class="logo-vlak logo-vlak--embleem" style="background:var(--hemel)">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <defs><path id="hs-cirkel" d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0"></path></defs>
+            <text><textPath href="#hs-cirkel">KLAAR IS KEES ✦ JE GEZINSASSISTENT ✦ SINDS 2026 ✦</textPath></text>
+          </svg>
+          <Logo kleur="var(--bordeaux)" />
+          <span>Embleem</span>
+        </div>
+        <div class="logo-vlak logo-vlak--icoon" style="background:var(--licht-diep)">
+          <Sticker class="icoon-groot">kees</Sticker>
+          <span>Sticker / app-icoon</span>
+        </div>
+      </div>
+
+      <ul class="regels">
+        <li><strong>Altijd kleine letters.</strong> "kees", nooit "KEES" of "Kees" in het logo.</li>
+        <li><strong>Ruimte.</strong> Houd rondom minimaal de hoogte van de "k" vrij.</li>
+        <li><strong>Contrast.</strong> Woordmerk in bordeaux of wit. De punt in tomaat, of bordeaux/lime op een gekleurd vlak.</li>
+        <li><strong>Niet doen.</strong> Niet uitrekken, geen schaduw, geen vinkje of andere toevoegingen.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- KLEUR -->
+  <section class="hs-sectie hs-sectie--wit" id="kleur">
+    <div class="container">
+      <header class="hs-kop">
+        <span class="hs-nr">02</span>
+        <h2 class="kop-l">Kleur</h2>
+        <p class="lead">
+          Een bewust klein palet. Een <strong>neutrale basis</strong> met bordeaux, en daarnaast <strong>tomaat, indigo en
+          hemelsblauw</strong>. Blauw brengt rust, tomaat brengt vrolijkheid. Lime alleen als klein accent. Geen roze, perzik of geel.
+          Tik op een kleur om de hexcode te kopiëren.
+        </p>
+      </header>
+
+      {
+        ['Basis', 'Hoofdkleur', 'Accent'].map((g) => (
+          <div class="kleur-groep">
+            <h3 class="hs-label">{g}</h3>
+            <div class:list={['swatches', { 'swatches--accent': g === 'Accent' }]}>
+              {kleuren
+                .filter((k) => k.groep === g)
+                .map((k) => (
+                  <button
+                    class="swatch"
+                    style={`--k:var(${k.var});color:${k.donker ? 'var(--wit)' : 'var(--bordeaux)'}`}
+                    data-hex={k.hex}
+                  >
+                    <span class="swatch__naam">{k.naam}</span>
+                    <span class="swatch__hex" data-hex-label>{k.hex}</span>
+                    <span class="swatch__rol">{k.rol}</span>
+                  </button>
+                ))}
+            </div>
+          </div>
+        ))
+      }
+
+      <div class="kleur-groep">
+        <h3 class="hs-label">Goedgekeurde combinaties</h3>
+        <div class="combis">
+          {
+            combinaties.map(([bg, fg], i) => (
+              <div class="combi" style={`background:var(${bg})`}>
+                <Bloem kleur={`var(${fg})`} class="bloem combi__bloem" style={`--duur:${30 + i * 4}s`} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TYPOGRAFIE -->
+  <section class="hs-sectie" id="typografie">
+    <div class="container">
+      <header class="hs-kop">
+        <span class="hs-nr">03</span>
+        <h2 class="kop-l">Typografie</h2>
+        <p class="lead">
+          Twee gratis Google Fonts, zelf gehost (dus geen gegevens naar Google). Bricolage Grotesque voor koppen, Figtree voor
+          lopende tekst. Koppen staan altijd in één stijl: geen cursief, geen serif-accenten en geen markeerstift. De
+          speelsheid zit in kleur en vorm, niet in de letter.
+        </p>
+      </header>
+
+      <div class="type-grid">
+        <div class="type-kaart" style="background:var(--bordeaux);color:var(--wit)">
+          <p class="hs-label">Koppen · Bricolage Grotesque · 700 · −3,5% spatiëring</p>
+          <p class="type-aa type-aa--kop">Aa</p>
+          <p class="type-zin type-zin--kop">Het hele huishouden? Klaar is Kees.</p>
+        </div>
+        <div class="type-kaart" style="background:var(--wit)">
+          <p class="hs-label">Tekst · Figtree · 400–800</p>
+          <p class="type-aa type-aa--tekst">Aa</p>
+          <p class="type-zin type-zin--tekst">
+            Kees onthoudt, plant en regelt alles wat jullie gezin draaiende houdt. Elke ochtend een appje met wat er speelt, plus
+            een voorstel.
+          </p>
+        </div>
+      </div>
+
+      <div class="schaal">
+        <div><span class="hs-label">XL · hero</span><p class="kop-xl">Klaar is Kees.</p></div>
+        <div><span class="hs-label">L · sectiekop</span><p class="kop-l">Kees denkt een paar dagen vooruit.</p></div>
+        <div><span class="hs-label">M · kaartkop</span><p class="kop-m">Ochtendbericht om 7:00</p></div>
+        <div><span class="hs-label">Lead</span><p class="lead">Kees doet een voorstel en jij tikt op akkoord. Daarna is het geregeld.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VORM -->
+  <section class="hs-sectie hs-sectie--bordeaux" id="vorm">
+    <div class="container vorm-grid">
+      <header class="hs-kop">
+        <span class="hs-nr">04</span>
+        <h2 class="kop-l">De Kees-bloem en -sticker</h2>
+        <p class="lead">
+          Ons vaste vormelement: een cirkel met zachte golven. Als decor draait de bloem heel langzaam. Met tekst erin wordt het
+          de Kees-sticker, net een kortingssticker, die met een veerkrachtige "klaar!" op het beeld landt. Hoeken zijn altijd
+          rond (12, 20 of 28 px) en knoppen zijn pillen met een harde schaduw eronder.
+        </p>
+      </header>
+      <div class="vorm-demo">
+        <Bloem kleur="var(--tomaat)" class="bloem vorm-demo__a" style="--duur:30s" />
+        <Bloem kleur="var(--hemel)" class="bloem vorm-demo__b" style="--duur:40s" />
+        <Sticker class="vorm-demo__c" kleur="var(--lime)" tekst="var(--bordeaux)">Klaar<br />is Kees!</Sticker>
+      </div>
+    </div>
+  </section>
+
+  <!-- TONE OF VOICE -->
+  <section class="hs-sectie" id="toon">
+    <div class="container">
+      <header class="hs-kop">
+        <span class="hs-nr">05</span>
+        <h2 class="kop-l">Tone of voice</h2>
+        <p class="lead">
+          Kees is dat ene gezinslid dat overal aan denkt. Behulpzaam, een beetje grappig en nooit betweterig. We spreken je aan met
+          "je" en "jullie".
+        </p>
+      </header>
+
+      <div class="toon-grid">
+        {
+          toon.map((t) => (
+            <article class="toon-kaart">
+              <h3 class="kop-m">{t.titel}</h3>
+              <p class="toon-uitleg">{t.uitleg}</p>
+              <p class="toon-voorbeeld toon-voorbeeld--wel">
+                <span>Wel</span>
+                {t.wel}
+              </p>
+              <p class="toon-voorbeeld toon-voorbeeld--niet">
+                <span>Niet</span>
+                {t.niet}
+              </p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPONENTEN -->
+  <section class="hs-sectie hs-sectie--wit" id="componenten">
+    <div class="container">
+      <header class="hs-kop">
+        <span class="hs-nr">06</span>
+        <h2 class="kop-l">Componenten</h2>
+      </header>
+      <div class="comp-rij">
+        <a class="knop" href="/#aanmelden">Meld je gezin aan</a>
+        <a class="knop knop--licht" href="/#een-dag">Hoe werkt het?</a>
+        <Sticker style="width:110px;font-size:1rem;rotate:-8deg">Nieuw!</Sticker>
+      </div>
+      <div class="comp-rij">
+        <span class="demo-chat demo-chat--kees">Goeiemorgen! Sem is donderdag jarig 🎂 Zal ik woensdag een seintje geven?</span>
+        <span class="demo-chat demo-chat--jij">Akkoord 👍</span>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.swatch').forEach((s) =>
+    s.addEventListener('click', async () => {
+      const hex = s.dataset.hex!;
+      const label = s.querySelector('[data-hex-label]')!;
+      try {
+        await navigator.clipboard.writeText(hex);
+        label.textContent = 'Gekopieerd ✓';
+      } catch {
+        label.textContent = hex;
+      }
+      setTimeout(() => (label.textContent = hex), 1400);
+    }),
+  );
+</script>
+
+<style>
+  .hs-intro {
+    padding-block: clamp(40px, 7vw, 96px) clamp(48px, 7vw, 96px);
+  }
+
+  .hs-intro .container {
+    display: grid;
+    gap: 24px;
+    justify-items: start;
+  }
+
+  .hs-index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .hs-index a {
+    padding: 10px 16px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 2px var(--lijn);
+    font-family: var(--font-kop);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  .hs-index a:hover {
+    background: var(--hemel-zacht);
+  }
+
+  .hs-sectie {
+    position: relative;
+    padding-block: clamp(64px, 9vw, 120px);
+    overflow: clip;
+  }
+
+  .hs-sectie--wit {
+    background: var(--wit);
+  }
+
+  .hs-sectie--bordeaux {
+    background: var(--bordeaux);
+    color: var(--licht);
+  }
+
+  .hs-sectie--bordeaux .lead {
+    color: color-mix(in srgb, var(--licht) 80%, transparent);
+  }
+
+  .hs-kop {
+    display: grid;
+    gap: 16px;
+    max-width: 760px;
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  .hs-nr {
+    font-family: var(--font-kop);
+    font-weight: 700;
+    color: var(--tomaat);
+  }
+
+  .hs-label {
+    font-family: var(--font-kop);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  /* Logo */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .logo-vlak {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-l);
+  }
+
+  .logo-vlak :global(.logo) {
+    font-size: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .logo-vlak--groot {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: auto;
+    box-shadow: inset 0 0 0 2px var(--lijn);
+  }
+
+  .logo-vlak--groot :global(.logo) {
+    font-size: clamp(5rem, 12vw, 10rem);
+  }
+
+  .logo-vlak--embleem {
+    position: relative;
+  }
+
+  .logo-vlak--embleem svg {
+    position: absolute;
+    width: 72%;
+    height: 72%;
+    animation: draai 30s linear infinite;
+  }
+
+  .logo-vlak--embleem text {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    fill: var(--bordeaux);
+  }
+
+  .logo-vlak--embleem :global(.logo) {
+    font-size: 2.2rem !important;
+  }
+
+  .logo-vlak--embleem > span {
+    position: absolute;
+    bottom: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+
+  .logo-vlak--icoon {
+    gap: 8px;
+    align-content: center;
+    font-family: var(--font-kop);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .logo-vlak :global(.icoon-groot) {
+    width: 104px;
+    font-size: 1.6rem;
+  }
+
+  .regels {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 32px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .regels li {
+    padding-left: 28px;
+    position: relative;
+  }
+
+  .regels li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45em;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--tomaat);
+  }
+
+  /* Kleur */
+  .kleur-groep {
+    display: grid;
+    gap: 14px;
+    margin-top: 40px;
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .swatches--accent {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .swatch {
+    display: grid;
+    align-content: end;
+    gap: 4px;
+    min-height: 160px;
+    padding: 20px;
+    border: 0;
+    border-radius: var(--radius-m);
+    background: var(--k);
+    text-align: left;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px var(--lijn);
+    transition: transform 0.4s var(--veer);
+  }
+
+  .swatch:hover {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  .swatch__naam {
+    font-family: var(--font-kop);
+    font-weight: 650;
+    font-size: 1.4rem;
+  }
+
+  .swatch__hex {
+    font-weight: 800;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .swatch__rol {
+    font-size: 0.85rem;
+    line-height: 1.35;
+    opacity: 0.85;
+  }
+
+  .combis {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+
+  .combi {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .combi :global(.combi__bloem) {
+    width: 64%;
+    height: 64%;
+    left: 18%;
+    top: 18%;
+  }
+
+  /* Typografie */
+  .type-uitleg {
+    font-size: 0.9rem;
+    color: var(--ink-zacht);
+  }
+
+  .type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .type-kaart {
+    display: grid;
+    gap: 16px;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: var(--radius-l);
+    box-shadow: inset 0 0 0 2px var(--lijn);
+  }
+
+  .type-aa {
+    font-size: clamp(5rem, 10vw, 8rem);
+    line-height: 0.9;
+  }
+
+  .type-aa--kop,
+  .type-zin--kop {
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    letter-spacing: var(--kop-spatiering);
+  }
+
+  .type-aa--tekst {
+    font-family: var(--font-tekst);
+    font-weight: 800;
+  }
+
+  .type-zin--kop {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    line-height: 1.05;
+  }
+
+  .type-zin--tekst {
+    font-size: 1.15rem;
+  }
+
+  .schaal {
+    display: grid;
+    gap: 28px;
+    margin-top: 48px;
+  }
+
+  .schaal > div {
+    display: grid;
+    gap: 6px;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--lijn);
+  }
+
+  /* Vorm */
+  .vorm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .vorm-demo {
+    position: relative;
+    aspect-ratio: 1;
+  }
+
+  .vorm-demo :global(.vorm-demo__a) {
+    width: 70%;
+    height: 70%;
+    left: 0;
+    top: 0;
+  }
+
+  .vorm-demo :global(.vorm-demo__b) {
+    width: 46%;
+    height: 46%;
+    right: 0;
+    bottom: 6%;
+  }
+
+  .vorm-demo :global(.vorm-demo__c) {
+    position: absolute;
+    width: 34%;
+    left: 10%;
+    bottom: 0;
+    rotate: -12deg;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  /* Toon */
+  .toon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .toon-kaart:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .toon-kaart {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: clamp(24px, 3vw, 36px);
+    border-radius: var(--radius-l);
+    background: var(--wit);
+    box-shadow: inset 0 0 0 2px var(--lijn);
+  }
+
+  .toon-uitleg {
+    color: var(--ink-zacht);
+  }
+
+  .toon-voorbeeld {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    font-weight: 600;
+  }
+
+  .toon-voorbeeld span {
+    font-family: var(--font-kop);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .toon-voorbeeld--wel {
+    background: color-mix(in srgb, var(--lime) 55%, white);
+  }
+
+  .toon-voorbeeld--niet {
+    background: var(--tomaat-zacht);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, var(--tomaat) 70%, transparent);
+    text-decoration-thickness: 2px;
+  }
+
+  .toon-voorbeeld--niet span {
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  /* Componenten */
+  .comp-rij {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .demo-chat {
+    max-width: 340px;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  }
+
+  .demo-chat--kees {
+    background: var(--wit);
+    border-bottom-left-radius: 6px;
+    box-shadow: inset 0 0 0 2px var(--lijn);
+  }
+
+  .demo-chat--jij {
+    background: #e3f3b0;
+    border-bottom-right-radius: 6px;
+  }
+
+  @media (max-width: 900px) {
+    .logo-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .logo-vlak--groot {
+      grid-column: span 2;
+      grid-row: auto;
+      aspect-ratio: 16 / 9;
+    }
+    .swatches--accent {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .combis {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .type-grid,
+    .toon-grid,
+    .vorm-grid,
+    .regels {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .swatches,
+    .swatches--accent {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

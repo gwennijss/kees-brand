@@ -1,0 +1,787 @@
+---
+import Telefoon from './Telefoon.astro';
+import Sticker from './Sticker.astro';
+import { bericht, knoppen, typen } from '../lib/wa';
+
+type Bericht = { van: 'in' | 'uit'; html: string; tijd: string } | { van: 'keuze'; labels: string[] };
+
+type Moment = {
+  tijd: string;
+  label: string;
+  titel: string;
+  tekst: string;
+  chip: string;
+  bg: string;
+  donker?: boolean;
+  berichten: Bericht[];
+};
+
+const dag: Moment[] = [
+  {
+    tijd: '07:00',
+    label: 'Ochtend',
+    titel: 'Om zeven uur weet je wat er speelt.',
+    tekst: 'Elke ochtend een appje met wie waar moet zijn, wat er mee moet en wat er vanavond op tafel staat.',
+    chip: 'Agenda bijgewerkt',
+    bg: '#fefbd9',
+    berichten: [
+      { van: 'in', tijd: '07:00', html: 'Goeiemorgen! Dit speelt er vandaag:' },
+      {
+        van: 'in',
+        tijd: '07:00',
+        html: '<ul><li>🎒 <span><b>08:15</b> Gymtas mee voor Noor</span></li><li>🏊 <span><b>16:15</b> Zwemles Sem, jij brengt</span></li><li>🍝 <span><b>Eten</b> pasta pesto, alles is in huis</span></li></ul>',
+      },
+    ],
+  },
+  {
+    tijd: '08:10',
+    label: 'Vooruit',
+    titel: 'Kees denkt een paar dagen vooruit.',
+    tekst: 'Verjaardagen, feestjes en cadeaus komen op tijd langs. Met een voorstel erbij, zodat jij alleen hoeft te kiezen.',
+    chip: 'Verlanglijstje van Sem',
+    bg: '#f6e6f8',
+    berichten: [
+      {
+        van: 'in',
+        tijd: '08:10',
+        html: 'Sem is donderdag jarig. Zal ik woensdag een seintje geven voor het cadeau? Op zijn lijstje staat de LEGO-brandweerauto.',
+      },
+      { van: 'keuze', labels: ['Akkoord', 'Liever morgen'] },
+      { van: 'uit', tijd: '08:12', html: 'Akkoord' },
+      { van: 'in', tijd: '08:12', html: 'Staat erin. Woensdag om 12:00 krijg je een seintje.' },
+    ],
+  },
+  {
+    tijd: '12:30',
+    label: 'Middag',
+    titel: 'Tieners appen Kees gewoon zelf.',
+    tekst: 'Noor laat weten dat ze vanavond bij een vriendin eet. Kees past het menu aan en jij hoort het meteen.',
+    chip: 'Weekmenu aangepast',
+    bg: '#eef6cf',
+    berichten: [
+      {
+        van: 'in',
+        tijd: '12:30',
+        html: '<span class="wa-citaat"><b>Noor</b>ik eet vanavond bij Fenna</span>Noor eet vanavond niet thuis. Ik heb het menu aangepast: pasta pesto voor drie.',
+      },
+      { van: 'uit', tijd: '12:41', html: 'Top, dank je' },
+    ],
+  },
+  {
+    tijd: '20:30',
+    label: 'Avond',
+    titel: "'s Avonds staat morgen al klaar.",
+    tekst: 'Het weekmenu en de boodschappenlijst zijn geregeld. Tijd voor de bank.',
+    chip: '14 boodschappen klaar',
+    bg: '#4f4fc1',
+    donker: true,
+    berichten: [
+      {
+        van: 'in',
+        tijd: '20:30',
+        html: 'Morgen is het boodschappendag. Het lijstje voor het weekmenu staat klaar: 14 dingen. Zal ik het sturen?',
+      },
+      { van: 'keuze', labels: ['Akkoord', 'Straks'] },
+      { van: 'uit', tijd: '20:34', html: 'Akkoord' },
+      {
+        van: 'in',
+        tijd: '20:34',
+        html: '<span class="wa-lijst"><b>Boodschappen</b>Pasta, pesto, wraps, kip, paprika, yoghurt en nog 8 dingen</span>Alles staat klaar voor morgen. Fijne avond!',
+      },
+    ],
+  },
+];
+
+// Chat opbouwen: elke rij krijgt een moment (stap) en een volgnummer.
+// Vóór elk bericht van Kees staat een eigen typ-indicator.
+let html = '';
+dag.forEach((m, i) => {
+  let vorige: string | null = null;
+  m.berichten.forEach((b, j) => {
+    const attrs = `data-stap="${i}" data-volg="${j}"`;
+    if (b.van === 'keuze') {
+      html += knoppen(b.labels, { verborgen: true, attrs: `${attrs} data-keuze` });
+      return;
+    }
+    const staart = vorige !== b.van;
+    if (b.van === 'in') html += typen({ attrs: `${attrs} data-typen` });
+    html += bericht({ van: b.van, html: b.html, tijd: b.tijd, staart, verborgen: true, attrs: `${attrs} data-bericht="${b.van}"` });
+    vorige = b.van;
+  });
+});
+
+const info = dag.map(({ bg, donker, tijd }) => ({ bg, donker: !!donker, tijd }));
+---
+
+<section
+  class="dag"
+  id="een-dag"
+  data-dag
+  data-momenten={JSON.stringify(info)}
+  style={`--momenten:${dag.length};--bg-a:${dag[0].bg};--bg-b:${dag[0].bg};--mix:0%;--p:0`}
+>
+  <div class="dag__sticky">
+    <div class="container dag__grid">
+      <div class="dag__links">
+        <p class="dag__tijd" aria-hidden="true" data-tijd>
+          {
+            [...dag[0].tijd].map((c) =>
+              c === ':' ? (
+                <span class="flip__punt">:</span>
+              ) : (
+                <span class="flip" data-flip>
+                  <span class="flip__helft flip__boven"><span>{c}</span></span>
+                  <span class="flip__helft flip__onder"><span>{c}</span></span>
+                  <span class="flip__helft flip__blad flip__blad--boven"><span>{c}</span></span>
+                  <span class="flip__helft flip__blad flip__blad--onder"><span>{c}</span></span>
+                </span>
+              ),
+            )
+          }
+        </p>
+        <div class="dag__teksten">
+          {
+            dag.map((m, i) => (
+              <div class="dag__tekst" data-tekst={i}>
+                <h2 class="kop-l">{m.titel}</h2>
+                <p class="lead">{m.tekst}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="dag__rechts">
+        {
+          dag.map((m, i) => (
+            <span class="dag__chip" data-chip={i} style={`--kant:${i % 2 ? 1 : -1}`}>
+              <span class="dag__chip-stip" />
+              {m.chip}
+            </span>
+          ))
+        }
+        <div class="dag__toestel">
+          <Telefoon class="dag__telefoon" tijd={dag[0].tijd}>
+            <Fragment set:html={html} />
+          </Telefoon>
+          <div class="dag__stempel" data-dag-stempel aria-hidden="true">
+            <Sticker class="dag__sticker">Klaar<br />is Kees!</Sticker>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container dag__lijn">
+      <svg class="dag__boog" viewBox="0 0 1000 80" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M10 74 Q500 -30 990 74" class="dag__boog-stip" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="2 8" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+        <path d="M10 74 Q500 -30 990 74" data-boog class="dag__boog-vol" fill="none" stroke-width="3" stroke-linecap="round"></path>
+      </svg>
+      <span class="dag__zon" data-zon aria-hidden="true"></span>
+      <ol class="dag__momenten">
+        {
+          dag.map((m, i) => (
+            <li>
+              <button class="dag__moment" data-naar={i}>
+                <b>{m.tijd}</b>
+                <span>{m.label}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  type Info = { bg: string; donker: boolean; tijd: string };
+
+  const sectie = document.querySelector<HTMLElement>('[data-dag]')!;
+  const momenten: Info[] = JSON.parse(sectie.dataset.momenten!);
+  const N = momenten.length;
+  const status = sectie.querySelector<HTMLElement>('[data-status]')!;
+  const tijdEl = sectie.querySelector<HTMLElement>('[data-tijd]')!;
+  const klok = sectie.querySelector<HTMLElement>('[data-klok]')!;
+  const stempel = sectie.querySelector<HTMLElement>('[data-dag-stempel]')!;
+  const boog = sectie.querySelector<SVGPathElement>('[data-boog]')!;
+  const zon = sectie.querySelector<HTMLElement>('[data-zon]')!;
+  const lijn = sectie.querySelector<HTMLElement>('.dag__lijn')!;
+  const teksten = [...sectie.querySelectorAll<HTMLElement>('[data-tekst]')];
+  const knoppenNav = [...sectie.querySelectorAll<HTMLButtonElement>('[data-naar]')];
+  const chips = [...sectie.querySelectorAll<HTMLElement>('[data-chip]')];
+  const rijen = [...sectie.querySelectorAll<HTMLElement>('.wa-rij[data-stap]')];
+
+  const klem = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const zacht = (a: number, b: number, v: number) => {
+    const t = klem((v - a) / (b - a));
+    return t * t * (3 - 2 * t);
+  };
+
+  // Drempels: berichten verschijnen verspreid over 10%–75% van hun moment.
+  // Het eerste moment begint direct gevuld, zodat de telefoon nooit leeg is.
+  type Rij = { el: HTMLElement; d: number; soort: 'typen' | 'bericht' | 'keuze'; antwoord?: number };
+  const lijst: Rij[] = [];
+  for (let m = 0; m < N; m++) {
+    const eigen = rijen.filter((el) => Number(el.dataset.stap) === m && !el.hasAttribute('data-typen'));
+    eigen.forEach((el, j) => {
+      const d = m === 0 ? (j === 0 ? -1 : 0.06) : m + 0.1 + (j / eigen.length) * 0.65;
+      const soort = el.hasAttribute('data-keuze') ? 'keuze' : 'bericht';
+      lijst.push({ el, d, soort });
+      // De typ-indicator staat direct vóór het Kees-bericht
+      const vorige = el.previousElementSibling as HTMLElement | null;
+      if (vorige?.hasAttribute('data-typen') && m > 0) lijst.push({ el: vorige, d: d - 0.09, soort: 'typen' });
+    });
+    // Een keuze wordt "aangetikt" zodra het antwoord van jou verschijnt
+    const keuze = lijst.find((r) => r.soort === 'keuze' && Number(r.el.dataset.stap) === m);
+    const antwoord = lijst.find((r) => r.el.dataset.bericht === 'uit' && Number(r.el.dataset.stap) === m);
+    if (keuze && antwoord) keuze.antwoord = antwoord.d;
+  }
+
+  // ---------- Flip-klok: de bovenste helft klapt om, zoals een ouderwetse klok ----------
+  const tegels = [...tijdEl.querySelectorAll<HTMLElement>('[data-flip]')];
+  let getoondeTijd = momenten[0].tijd;
+
+  function zetCijfer(tegel: HTMLElement, oud: string, nieuw: string, vertraging: number) {
+    const [boven, onder, bladBoven, bladOnder] = [...tegel.children].map((c) => c.firstElementChild as HTMLElement);
+    window.setTimeout(() => {
+      boven.textContent = nieuw;
+      onder.textContent = oud;
+      bladBoven.textContent = oud;
+      bladOnder.textContent = nieuw;
+      tegel.classList.remove('is-flip');
+      void tegel.offsetWidth;
+      tegel.classList.add('is-flip');
+      window.clearTimeout(Number(tegel.dataset.timer));
+      tegel.dataset.timer = String(
+        window.setTimeout(() => {
+          onder.textContent = nieuw;
+          bladBoven.textContent = nieuw;
+          tegel.classList.remove('is-flip');
+        }, 620),
+      );
+    }, vertraging);
+  }
+
+  function zetTijd(tijd: string) {
+    if (tijd === getoondeTijd) return;
+    const oud = getoondeTijd.replace(':', '');
+    const nieuw = tijd.replace(':', '');
+    getoondeTijd = tijd;
+    klok.textContent = tijd;
+    tegels.forEach((t, i) => {
+      if (oud[i] !== nieuw[i]) zetCijfer(t, oud[i], nieuw[i], i * 70);
+    });
+  }
+
+  // ---------- Alles volgt de scrollpositie ----------
+  function render(P: number) {
+    const pos = P * N;
+    const m = Math.min(N - 1, Math.floor(pos));
+    const l = pos - m;
+
+    const volgende = Math.min(N - 1, m + 1);
+    const mix = m === N - 1 ? 0 : zacht(0.78, 1, l);
+    sectie.style.setProperty('--bg-a', momenten[m].bg);
+    sectie.style.setProperty('--bg-b', momenten[volgende].bg);
+    sectie.style.setProperty('--mix', `${(mix * 100).toFixed(1)}%`);
+    sectie.style.setProperty('--p', P.toFixed(4));
+    sectie.classList.toggle('is-donker', mix > 0.5 ? momenten[volgende].donker : momenten[m].donker);
+
+    zetTijd(momenten[m].tijd);
+
+    teksten.forEach((t, i) => {
+      const inn = i === 0 ? 1 : zacht(i - 0.04, i + 0.14, pos);
+      const uit = i === N - 1 ? 1 : 1 - zacht(i + 0.84, i + 0.98, pos);
+      const z = Math.min(inn, uit);
+      t.style.opacity = z.toFixed(3);
+      t.style.transform = `translateY(${((1 - inn) * 24 - (1 - uit) * 24).toFixed(1)}px)`;
+      t.style.filter = z < 0.99 ? `blur(${((1 - z) * 6).toFixed(1)}px)` : 'none';
+    });
+
+    chips.forEach((c, i) => {
+      const z = Math.min(zacht(i + 0.12, i + 0.3, pos), i === N - 1 ? 1 : 1 - zacht(i + 0.8, i + 0.92, pos));
+      c.style.setProperty('--z', z.toFixed(3));
+    });
+
+    let typt = false;
+    for (const r of lijst) {
+      if (r.soort === 'typen') {
+        const aan = pos >= r.d && pos < r.d + 0.09;
+        r.el.classList.toggle('is-verborgen', !aan);
+        typt ||= aan;
+      } else {
+        r.el.classList.toggle('is-verborgen', pos < r.d);
+        if (r.soort === 'keuze' && r.antwoord !== undefined) {
+          const getikt = pos >= r.antwoord - 0.04;
+          r.el.querySelector('.wa-knoppen')!.classList.toggle('is-beantwoord', getikt);
+          r.el.querySelector('.wa-knop--ja')!.classList.toggle('is-getikt', getikt);
+        }
+      }
+    }
+    status.textContent = typt ? 'typt…' : 'online';
+
+    stempel.classList.toggle('is-gezet', pos >= N - 0.16);
+    knoppenNav.forEach((k, i) => {
+      k.classList.toggle('is-actief', i === m);
+      k.classList.toggle('is-geweest', i < m);
+    });
+    // Zon over de gebogen tijdlijn, met een ingevulde boog erachter
+    const lengte = boog.getTotalLength();
+    boog.style.strokeDasharray = `${lengte}`;
+    boog.style.strokeDashoffset = `${lengte * (1 - P)}`;
+    const punt = boog.getPointAtLength(P * lengte);
+    const svg = boog.ownerSVGElement!.getBoundingClientRect();
+    const kader = lijn.getBoundingClientRect();
+    zon.style.transform = `translate(${(svg.left - kader.left + (punt.x / 1000) * svg.width).toFixed(1)}px, ${(svg.top - kader.top + (punt.y / 80) * svg.height).toFixed(1)}px)`;
+  }
+
+  function voortgang() {
+    const r = sectie.getBoundingClientRect();
+    return klem(-r.top / (sectie.offsetHeight - innerHeight));
+  }
+
+  let frame = 0;
+  const opScroll = () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => render(voortgang()));
+  };
+
+  knoppenNav.forEach((k, i) =>
+    k.addEventListener('click', () => {
+      const totaal = sectie.offsetHeight - innerHeight;
+      const doel = sectie.offsetTop + ((i + (i === N - 1 ? 0.95 : 0.8)) / N) * totaal;
+      const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: object) => void } }).lenis;
+      if (lenis) lenis.scrollTo(doel, { duration: 1.6 });
+      else scrollTo({ top: doel, behavior: 'smooth' });
+    }),
+  );
+
+  render(voortgang());
+  addEventListener('scroll', opScroll, { passive: true });
+  addEventListener('resize', opScroll);
+</script>
+
+<style>
+  .dag {
+    position: relative;
+    height: calc(var(--momenten) * 110svh + 100svh);
+    background: color-mix(in srgb, var(--bg-a), var(--bg-b) var(--mix));
+  }
+
+  .dag__sticky {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 100svh;
+    padding-top: 96px;
+    overflow: clip;
+  }
+
+  .dag__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+    min-height: 0;
+  }
+
+  /* ---------- Links ---------- */
+  .dag__links {
+    display: grid;
+    gap: 22px;
+    justify-items: start;
+    transition: color 0.8s var(--uit);
+  }
+
+  .is-donker .dag__links {
+    color: var(--wit);
+  }
+
+  .dag__tijd {
+    --tegel: var(--indigo);
+    --cijfer: var(--wit);
+    display: flex;
+    align-items: center;
+    gap: 0.06em;
+    font-family: var(--font-kop);
+    font-weight: 600;
+    font-size: clamp(3rem, 5.6vw, 4.8rem);
+    line-height: 1;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .is-donker .dag__tijd {
+    --tegel: var(--wit);
+    --cijfer: var(--indigo-diep);
+  }
+
+  .flip {
+    position: relative;
+    width: 0.74em;
+    height: 1.12em;
+    perspective: 4em;
+    filter: drop-shadow(0 0.12em 0.14em rgb(20 20 60 / 0.18));
+  }
+
+  /* Naad in het midden */
+  .flip::after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 0.018em;
+    margin-top: -0.009em;
+    background: rgb(0 0 0 / 0.28);
+  }
+
+  .flip__helft {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+    background: var(--tegel);
+    color: var(--cijfer);
+    backface-visibility: hidden;
+    transition:
+      background-color 0.8s var(--uit),
+      color 0.8s var(--uit);
+  }
+
+  .flip__helft > span {
+    display: block;
+    height: 1.12em;
+    line-height: 1.12em;
+    text-align: center;
+  }
+
+  .flip__boven,
+  .flip__blad--boven {
+    top: 0;
+    border-radius: 0.1em 0.1em 0 0;
+    transform-origin: 50% 100%;
+  }
+
+  .flip__onder,
+  .flip__blad--onder {
+    bottom: 0;
+    border-radius: 0 0 0.1em 0.1em;
+    transform-origin: 50% 0;
+  }
+
+  .flip__onder > span,
+  .flip__blad--onder > span {
+    transform: translateY(-50%);
+  }
+
+  /* Bovenkant iets lichter, onderkant iets donkerder: echte klepjes */
+  .flip__boven,
+  .flip__blad--boven {
+    background-image: linear-gradient(rgb(255 255 255 / 0.06), rgb(0 0 0 / 0.04));
+  }
+
+  .flip__onder,
+  .flip__blad--onder {
+    background-image: linear-gradient(rgb(0 0 0 / 0.08), rgb(0 0 0 / 0));
+  }
+
+  .flip__blad {
+    z-index: 2;
+  }
+
+  .flip__blad--onder {
+    transform: rotateX(90deg);
+  }
+
+  .flip.is-flip .flip__blad--boven {
+    animation: klep-boven 0.3s cubic-bezier(0.55, 0, 0.9, 0.4) forwards;
+  }
+
+  .flip.is-flip .flip__blad--onder {
+    animation: klep-onder 0.32s cubic-bezier(0.2, 0.7, 0.35, 1.25) 0.3s forwards;
+  }
+
+  @keyframes klep-boven {
+    from {
+      transform: rotateX(0deg);
+    }
+    to {
+      transform: rotateX(-90deg);
+    }
+  }
+
+  @keyframes klep-onder {
+    from {
+      transform: rotateX(90deg);
+    }
+    to {
+      transform: rotateX(0deg);
+    }
+  }
+
+  .flip__punt {
+    padding-inline: 0.04em;
+    color: var(--indigo);
+    transform: translateY(-0.06em);
+    transition: color 0.8s var(--uit);
+  }
+
+  .is-donker .flip__punt {
+    color: var(--wit);
+  }
+
+  .dag__teksten {
+    display: grid;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .dag__tekst {
+    grid-area: 1 / 1;
+    display: grid;
+    align-content: start;
+    gap: 16px;
+    opacity: 0;
+    will-change: opacity, transform, filter;
+  }
+
+  .dag__tekst .lead {
+    color: inherit;
+    opacity: 0.72;
+  }
+
+  /* ---------- Rechts: telefoon ---------- */
+  .dag__rechts {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .dag__toestel {
+    position: relative;
+    height: clamp(460px, calc(100svh - 240px), 660px);
+    aspect-ratio: 418 / 877;
+    /* Speels schuin, kantelt mee met de dag */
+    transform: rotate(calc(5deg - var(--p) * 9deg)) translateY(calc(var(--p) * -14px));
+  }
+
+  .dag__toestel :global(.dag__telefoon) {
+    width: 100%;
+  }
+
+  .dag__chip {
+    --z: 0;
+    position: absolute;
+    z-index: 3;
+    top: 26%;
+    left: calc(50% - 290px);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px 12px 14px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--bordeaux);
+    font-weight: 650;
+    font-size: 0.92rem;
+    white-space: nowrap;
+    box-shadow: 0 20px 40px -18px rgb(40 10 10 / 0.35);
+    opacity: var(--z);
+    transform: translateX(calc((1 - var(--z)) * 24px)) translateY(calc((1 - var(--z)) * 8px));
+    filter: blur(calc((1 - var(--z)) * 6px));
+    pointer-events: none;
+  }
+
+  .dag__chip[style*='--kant:1'] {
+    top: auto;
+    bottom: 24%;
+    left: auto;
+    right: calc(50% - 300px);
+    transform: translateX(calc((1 - var(--z)) * -24px)) translateY(calc((1 - var(--z)) * 8px));
+  }
+
+  .dag__chip-stip {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sticker);
+  }
+
+  .dag__stempel {
+    position: absolute;
+    z-index: 4;
+    top: 16%;
+    right: -26%;
+    width: 128px;
+    opacity: 0;
+    transform: scale(1.5) rotate(-28deg);
+    transition:
+      opacity 0.4s var(--uit),
+      transform 0.9s var(--veer);
+    pointer-events: none;
+  }
+
+  .dag__stempel :global(.dag__sticker) {
+    width: 100%;
+    font-size: 1.15rem;
+    filter: drop-shadow(0 14px 22px rgb(0 0 0 / 0.3));
+  }
+
+  .dag__stempel.is-gezet {
+    opacity: 1;
+    transform: scale(1) rotate(-10deg);
+  }
+
+  /* ---------- Tijdlijn ---------- */
+  .dag__lijn {
+    position: relative;
+    padding-block: 6px 26px;
+    color: var(--ink-stil);
+    transition: color 0.8s var(--uit);
+  }
+
+  .is-donker .dag__lijn {
+    color: rgb(255 255 255 / 0.5);
+  }
+
+  .dag__boog {
+    display: block;
+    width: 100%;
+    height: 54px;
+    overflow: visible;
+  }
+
+  .dag__boog-vol {
+    stroke: var(--indigo);
+    transition: stroke 0.8s var(--uit);
+  }
+
+  .is-donker .dag__boog-vol {
+    stroke: var(--wit);
+  }
+
+  .dag__zon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    margin: -14px 0 0 -14px;
+    border-radius: 50%;
+    background: var(--sticker);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--sticker) 20%, transparent);
+    transition:
+      background-color 0.8s var(--uit),
+      box-shadow 0.8s var(--uit);
+  }
+
+  .is-donker .dag__zon {
+    background: var(--hemel);
+    box-shadow:
+      inset -8px -3px 0 0 #7fa6e8,
+      0 0 0 8px rgb(171 201 251 / 0.18);
+  }
+
+  .dag__momenten {
+    display: grid;
+    grid-template-columns: repeat(var(--momenten), 1fr);
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dag__moment {
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    gap: 2px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    transition: color 0.5s var(--uit);
+  }
+
+  .dag__moment b {
+    font-weight: 700;
+    font-size: 0.92rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dag__moment span {
+    font-size: 0.88rem;
+  }
+
+  .dag__moment.is-actief,
+  .dag__moment.is-geweest,
+  .dag__moment:hover {
+    color: var(--bordeaux);
+  }
+
+  .is-donker .dag__moment.is-actief,
+  .is-donker .dag__moment.is-geweest,
+  .is-donker .dag__moment:hover {
+    color: var(--wit);
+  }
+
+  /* ---------- Mobiel ---------- */
+  @media (max-width: 860px) {
+    .dag__sticky {
+      padding-top: 84px;
+    }
+
+    .dag__grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .dag__links {
+      gap: 8px;
+    }
+
+    .dag__tijd {
+      font-size: 2.4rem;
+    }
+
+    .dag__tekst .kop-l {
+      font-size: 1.4rem;
+    }
+
+    .dag__tekst .lead {
+      display: none;
+    }
+
+    .dag__toestel {
+      height: min(470px, calc(100svh - 280px));
+    }
+
+    .dag__chip {
+      display: none;
+    }
+
+    .dag__stempel {
+      right: -18%;
+      top: 4%;
+      width: 92px;
+    }
+
+    .dag__stempel :global(.dag__sticker) {
+      font-size: 0.85rem;
+    }
+
+    .dag__moment span {
+      display: none;
+    }
+  }
+</style>

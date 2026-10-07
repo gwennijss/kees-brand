@@ -1,0 +1,100 @@
+---
+import Logo from './Logo.astro';
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__groot">
+      <p class="footer__slogan">
+        Klaar is Kees.
+      </p>
+      <a href="/#aanmelden" class="knop footer__knop">Meld je gezin aan</a>
+    </div>
+
+    <div class="footer__onder">
+      <Logo kleur="var(--wit)" punt="var(--bordeaux)" class="footer__logo" />
+      <p>© 2026 Kees · Je gezinsassistent in WhatsApp</p>
+      <ul>
+        <li><a href="/#vragen">Vragen</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="/huisstijl">Huisstijl</a></li>
+        <li><a href="mailto:hallo@example.com">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: clamp(56px, 7vw, 96px) 28px;
+    background: var(--tomaat);
+    color: var(--wit);
+    overflow: clip;
+  }
+
+  .footer__groot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: clamp(40px, 5vw, 64px);
+  }
+
+  .footer__slogan {
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 0.9;
+    letter-spacing: var(--kop-spatiering);
+  }
+
+  .footer__slogan span {
+    color: var(--sticker);
+  }
+
+  .footer__knop {
+    --knop-bg: var(--wit);
+    --knop-fg: var(--bordeaux);
+    --knop-schaduw: var(--bordeaux);
+  }
+
+  .footer__onder {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgb(255 255 255 / 0.3);
+    font-size: 0.95rem;
+  }
+
+  .footer__onder :global(.footer__logo) {
+    font-size: 1.6rem;
+  }
+
+  .footer__onder ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__onder a {
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .footer__onder a:hover {
+    color: var(--boter);
+  }
+
+  @media (max-width: 640px) {
+    .footer__onder ul {
+      margin-left: 0;
+    }
+  }
+</style>
