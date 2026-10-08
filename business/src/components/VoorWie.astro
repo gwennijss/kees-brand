@@ -1,0 +1,552 @@
+---
+import { Image } from 'astro:assets';
+import Sticker from '../../../src/components/Sticker.astro';
+import team from '../assets/klein-team.jpg';
+import officemanager from '../assets/vergadertafel.jpg';
+import ondernemer from '../assets/assistent.jpg';
+
+// Voor wie Business Kees is: drie soorten kantoren als tabs.
+// Per tab een grote fotokaart en een kleinere kaart met een mini-UI.
+const tabs = [
+  { id: 'klein', label: 'Kleine bedrijven' },
+  { id: 'groei', label: 'Groeiende teams' },
+  { id: 'ondernemer', label: 'Drukke ondernemers' },
+];
+
+const VINK =
+  '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.4l2.6 2.6L12 5.4"/></svg>';
+---
+
+<section class="sectie vw" id="voor-wie" data-vw>
+  <div class="container">
+    <h2 class="kop-l vw__kop" data-reveal>Er is een Kees voor elk kantoor.</h2>
+
+    <div class="vw__tabs" role="tablist" aria-label="Voor wie" data-reveal style="--d:1">
+      <span class="vw__duim" aria-hidden="true" data-duim></span>
+      {
+        tabs.map((t, i) => (
+          <button
+            type="button"
+            role="tab"
+            class="vw__tab"
+            id={`vw-tab-${t.id}`}
+            aria-controls={`vw-paneel-${t.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab={i}
+          >
+            {t.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="vw__panelen" data-reveal style="--d:2">
+      <!-- Kleine bedrijven -->
+      <div class="vw-paneel is-actief" role="tabpanel" id="vw-paneel-klein" aria-labelledby="vw-tab-klein" data-paneel="0">
+        <article class="vw-kaart vw-kaart--foto">
+          <Image src={team} class="vw-foto--klein" alt="Twee collega's overleggen aan een tafel met laptops bij een groot raam" widths={[700, 1400]} sizes="(max-width: 900px) 100vw, 760px" />
+          <div class="vw-kaart__tekst">
+            <h3>Kees als office manager</h3>
+            <p>Geen office manager? Dan doet de ondernemer het er meestal bij. Kees neemt het over in de groepsapp van kantoor.</p>
+          </div>
+        </article>
+        <article class="vw-kaart vw-kaart--hemel">
+          <div class="vw-kaart__tekst">
+            <h3>Alles in de groepsapp</h3>
+            <p>Iedereen appt Kees wat er nodig is. Kees regelt het en meldt het in één kort bericht.</p>
+          </div>
+          <ul class="vw-stapel" aria-hidden="true">
+            <li style="--n:0"><span class="vw-vink" set:html={VINK} /><b>Koffie besteld</b><small>morgen 9:00</small></li>
+            <li style="--n:1"><span class="vw-vink" set:html={VINK} /><b>Laptop voor Lisa</b><small>klaar op dag één</small></li>
+            <li style="--n:2"><span class="vw-vink" set:html={VINK} /><b>Borrel geboekt</b><small>vrijdag 16:30</small></li>
+          </ul>
+        </article>
+      </div>
+
+      <!-- Groeiende teams -->
+      <div class="vw-paneel vw-paneel--om" role="tabpanel" id="vw-paneel-groei" aria-labelledby="vw-tab-groei" data-paneel="1" hidden>
+        <article class="vw-kaart vw-kaart--boter">
+          <div class="vw-kaart__tekst">
+            <h3>Meer tijd voor de mensen</h3>
+            <p>Kees neemt het saaie werk over, zodat de office manager tijd heeft voor het team.</p>
+          </div>
+          <div class="vw-verdeel" aria-hidden="true">
+            <div class="vw-verdeel__kolom">
+              <p class="vw-verdeel__wie"><span class="vw-avatar">S</span>Sanne</p>
+              <span style="--n:0">Welkom voor Lisa</span>
+              <span style="--n:1">Teamuitje kiezen</span>
+            </div>
+            <div class="vw-verdeel__kolom vw-verdeel__kolom--kees">
+              <p class="vw-verdeel__wie"><Sticker class="vw-k" kleur="var(--indigo)" lobes={10}>k</Sticker>Kees</p>
+              <span style="--n:0">Pas en sleutel</span>
+              <span style="--n:1">Zaal 2 boeken</span>
+              <span style="--n:2">Wc-papier</span>
+              <span style="--n:3">Lease bus</span>
+            </div>
+          </div>
+        </article>
+        <article class="vw-kaart vw-kaart--foto">
+          <Image src={officemanager} alt="Een team in overleg aan een oranje vergadertafel" widths={[700, 1400]} sizes="(max-width: 900px) 100vw, 760px" />
+          <div class="vw-kaart__tekst">
+            <h3>Kees als assistent van de office manager</h3>
+            <p>Kees bestelt, boekt en herinnert. De office manager houdt het overzicht en tikt op akkoord.</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Drukke ondernemers -->
+      <div class="vw-paneel" role="tabpanel" id="vw-paneel-ondernemer" aria-labelledby="vw-tab-ondernemer" data-paneel="2" hidden>
+        <article class="vw-kaart vw-kaart--foto">
+          <Image src={ondernemer} class="vw-foto--ondernemer" alt="Een ondernemer leest papieren aan een lange tafel voor lichte gordijnen" widths={[700, 1400]} sizes="(max-width: 900px) 100vw, 760px" />
+          <div class="vw-kaart__tekst">
+            <h3>Kees als persoonlijke assistent</h3>
+            <p>Te veel agenda, mail en relaties? Kees plant afspraken, sorteert je inbox en denkt aan je klanten.</p>
+          </div>
+        </article>
+        <article class="vw-kaart vw-kaart--indigo">
+          <div class="vw-kaart__tekst">
+            <h3>Je inbox op orde</h3>
+            <p>Kees sorteert de mail en zet antwoorden klaar. Jij leest alleen wat ertoe doet.</p>
+          </div>
+          <ul class="vw-inbox" aria-hidden="true">
+            <li style="--n:0"><span class="vw-label vw-label--nu">Nu doen</span><b>Offerte Van Dijk</b></li>
+            <li style="--n:1"><span class="vw-label">Concept klaar</span><b>Vraag van Jansen Bouw</b></li>
+            <li style="--n:2"><span class="vw-label vw-label--rustig">Later</span><b>Nieuwsbrief leverancier</b></li>
+          </ul>
+          <Sticker class="vw-sticker">23 mails<br />gesorteerd</Sticker>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const vw = document.querySelector<HTMLElement>('[data-vw]')!;
+  const tabs = [...vw.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+  const panelen = [...vw.querySelectorAll<HTMLElement>('[data-paneel]')];
+  const duim = vw.querySelector<HTMLElement>('[data-duim]')!;
+  let actief = 0;
+
+  function zetDuim() {
+    const t = tabs[actief];
+    duim.style.width = `${t.offsetWidth}px`;
+    duim.style.transform = `translateX(${t.offsetLeft}px)`;
+  }
+
+  function kies(i: number, focus = false) {
+    if (i === actief) return;
+    const oud = panelen[actief];
+    actief = i;
+    tabs.forEach((t, n) => {
+      t.setAttribute('aria-selected', String(n === i));
+      t.tabIndex = n === i ? 0 : -1;
+    });
+    if (focus) tabs[i].focus();
+    zetDuim();
+    oud.classList.remove('is-actief');
+    oud.hidden = true;
+    const nieuw = panelen[i];
+    nieuw.hidden = false;
+    void nieuw.offsetWidth;
+    nieuw.classList.add('is-actief');
+  }
+
+  tabs.forEach((t, i) => t.addEventListener('click', () => kies(i)));
+  vw.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
+    const k = (e as KeyboardEvent).key;
+    if (k === 'ArrowRight') kies((actief + 1) % tabs.length, true);
+    if (k === 'ArrowLeft') kies((actief - 1 + tabs.length) % tabs.length, true);
+  });
+
+  zetDuim();
+  addEventListener('resize', zetDuim);
+  document.fonts?.ready.then(zetDuim);
+</script>
+
+<style>
+  .vw {
+    padding-block: clamp(56px, 5.5vw, 80px);
+  }
+
+  .vw__kop {
+    text-align: center;
+  }
+
+  /* ---------- Tabs ---------- */
+  .vw__tabs {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    margin: 24px auto clamp(28px, 3vw, 40px);
+    padding: 5px;
+    border-radius: 999px;
+    background: var(--hemel-zacht);
+  }
+
+  .vw__duim {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    border-radius: 999px;
+    background: var(--nacht);
+    box-shadow: 0 8px 18px -10px rgb(20 20 60 / 0.6);
+    transition:
+      transform 0.55s var(--veer),
+      width 0.55s var(--veer);
+  }
+
+  .vw__tab {
+    position: relative;
+    z-index: 1;
+    padding: 11px 20px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--nacht);
+    cursor: pointer;
+    transition: color 0.35s;
+  }
+
+  .vw__tab[aria-selected='true'] {
+    color: var(--wit);
+  }
+
+  /* ---------- Panelen ---------- */
+  .vw-paneel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 16px;
+    height: clamp(400px, 52vh, 480px);
+  }
+
+  .vw-paneel--om {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  }
+
+  .vw-paneel[hidden] {
+    display: none;
+  }
+
+  .vw-kaart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-l);
+    overflow: hidden;
+    opacity: 0;
+    translate: 0 18px;
+    transition:
+      opacity 0.5s var(--uit),
+      translate 0.7s var(--uit);
+  }
+
+  .vw-kaart + .vw-kaart {
+    transition-delay: 0.08s;
+  }
+
+  .is-actief .vw-kaart {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .vw-kaart__tekst {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 10px;
+    max-width: 26em;
+    padding: clamp(26px, 3vw, 44px) clamp(26px, 3vw, 44px) 0;
+  }
+
+  .vw-kaart h3 {
+    font-size: clamp(1.4rem, 2vw, 1.85rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .vw-kaart p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  /* Fotokaart: foto vult de kaart, tekst wit op een zacht verloop */
+  .vw-kaart--foto {
+    color: var(--wit);
+    background: var(--nacht);
+  }
+
+  .vw-kaart--foto :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    scale: 1.06;
+    transition: scale 1.6s var(--uit);
+  }
+
+  .vw-kaart--foto :global(.vw-foto--ondernemer) {
+    object-position: 50% 62%;
+  }
+
+  .vw-kaart--foto :global(.vw-foto--klein) {
+    object-position: 50% 62%;
+  }
+
+  .is-actief .vw-kaart--foto :global(img) {
+    scale: 1;
+  }
+
+  .vw-kaart--foto::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0.4) 40%, transparent 72%);
+  }
+
+  .vw-kaart--foto p {
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .vw-kaart--hemel {
+    background: var(--hemel-zacht);
+  }
+
+  .vw-kaart--boter {
+    background: var(--boter);
+  }
+
+  .vw-kaart--indigo {
+    background: var(--indigo);
+    color: var(--wit);
+  }
+
+  .vw-kaart--indigo p {
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  .vw-kaart--hemel p,
+  .vw-kaart--boter p {
+    color: var(--ink-zacht);
+  }
+
+  /* Mini-UI's komen gestaffeld omhoog */
+  .vw-stapel li,
+  .vw-inbox li,
+  .vw-verdeel span {
+    opacity: 0;
+    translate: 0 26px;
+    transition:
+      opacity 0.5s var(--uit),
+      translate 0.8s var(--veer);
+    transition-delay: calc(var(--n) * 110ms + 250ms);
+  }
+
+  .is-actief .vw-stapel li,
+  .is-actief .vw-inbox li,
+  .is-actief .vw-verdeel span {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .vw-stapel,
+  .vw-inbox {
+    display: grid;
+    gap: 10px;
+    margin: auto clamp(26px, 3vw, 44px) clamp(26px, 3vw, 40px);
+    padding: 0;
+    list-style: none;
+  }
+
+  .vw-stapel li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px 12px 12px;
+    border-radius: 16px;
+    background: var(--wit);
+    box-shadow: 0 12px 24px -18px rgb(20 20 60 / 0.5);
+    font-size: 0.92rem;
+  }
+
+  .vw-stapel li:nth-child(2) {
+    margin-left: 18px;
+    margin-right: -10px;
+    rotate: 1.5deg;
+  }
+
+  .vw-stapel li:nth-child(3) {
+    rotate: -1deg;
+  }
+
+  .vw-stapel small {
+    margin-left: auto;
+    color: var(--ink-stil);
+    font-size: 0.8rem;
+  }
+
+  .vw-vink {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--indigo);
+    color: var(--wit);
+  }
+
+  .vw-vink :global(svg) {
+    width: 15px;
+  }
+
+  /* Verdeling Sanne en Kees */
+  .vw-verdeel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: auto clamp(26px, 3vw, 44px) clamp(26px, 3vw, 40px);
+  }
+
+  .vw-verdeel__kolom {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 18px;
+    background: rgb(255 255 255 / 0.55);
+  }
+
+  .vw-verdeel__kolom--kees {
+    background: var(--wit);
+    box-shadow: 0 14px 28px -18px rgb(20 20 60 / 0.5);
+  }
+
+  .vw-verdeel__wie {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 0.9rem !important;
+  }
+
+  .vw-avatar {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--hemel);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .vw-verdeel :global(.vw-k) {
+    width: 28px;
+    font-size: 0.8rem;
+  }
+
+  .vw-verdeel span:not(.vw-avatar) {
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: var(--hemel-licht);
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
+  .vw-verdeel__kolom:not(.vw-verdeel__kolom--kees) span:not(.vw-avatar) {
+    background: rgb(255 255 255 / 0.8);
+  }
+
+  /* Inbox */
+  .vw-inbox li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--wit);
+    color: var(--nacht);
+    font-size: 0.9rem;
+  }
+
+  .vw-label {
+    flex: none;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--hemel-zacht);
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--indigo);
+  }
+
+  .vw-label--nu {
+    background: var(--boter);
+    color: var(--nacht);
+  }
+
+  .vw-label--rustig {
+    background: var(--licht-diep);
+    color: var(--ink-zacht);
+  }
+
+  .vw-kaart :global(.vw-sticker) {
+    position: absolute;
+    z-index: 2;
+    top: 22px;
+    right: 22px;
+    width: 104px;
+    font-size: 0.92rem;
+    rotate: 10deg;
+    filter: drop-shadow(0 10px 14px rgb(20 20 60 / 0.3));
+    scale: 0;
+    transition: scale 0.6s var(--veer) 0.6s;
+  }
+
+  .is-actief .vw-kaart :global(.vw-sticker) {
+    scale: 1;
+  }
+
+  @media (max-width: 900px) {
+    .vw-paneel,
+    .vw-paneel--om {
+      grid-template-columns: minmax(0, 1fr);
+      height: auto;
+    }
+
+    .vw-kaart--foto {
+      min-height: 380px;
+    }
+
+    .vw-kaart:not(.vw-kaart--foto) {
+      min-height: 360px;
+    }
+
+    .vw-paneel--om .vw-kaart--foto {
+      order: -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .vw__tabs {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .vw__tab {
+      flex: none;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+    }
+
+    .vw-kaart :global(.vw-sticker) {
+      width: 84px;
+      font-size: 0.78rem;
+    }
+  }
+</style>

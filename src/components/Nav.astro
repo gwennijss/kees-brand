@@ -1,6 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import Logo from './Logo.astro';
+import BusinessLogo from './BusinessLogo.astro';
+import { BUSINESS_URL, BUSINESS_LOGO } from '../lib/sites';
 import stelFoto from '../assets/stel-keuken.jpg';
 
 const functies = [
@@ -52,6 +54,9 @@ const functies = [
       <span class="rol"><span>Aanmelden</span></span>
     </a>
   </div>
+  <a href={BUSINESS_URL} class="nav__business" aria-label="Business Kees: Kees voor kantoren">
+    <BusinessLogo variant={BUSINESS_LOGO} kleur="var(--indigo-diep)" />
+  </a>
   <div class="nav__dimmer" data-dimmer aria-hidden="true"></div>
 </header>
 
@@ -172,6 +177,39 @@ const functies = [
   .nav__cta:hover {
     background: var(--bordeaux);
     color: var(--wit);
+  }
+
+  /* Losse knop rechtsboven naar Business Kees */
+  .nav__business {
+    position: absolute;
+    top: 14px;
+    right: var(--gutter);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    height: 54px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--wit);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 10px 30px -18px rgb(40 10 10 / 0.35);
+    text-decoration: none;
+    pointer-events: auto;
+    transition:
+      transform 0.5s var(--uit),
+      box-shadow 0.5s var(--uit);
+  }
+
+  .nav__business:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 18px 36px -16px rgb(40 10 10 / 0.4);
+  }
+
+  .nav__business :global(.blogo) {
+    font-size: 1.6rem;
   }
 
   /* Rollende tekst bij hover */
@@ -351,7 +389,20 @@ const functies = [
     pointer-events: auto;
   }
 
+  @media (max-width: 1260px) {
+    .nav__business {
+      position: relative;
+      top: auto;
+      right: auto;
+      margin-left: 8px;
+    }
+  }
+
   @media (max-width: 860px) {
+    .nav__business {
+      display: none;
+    }
+
     .nav__menu {
       display: none;
     }

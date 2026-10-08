@@ -1,0 +1,146 @@
+---
+// Wachtlijst: zakelijk e-mailadres + knop. Mock: er wordt (nog) niets opgeslagen.
+interface Props {
+  id: string;
+  donker?: boolean;
+}
+
+const { id, donker = false } = Astro.props;
+---
+
+<form class:list={['wl', { 'wl--donker': donker }]} data-wl novalidate>
+  <label class="visually-hidden" for={id}>Zakelijk e-mailadres</label>
+  <div class="wl__rij">
+    <input id={id} type="email" name="email" autocomplete="email" required placeholder="naam@bedrijf.nl" />
+    <button class="knop" type="submit">
+      <span>Zet ons op de wachtlijst</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+    </button>
+  </div>
+  <p class="wl__melding" data-wl-melding aria-live="polite"></p>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-wl]').forEach((form) => {
+    const input = form.querySelector('input')!;
+    const melding = form.querySelector<HTMLElement>('[data-wl-melding]')!;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Mock: koppel hier de echte wachtlijst (bijv. Tally of Supabase)
+      if (!input.checkValidity()) {
+        form.classList.add('is-fout');
+        melding.textContent = 'Vul een geldig e-mailadres in, dan houden we je op de hoogte.';
+        input.focus();
+        return;
+      }
+      form.classList.remove('is-fout');
+      form.classList.add('is-klaar');
+      melding.textContent = 'Staat genoteerd. Jullie horen het als eerste. Klaar is Kees.';
+    });
+    input.addEventListener('input', () => form.classList.remove('is-fout'));
+  });
+</script>
+
+<style>
+  .wl {
+    display: grid;
+    gap: 10px;
+    width: min(100%, 520px);
+  }
+
+  .wl__rij {
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 999px;
+    background: var(--wit);
+    box-shadow:
+      0 0 0 1.5px var(--ink),
+      0 4px 0 var(--ink);
+    transition:
+      box-shadow 0.3s,
+      opacity 0.3s;
+  }
+
+  .wl.is-fout .wl__rij {
+    box-shadow:
+      0 0 0 1.5px var(--tomaat),
+      0 4px 0 var(--tomaat);
+  }
+
+  .wl input {
+    flex: 1;
+    min-width: 0;
+    padding: 0 8px 0 18px;
+    border: 0;
+    background: transparent;
+    color: var(--nacht);
+    font: inherit;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  .wl input::placeholder {
+    color: color-mix(in srgb, var(--nacht) 45%, var(--wit));
+  }
+
+  .wl .knop {
+    min-height: 46px;
+    padding-inline: 1.2em;
+    box-shadow: none;
+    font-size: 0.95rem;
+    --knop-bg: var(--primair);
+    --knop-fg: var(--wit);
+  }
+
+  .wl .knop:hover {
+    transform: none;
+    box-shadow: none;
+    background: var(--nacht);
+  }
+
+  .wl__melding {
+    min-height: 1.4em;
+    padding-left: 20px;
+    font-size: 0.88rem;
+    color: var(--ink-zacht);
+  }
+
+  .wl.is-fout .wl__melding {
+    color: #c23a17;
+  }
+
+  .wl.is-klaar .wl__rij {
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  .wl--donker .wl__rij {
+    box-shadow:
+      0 0 0 1.5px var(--wit),
+      0 4px 0 var(--hemel);
+  }
+
+  .wl--donker .wl__melding {
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  .wl--donker.is-fout .wl__melding {
+    color: var(--boter);
+  }
+
+  .wl--donker .knop:hover {
+    background: var(--indigo-diep);
+  }
+
+  @media (max-width: 560px) {
+    .wl__rij {
+      flex-direction: column;
+      border-radius: 24px;
+    }
+
+    .wl input {
+      min-height: 46px;
+    }
+  }
+</style>

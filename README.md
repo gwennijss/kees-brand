@@ -21,6 +21,19 @@ npm run build    # bouwt naar dist/
 - `/`: de landingspagina
 - `/huisstijl`: logo, kleur, typografie, vorm, tone of voice en componenten
 
+## Business Kees
+
+Een tweede site in `business/`, voor kantoren en office managers. Gebruikt dezelfde fonts, tokens en componenten als Kees (via `../src`), met een eigen laag in `business/src/styles/business.css`.
+
+```bash
+npm run dev:business     # http://localhost:4322
+npm run build:business   # bouwt naar business/dist/
+```
+
+- `/logo`: de logo-varianten voor Business Kees
+- De sites linken naar elkaar via `src/lib/sites.ts`. Zet daar de echte domeinen.
+- Vercel: maak een tweede project van dezelfde repo, met Build Command `npm run build:business` en Output Directory `business/dist`.
+
 ## Deploy naar Vercel
 
 Push naar GitHub en importeer de repo in Vercel. Astro wordt automatisch herkend, configuratie is niet nodig.

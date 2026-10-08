@@ -4,13 +4,16 @@ import Sticker from './Sticker.astro';
 // Realistische iPhone (15/16 Pro-verhoudingen) met een WhatsApp-gesprek.
 // Alle maten binnen het scherm zijn in iOS-punten (--u): het scherm is 393 punten breed.
 interface Props {
+  naam?: string;
   status?: string;
   tijd?: string;
   class?: string;
   style?: string;
 }
 
-const { status = 'online', tijd = '07:00', class: className, style } = Astro.props;
+// Eigen avatar (bijvoorbeeld voor een groepsapp) via <Fragment slot="avatar">
+const { naam = 'Kees', status = 'online', tijd = '07:00', class: className, style } = Astro.props;
+const eigenAvatar = Astro.slots.has('avatar');
 
 // Rustig doodle-behang, zoals WhatsApp
 const behang = `url("data:image/svg+xml,${encodeURIComponent(
@@ -42,9 +45,9 @@ const behang = `url("data:image/svg+xml,${encodeURIComponent(
         <div class="wa-kop">
           <svg class="wa-terug" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2L2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
           <span class="wa-terug__aantal" aria-hidden="true">3</span>
-          <Sticker class="wa-avatar">k</Sticker>
+          {eigenAvatar ? <span class="wa-avatar wa-avatar--eigen"><slot name="avatar" /></span> : <Sticker class="wa-avatar">k</Sticker>}
           <span class="wa-kop__naam">
-            <b>Kees</b>
+            <b>{naam}</b>
             <span data-status>{status}</span>
           </span>
           <svg class="wa-kop__icoon" viewBox="0 0 26 18" aria-hidden="true"><rect x="1" y="2" width="16" height="14" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M17 7.2l6.2-3.6c.6-.3 1.3.1 1.3.8v9.2c0 .7-.7 1.1-1.3.8L17 10.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
@@ -268,6 +271,15 @@ const behang = `url("data:image/svg+xml,${encodeURIComponent(
     margin-left: calc(4 * var(--u));
   }
 
+  .wa-avatar--eigen {
+    display: grid;
+    place-items: center;
+    flex: none;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
   .wa-kop__naam {
     display: grid;
     flex: 1;
@@ -410,6 +422,13 @@ const behang = `url("data:image/svg+xml,${encodeURIComponent(
     background: #fff;
     box-shadow: 0 calc(1 * var(--u)) calc(0.5 * var(--u)) rgb(11 20 26 / 0.13);
     transform-origin: left bottom;
+  }
+
+  .iphone :global(.wa-afzender) {
+    display: block;
+    margin-bottom: calc(1 * var(--u));
+    font-weight: 600;
+    font-size: calc(13 * var(--u));
   }
 
   .iphone :global(.wa-bubbel--uit) {

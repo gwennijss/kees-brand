@@ -1,0 +1,540 @@
+---
+import Sticker from '../../../src/components/Sticker.astro';
+import Links from './agenda/Links.astro';
+import Rechts from './agenda/Rechts.astro';
+import { dagen } from './agenda/data';
+
+// Een werkweek met Kees als agenda waar je doorheen bladert.
+// De sectie pint vast; bij het scrollen komt per dag het bericht van Kees binnen,
+// wordt er op de knop getikt, komt de stempel erop en slaat de pagina om naar de volgende dag.
+const N = dagen.length;
+const bedragen = dagen.map((d) => d.bedrag);
+---
+
+<section class="ag" id="week" data-ag style={`--n:${N}`} data-bedragen={JSON.stringify(bedragen)}>
+  <div class="ag__pin">
+    <div class="container ag__kop">
+      <h2 class="kop-l">Zo loopt een werkweek met Kees.</h2>
+
+    </div>
+
+    <div class="ag__podium">
+
+      <div class="ag__boek" data-boek>
+        <div class="ag__kaft" aria-hidden="true"></div>
+
+        <!-- Vaste onderlaag: links maandag, rechts vrijdag -->
+        <div class="ag__pagina ag__pagina--links">
+          <Links i={0} />
+        </div>
+        <div class="ag__pagina ag__pagina--rechts">
+          <Rechts i={N - 1} />
+          <div class="ag__sticker" data-ag-sticker>
+            <Sticker class="ag__sticker-vorm">Klaar<br />is Kees!</Sticker>
+          </div>
+        </div>
+
+        <!-- Bladen die omslaan: voorkant = rechterpagina van dag k, achterkant = linkerpagina van dag k+1 -->
+        {
+          dagen.slice(0, -1).map((_, k) => (
+            <div class="ag__blad" data-blad={k} style={`z-index:${20 + N - k}`}>
+              <div class="ag__zijde ag__zijde--voor ag__pagina--rechts">
+                <Rechts i={k} />
+                <span class="ag__schaduw" />
+              </div>
+              <div class="ag__zijde ag__zijde--achter ag__pagina--links">
+                <Links i={k + 1} />
+                <span class="ag__schaduw" />
+              </div>
+            </div>
+          ))
+        }
+
+        <div class="ag__ringen" aria-hidden="true">
+          {Array.from({ length: 11 }, () => <i />)}
+        </div>
+
+        <span class="ag__lint" aria-hidden="true"></span>
+
+        <nav class="ag__tabs" aria-label="Dagen van de week">
+          {
+            dagen.map((d, i) => (
+              <button type="button" class="ag__tab" data-naar={i} style={`--tab:${d.tab};--tab-tekst:${d.tabTekst}`}>
+                {d.kort}
+              </button>
+            ))
+          }
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const ag = document.querySelector<HTMLElement>('[data-ag]')!;
+  const N = Number(getComputedStyle(ag).getPropertyValue('--n')) || 5;
+  const bedragen: number[] = JSON.parse(ag.dataset.bedragen!);
+  const bladen = [...ag.querySelectorAll<HTMLElement>('[data-blad]')];
+  const tabs = [...ag.querySelectorAll<HTMLButtonElement>('[data-naar]')];
+  const sticker = ag.querySelector<HTMLElement>('[data-ag-sticker]')!;
+  const telGeregeld = ag.querySelector<HTMLElement>('[data-tel="geregeld"]');
+  const telBedrag = ag.querySelector<HTMLElement>('[data-tel="bedrag"]');
+  const perDag = Array.from({ length: N }, (_, i) => [...ag.querySelectorAll<HTMLElement>(`[data-dag="${i}"]`)]);
+
+  const klem = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const zacht = (a: number, b: number, v: number) => {
+    const t = klem((v - a) / (b - a));
+    return t * t * (3 - 2 * t);
+  };
+
+  // Ritme binnen één dag (l loopt van 0 tot 1): het bericht komt binnen, er wordt getikt,
+  // de stempel komt erop, even rust om te lezen, en daarna slaat de pagina om.
+  const BERICHT = 0.04;
+  const TIK = 0.16;
+  const KLAAR = 0.26;
+  const OM_VAN = 0.56;
+  const OM_TOT = 0.96;
+  const STICKER = 0.42;
+
+  function tel(el: HTMLElement | null, waarde: number) {
+    if (!el || el.textContent === String(waarde)) return;
+    el.textContent = String(waarde);
+    el.classList.remove('is-tik');
+    void el.offsetWidth;
+    el.classList.add('is-tik');
+  }
+
+  function render(pos: number) {
+    const m = Math.min(N - 1, Math.floor(pos));
+    const l = pos - m;
+
+    bladen.forEach((b, k) => {
+      const f = k < m ? 1 : k === m ? zacht(OM_VAN, OM_TOT, l) : 0;
+      b.style.setProperty('--f', f.toFixed(4));
+      b.style.setProperty('--sh', Math.sin(f * Math.PI).toFixed(3));
+      // Omgeslagen bladen liggen links op volgorde, de rest rechts andersom
+      b.style.zIndex = String(f > 0.5 ? 20 + k : 20 + N - k);
+    });
+
+    let geregeld = 0;
+    let bedrag = 0;
+    perDag.forEach((els, i) => {
+      const klaar = pos >= i + KLAAR;
+      els.forEach((el) => {
+        el.classList.toggle('is-bericht', pos >= i + BERICHT);
+        el.classList.toggle('is-getikt', pos >= i + TIK);
+        el.classList.toggle('is-klaar', klaar);
+      });
+      if (klaar) {
+        geregeld++;
+        bedrag += bedragen[i];
+      }
+    });
+    tel(telGeregeld, geregeld);
+    tel(telBedrag, bedrag);
+    sticker.classList.toggle('is-gezet', pos >= N - 1 + STICKER);
+
+    const zicht = m < N - 1 && l > (OM_VAN + OM_TOT) / 2 ? m + 1 : m;
+    tabs.forEach((t, i) => {
+      t.classList.toggle('is-actief', i === zicht);
+      t.classList.toggle('is-klaar', pos >= i + KLAAR);
+    });
+  }
+
+  function voortgang() {
+    const r = ag.getBoundingClientRect();
+    return klem(-r.top / (ag.offsetHeight - innerHeight)) * N * 0.99999;
+  }
+
+  const stil = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (stil) {
+    // Zonder beweging: de agenda staat open op vrijdag en de tabs bladeren direct
+    render(N - 1 + 0.5);
+    tabs.forEach((t, i) => t.addEventListener('click', () => render(i + 0.5)));
+  } else {
+    let frame = 0;
+    const opScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => render(voortgang()));
+    };
+
+    // Klik op een tab: rustig naar het moment waarop die dag geregeld is
+    tabs.forEach((t, i) =>
+      t.addEventListener('click', () => {
+        const afstand = ag.offsetHeight - innerHeight;
+        const top = ag.getBoundingClientRect().top + scrollY;
+        const doel = top + ((i + 0.42) / N) * afstand;
+        const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: object) => void } }).lenis;
+        if (lenis) lenis.scrollTo(doel, { duration: 1.4 });
+        else scrollTo({ top: doel, behavior: 'smooth' });
+      }),
+    );
+
+    render(voortgang());
+    addEventListener('scroll', opScroll, { passive: true });
+    addEventListener('resize', opScroll);
+  }
+</script>
+
+<style>
+  /* ---------- Vastgepinde sectie ---------- */
+  .ag {
+    --ph: clamp(380px, calc(100svh - 300px), 580px);
+    --pw: min(calc(var(--ph) * 0.8), calc((100vw - 2 * var(--gutter) - 120px) / 2));
+    position: relative;
+    height: calc(100svh + var(--n) * 55svh);
+    background: var(--hemel-licht);
+  }
+
+  .ag__pin {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100svh;
+    padding-top: clamp(92px, 12vh, 112px);
+    overflow: clip;
+  }
+
+  .ag__kop {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+    gap: 16px 32px;
+  }
+
+  /* ---------- Bureau met de agenda ---------- */
+  .ag__podium {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+  }
+
+
+  .ag__boek {
+    position: relative;
+    width: calc(var(--pw) * 2);
+    height: var(--ph);
+    perspective: 2600px;
+    rotate: -1.5deg;
+  }
+
+  .ag__kaft {
+    position: absolute;
+    inset: -14px -16px -16px -16px;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 20% 0%, rgb(255 255 255 / 0.08), transparent 50%),
+      var(--nacht);
+    box-shadow:
+      0 50px 80px -40px rgb(20 20 60 / 0.6),
+      0 20px 30px -20px rgb(20 20 60 / 0.4);
+  }
+
+  /* Papier */
+  .ag__pagina {
+    position: absolute;
+    top: 0;
+    width: var(--pw);
+    height: var(--ph);
+    overflow: hidden;
+    background: #fffdf8;
+    color: var(--nacht);
+  }
+
+  .ag__pagina--links {
+    left: 0;
+    border-radius: 14px 3px 3px 14px;
+    background:
+      linear-gradient(to left, rgb(20 20 60 / 0.1), transparent 9%),
+      #fffdf8;
+  }
+
+  .ag__pagina--rechts {
+    left: var(--pw);
+    border-radius: 3px 14px 14px 3px;
+    background:
+      linear-gradient(to right, rgb(20 20 60 / 0.1), transparent 9%),
+      repeating-linear-gradient(transparent 0 calc(var(--ph) * 0.059 - 1px), color-mix(in srgb, var(--hemel) 45%, transparent) calc(var(--ph) * 0.059 - 1px) calc(var(--ph) * 0.059)),
+      #fffdf8;
+  }
+
+  /* Dikte van de bladen onder de rechterpagina */
+  .ag__boek > .ag__pagina--rechts {
+    box-shadow:
+      2px 2px 0 #f0ede6,
+      4px 4px 0 #e6e2d9,
+      6px 6px 0 #dcd8cf;
+  }
+
+  /* ---------- Omslaande bladen ---------- */
+  .ag__blad {
+    position: absolute;
+    top: 0;
+    left: var(--pw);
+    width: var(--pw);
+    height: var(--ph);
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transform: rotateY(calc(var(--f, 0) * -180deg));
+    will-change: transform;
+  }
+
+  .ag__zijde {
+    position: absolute;
+    inset: 0;
+    left: 0;
+    overflow: hidden;
+    color: var(--nacht);
+    backface-visibility: hidden;
+  }
+
+  .ag__zijde--achter {
+    transform: rotateY(180deg);
+  }
+
+  .ag__schaduw {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: calc(var(--sh, 0) * 0.9);
+  }
+
+  .ag__zijde--voor .ag__schaduw {
+    background: linear-gradient(to left, rgb(20 20 60 / 0.28), transparent 70%);
+  }
+
+  .ag__zijde--achter .ag__schaduw {
+    background: linear-gradient(to right, rgb(20 20 60 / 0.28), transparent 70%);
+  }
+
+  /* ---------- Ringband ---------- */
+  .ag__ringen {
+    position: absolute;
+    z-index: 60;
+    top: 3%;
+    bottom: 3%;
+    left: calc(var(--pw) - 17px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 34px;
+    pointer-events: none;
+  }
+
+  .ag__ringen i {
+    height: 12px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f4f4f8, #a9adc0 55%, #6d7186);
+    box-shadow:
+      0 2px 3px rgb(0 0 0 / 0.3),
+      inset 0 1px 0 rgb(255 255 255 / 0.8);
+  }
+
+  /* ---------- Leeslint ---------- */
+  .ag__lint {
+    position: absolute;
+    z-index: 55;
+    left: calc(var(--pw) * 1.72);
+    top: calc(var(--ph) - 26px);
+    width: 20px;
+    height: 92px;
+    background: linear-gradient(90deg, #e2461f, var(--tomaat) 45%, #e2461f);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 84%, 0 100%);
+    rotate: 6deg;
+    transform-origin: top center;
+    filter: drop-shadow(0 6px 6px rgb(20 20 60 / 0.25));
+  }
+
+  /* ---------- Tabbladen ---------- */
+  .ag__tabs {
+    position: absolute;
+    z-index: 1;
+    left: calc(var(--pw) * 2 + 2px);
+    top: 8%;
+    display: grid;
+    gap: 6px;
+  }
+
+  .ag__tab {
+    min-width: 54px;
+    padding: 10px 14px 10px 22px;
+    border: 0;
+    border-radius: 0 12px 12px 0;
+    background: var(--tab);
+    color: var(--tab-tekst);
+    font-weight: 600;
+    font-size: 0.86rem;
+    text-align: left;
+    cursor: pointer;
+    translate: -10px 0;
+    box-shadow: 0 6px 12px -8px rgb(20 20 60 / 0.5);
+    transition:
+      translate 0.5s var(--veer),
+      filter 0.3s;
+  }
+
+  .ag__tab:hover {
+    translate: -4px 0;
+  }
+
+  .ag__tab.is-actief {
+    translate: 8px 0;
+  }
+
+  /* ---------- Sticker op vrijdag ---------- */
+  .ag__sticker {
+    position: absolute;
+    z-index: 3;
+    right: 9%;
+    top: 55%;
+    width: calc(var(--ph) * 0.24);
+    opacity: 0;
+    transform: scale(1.8) rotate(-30deg);
+    pointer-events: none;
+  }
+
+  .ag__sticker.is-gezet {
+    animation: stempel 0.7s var(--veer) forwards;
+  }
+
+  .ag__sticker :global(.ag__sticker-vorm) {
+    width: 100%;
+    font-size: calc(var(--ph) * 0.036);
+    filter: drop-shadow(0 12px 18px rgb(20 20 60 / 0.3));
+  }
+
+  @keyframes stempel {
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(-10deg);
+    }
+  }
+
+  /* ---------- Mobiel: één pagina, de ringband bovenaan ---------- */
+  @media (max-width: 820px) {
+    .ag {
+      --pw: calc(100vw - 2 * var(--gutter) - 12px);
+      --ph: min(calc(100svh - 330px), 560px);
+    }
+
+    .ag__podium {
+      align-items: start;
+      padding-top: 26px;
+    }
+
+    .ag__sticker {
+      top: auto;
+      right: auto;
+      left: 7%;
+      bottom: 6%;
+      width: calc(var(--ph) * 0.22);
+    }
+
+    .ag__kop .kop-l {
+      font-size: 1.85rem;
+    }
+
+
+    .ag__boek {
+      width: var(--pw);
+      rotate: none;
+      perspective: 1800px;
+    }
+
+    .ag__boek > .ag__pagina--links,
+    .ag__zijde--achter,
+    .ag__tabs {
+      display: none;
+    }
+
+    .ag__pagina--rechts,
+    .ag__blad {
+      left: 0;
+      border-radius: 14px;
+    }
+
+    .ag__blad {
+      transform-origin: center top;
+      transform: rotateX(calc(var(--f, 0) * 180deg));
+    }
+
+    .ag__zijde--voor .ag__schaduw {
+      background: linear-gradient(to top, rgb(20 20 60 / 0.28), transparent 70%);
+    }
+
+    .ag__ringen {
+      top: -10px;
+      bottom: auto;
+      left: 4%;
+      right: 4%;
+      flex-direction: row;
+      width: auto;
+      height: 26px;
+    }
+
+    .ag__ringen i {
+      width: 10px;
+      height: 26px;
+    }
+
+    .ag__lint {
+      left: 78%;
+    }
+
+    .ag :global(.ar__mobiel) {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .ag :global(.ar__mobiel p) {
+      font-size: 1.05rem;
+    }
+
+    .ag :global(.ar__mobiel b) {
+      font-family: var(--font-kop);
+      font-size: 1.6rem;
+      letter-spacing: -0.03em;
+    }
+
+    .ag :global(.ar__mobiel-afspraak) {
+      justify-self: start;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: var(--indigo);
+      color: var(--wit);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .ag :global(.ar__notities) {
+      display: none;
+    }
+  }
+
+  /* ---------- Zonder beweging: geen vastgepinde scroll ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .ag {
+      height: auto;
+    }
+
+    .ag__pin {
+      position: relative;
+      height: auto;
+      min-height: 100svh;
+      padding-bottom: 64px;
+    }
+
+    .ag__blad {
+      transition: transform 0.001ms;
+    }
+  }
+</style>

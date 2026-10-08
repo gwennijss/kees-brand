@@ -1,0 +1,99 @@
+---
+import '../styles/business.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  kaal?: boolean;
+}
+
+const {
+  title = 'Business Kees · Kantoor geregeld? Klaar is Kees.',
+  description = 'Business Kees is de office manager in de WhatsApp-groep van kantoor. Kees regelt het, jij keurt goed.',
+  kaal = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f6f5f2" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="nl_NL" />
+  </head>
+  <body>
+    {
+      kaal ? (
+        <slot />
+      ) : (
+        <>
+          <a class="skiplink" href="#inhoud">
+            Naar de inhoud
+          </a>
+          <Nav />
+          <main id="inhoud">
+            <slot />
+          </main>
+          <Footer />
+        </>
+      )
+    }
+
+    <script>
+      import Lenis from 'lenis';
+
+      // Smooth scroll: zacht uitlopend scrollen, ook voor ankerlinks.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const lenis = new Lenis({
+          autoRaf: true,
+          lerp: 0.09,
+          wheelMultiplier: 0.9,
+          anchors: { offset: -40, duration: 1.4 },
+        });
+        (window as unknown as { lenis: Lenis }).lenis = lenis;
+      }
+
+      // Scroll-reveal: alles met data-reveal komt zacht omhoog zodra het in beeld is.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('is-zichtbaar');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.15 },
+      );
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+    </script>
+
+    <style>
+      .skiplink {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 100;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: var(--nacht);
+        color: var(--wit);
+        font-weight: 700;
+        translate: 0 -200%;
+        transition: translate 0.2s;
+      }
+      .skiplink:focus {
+        translate: 0 0;
+      }
+    </style>
+  </body>
+</html>

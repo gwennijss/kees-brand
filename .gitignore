@@ -4,3 +4,6 @@ dist/
 .vercel/
 .DS_Store
 .context/
+business/dist/
+business/.astro/
+business/node_modules/

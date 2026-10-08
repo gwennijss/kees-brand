@@ -1,0 +1,1207 @@
+---
+// Hoe het werkt: zelfde patroon als de functiesectie van Kees.
+// Links de zes kernfuncties als lijst die openklapt, rechts een groot kleurvlak met één zwevende kaart per functie.
+import Bloem from '../../../src/components/Bloem.astro';
+import Sticker from '../../../src/components/Sticker.astro';
+
+// vlak: [basis, gloed 1, gloed 2] · bloem: kleur van de draaiende vorm · ink: kleur van het icoon op de basiskleur · r: hoe scheef de kaart ligt
+const functies = [
+  {
+    id: 'taken',
+    titel: 'Taken',
+    tekst: 'Zeg “Kees, zet dit op mijn lijst” en de taak staat in de agenda, in monday of in een ander systeem.',
+    vlak: ['var(--indigo)', 'var(--hemel)', 'var(--hemel-zacht)'],
+    bloem: 'var(--hemel)',
+    ink: 'var(--wit)',
+    zacht: 'var(--indigo-zacht)',
+    r: -2.5,
+    icoon: 'M10 6h10M10 12h10M10 18h10M4 6l1.2 1.2L7.5 5M4 12l1.2 1.2L7.5 11M4 18l1.2 1.2L7.5 17',
+  },
+  {
+    id: 'doorsturen',
+    titel: 'Doorsturen naar Kees',
+    tekst: 'Stuur een appje door uit een andere chat. Kees maakt er een taak van en herinnert je als je nog niet hebt geantwoord.',
+    vlak: ['var(--nacht)', 'var(--indigo)', 'var(--hemel)'],
+    bloem: 'var(--indigo)',
+    ink: 'var(--wit)',
+    zacht: 'color-mix(in srgb, var(--nacht) 14%, var(--wit))',
+    r: 2,
+    icoon: 'M14 5l6 6-6 6M20 11H10a6 6 0 0 0-6 6v2',
+  },
+  {
+    id: 'bonnetjes',
+    titel: 'Bonnetjes',
+    tekst: 'Maak een foto van de bon en stuur die naar Kees. De bon staat meteen klaar voor de administratie.',
+    vlak: ['var(--hemel)', 'var(--hemel-licht)', 'var(--wit)'],
+    bloem: 'var(--hemel-zacht)',
+    ink: 'var(--nacht)',
+    zacht: 'var(--hemel-zacht)',
+    r: -3,
+    icoon: 'M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3',
+  },
+  {
+    id: 'mail',
+    titel: 'Mail',
+    tekst: 'Kees sorteert de inbox, zet conceptantwoorden klaar en maakt van een mail een taak. Per collega zet je dit aan of uit.',
+    vlak: ['var(--hemel-zacht)', 'var(--wit)', 'var(--hemel)'],
+    bloem: 'var(--hemel)',
+    ink: 'var(--nacht)',
+    zacht: 'var(--hemel-licht)',
+    r: 2.5,
+    icoon: 'M4 6h16v12H4zM4 7l8 6 8-6',
+  },
+  {
+    id: 'ochtend',
+    titel: 'Ochtendbericht om 8:00',
+    tekst: 'Iedere collega krijgt een eigen bericht met afspraken en taken. In de groep komt één kort teambericht.',
+    vlak: ['var(--nacht)', 'var(--indigo)', 'var(--hemel)'],
+    bloem: 'var(--indigo)',
+    ink: 'var(--wit)',
+    zacht: 'color-mix(in srgb, var(--nacht) 14%, var(--wit))',
+    r: -2,
+    icoon: 'M12 3v2M5.6 5.6l1.4 1.4M3 12h2M19 12h2M17 7l1.4-1.4M7 16a5 5 0 1 1 10 0M3 20h18',
+  },
+  {
+    id: 'akkoord',
+    titel: 'Altijd akkoord',
+    tekst: 'Kees doet een voorstel en de verantwoordelijke tikt op akkoord. Pas dan wordt er besteld of geboekt.',
+    vlak: ['var(--indigo)', 'var(--hemel)', 'var(--indigo-diep)'],
+    bloem: 'var(--hemel)',
+    ink: 'var(--wit)',
+    zacht: 'var(--indigo-zacht)',
+    r: 3,
+    icoon: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM8 12.5l2.8 2.8L16 10',
+  },
+];
+
+const vink =
+  '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.3l3 3 6-6.6"/></svg>';
+const pijl =
+  '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3l4 4-4 4"/><path d="M14 7H7a5 5 0 0 0-5 5v1"/></svg>';
+---
+
+<section class="sectie sectie--wit hoe" id="hoe" data-hoe>
+  <div class="container">
+    <div class="sectie-kop hoe__kop" data-reveal>
+      <h2 class="kop-l">Kees werkt gewoon in de WhatsApp-groep van kantoor.</h2>
+    </div>
+
+    <div class="hoe__grid">
+      <ul class="hoe__lijst" role="tablist" aria-label="Kernfuncties" aria-orientation="vertical" data-reveal style="--d:1">
+        {
+          functies.map((f, i) => (
+            <li>
+              <button
+                class="hf"
+                role="tab"
+                id={`hoe-tab-${f.id}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls="hoe-beeld"
+                tabindex={i === 0 ? 0 : -1}
+                data-tab={i}
+                style={`--k:${f.vlak[0]};--k-ink:${f.ink};--k-zacht:${f.zacht}`}
+              >
+                <span class="hf__icoon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d={f.icoon} /></svg>
+                </span>
+                <span class="hf__titel">{f.titel}</span>
+                <span class="hf__tekst"><span>{f.tekst}</span></span>
+                <span class="hf__balk" aria-hidden="true"><span /></span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="hbeeld" id="hoe-beeld" role="tabpanel" aria-labelledby="hoe-tab-taken" data-beeld data-reveal style="--d:2">
+        {
+          functies.map((f, i) => (
+            <div
+              class:list={['hbeeld__vlak', { 'is-actief': i === 0 }]}
+              data-vlak={i}
+              style={`--a:${f.vlak[0]};--b:${f.vlak[1]};--c:${f.vlak[2]}`}
+            >
+              <Bloem class="bloem hbeeld__bloem" kleur={f.bloem} lobes={i % 2 ? 9 : 12} amp={0.09} />
+            </div>
+          ))
+        }
+
+        <!-- Taken -->
+        <div class="hui hui--taken is-actief" data-ui="0" aria-hidden="true" style={`--r:${functies[0].r}deg`}>
+          <span class="hplak hplak--chip hplak--boter">Via WhatsApp</span>
+          <p class="hui__kop"><b>Taken van Joost</b><span>monday</span></p>
+          <ul class="taken">
+            <li class="is-nieuw">
+              <i class="taken__vak"></i>
+              <span><b>Offerte Van Dijk</b><small>vrijdag 12:00</small></span>
+              <em>Nieuw</em>
+            </li>
+            <li>
+              <i class="taken__vak"></i>
+              <span><b>Planning naar Jansen Bouw</b><small>woensdag</small></span>
+            </li>
+            <li class="is-klaar">
+              <i class="taken__vak" set:html={vink}></i>
+              <span><b>Koffie en melk bestellen</b><small>vandaag</small></span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Doorsturen -->
+        <div class="hui hui--door" data-ui="1" aria-hidden="true" style={`--r:${functies[1].r}deg`}>
+          <Sticker class="hplak hplak--sticker" kleur="var(--boter)" tekst="var(--nacht)" lobes={12}>Op je<br />lijst</Sticker>
+          <p class="door__van"><span set:html={pijl} />Doorgestuurd van Eva, Jansen Bouw</p>
+          <p class="door__bericht">Hoi Joost, kun je me vóór woensdag de planning sturen?</p>
+          <div class="door__taak">
+            <span class="door__icoon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0" /></svg>
+            </span>
+            <span>
+              <b>Planning naar Eva</b>
+              <small>Seintje dinsdag 16:00 als je nog niet hebt geantwoord</small>
+            </span>
+          </div>
+        </div>
+
+        <!-- Bonnetjes -->
+        <div class="hui hui--bon" data-ui="2" aria-hidden="true" style={`--r:${functies[2].r}deg`}>
+          <span class="hplak hplak--chip hplak--indigo">Btw herkend</span>
+          <div class="bon">
+            <b>Bakkerij De Wit</b>
+            <small>7 okt 2026 · 09:42</small>
+            <p><span>Slagroomtaart</span><span>€29,36</span></p>
+            <p><span>Btw 9%</span><span>€2,64</span></p>
+            <p class="bon__totaal"><span>Totaal</span><span>€32,00</span></p>
+          </div>
+          <p class="bon__status"><span set:html={vink} />Geboekt op het kantoorbudget</p>
+        </div>
+
+        <!-- Mail -->
+        <div class="hui hui--mail" data-ui="3" aria-hidden="true" style={`--r:${functies[3].r}deg`}>
+          <Sticker class="hplak hplak--sticker hplak--mail" lobes={12}>23 mails<br />gesorteerd</Sticker>
+          <p class="hui__kop"><b>Inbox</b></p>
+          <ul class="inbox">
+            <li><i>VD</i><span><b>Van Dijk</b><small>Offerte vrijdag?</small></span><em class="is-vol">Concept klaar</em></li>
+            <li><i>SM</i><span><b>Schoonmaak Smit</b><small>Factuur oktober</small></span><em>Taak</em></li>
+            <li><i>KV</i><span><b>Nieuwsbrief KvK</b><small>Webinar 12 november</small></span><em class="is-stil">Later</em></li>
+          </ul>
+        </div>
+
+        <!-- Ochtendbericht -->
+        <div class="hui hui--ochtend" data-ui="4" aria-hidden="true" style={`--r:${functies[4].r}deg`}>
+          <Sticker class="hplak hplak--sticker hplak--klok" kleur="var(--boter)" tekst="var(--nacht)" lobes={12}>8:00</Sticker>
+          <div class="melding">
+            <p class="melding__app"><i></i>WhatsApp · 08:00</p>
+            <b>Kees</b>
+            <p>Goedemorgen Joost. Om 10:00 heb je overleg met Van Dijk in zaal 2. Sanne, Mark en Lisa zijn op kantoor en Sanne is jarig.</p>
+          </div>
+          <div class="melding melding--achter">
+            <p class="melding__app"><i></i>Kantoor · teambericht</p>
+            <b>De taart voor Sanne komt om 10:00</b>
+          </div>
+        </div>
+
+        <!-- Akkoord -->
+        <div class="hui hui--akkoord" data-ui="5" aria-hidden="true" style={`--r:${functies[5].r}deg`}>
+          <Bloem class="hplak hplak--stempel" kleur="var(--tomaat)" lobes={12} vinkje="var(--wit)" />
+          <p class="akk__van">Voorstel van Kees</p>
+          <b class="akk__groot">Taart voor Sanne</b>
+          <p class="akk__tekst">Morgen om 10:00 bezorgd. Kosten €32 uit het kantoorbudget.</p>
+          <div class="akk__knoppen">
+            <span class="akk__ja">Akkoord</span>
+            <span class="akk__nee">Iets anders</span>
+          </div>
+          <p class="akk__klaar"><span set:html={vink} />Mark tikte op akkoord. De taart is besteld.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const sectie = document.querySelector<HTMLElement>('[data-hoe]')!;
+  const knoppen = [...sectie.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+  const vlakken = [...sectie.querySelectorAll<HTMLElement>('[data-vlak]')];
+  const uis = [...sectie.querySelectorAll<HTMLElement>('[data-ui]')];
+  const beeld = sectie.querySelector<HTMLElement>('[data-beeld]')!;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DUUR = 6500;
+  let huidig = 0;
+  let timer: number | undefined;
+  let zichtbaar = false;
+  let gepauzeerd = rustig;
+
+  if (rustig) sectie.classList.add('is-gepauzeerd');
+
+  function kies(i: number, focus = false) {
+    huidig = i;
+    knoppen.forEach((k, n) => {
+      const actief = n === i;
+      k.setAttribute('aria-selected', String(actief));
+      k.tabIndex = actief ? 0 : -1;
+      // Voortgangsbalk opnieuw laten lopen
+      const balk = k.querySelector<HTMLElement>('.hf__balk span')!;
+      balk.style.animation = 'none';
+      void balk.offsetWidth;
+      balk.style.animation = '';
+    });
+    if (focus) knoppen[i].focus();
+    beeld.setAttribute('aria-labelledby', knoppen[i].id);
+    vlakken.forEach((v, n) => v.classList.toggle('is-actief', n === i));
+    uis.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    plan();
+  }
+
+  function plan() {
+    window.clearTimeout(timer);
+    if (!zichtbaar || gepauzeerd || document.documentElement.classList.contains('alles-stil')) return;
+    timer = window.setTimeout(() => kies((huidig + 1) % knoppen.length), DUUR);
+  }
+
+  function pauzeer() {
+    gepauzeerd = true;
+    sectie.classList.add('is-gepauzeerd');
+  }
+
+  knoppen.forEach((k, i) =>
+    k.addEventListener('click', () => {
+      pauzeer();
+      kies(i);
+    }),
+  );
+
+  sectie.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
+    const t = (e as KeyboardEvent).key;
+    if (t !== 'ArrowDown' && t !== 'ArrowUp') return;
+    e.preventDefault();
+    pauzeer();
+    kies((huidig + (t === 'ArrowDown' ? 1 : -1) + knoppen.length) % knoppen.length, true);
+  });
+
+  new IntersectionObserver(
+    ([e]) => {
+      zichtbaar = e.isIntersecting;
+      sectie.classList.toggle('is-in-beeld', zichtbaar);
+      if (zichtbaar) kies(huidig);
+      else window.clearTimeout(timer);
+    },
+    { threshold: 0.45 },
+  ).observe(sectie);
+</script>
+
+<style>
+  .hoe {
+    padding-block: clamp(72px, 6.2vw, 92px);
+  }
+
+  .hoe__kop {
+    max-width: 860px;
+  }
+
+  .hoe__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(16px, 2.4vw, 32px);
+    align-items: stretch;
+  }
+
+  /* ---------- Lijst ---------- */
+  .hoe__lijst {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hf {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    column-gap: 16px;
+    align-items: center;
+    width: 100%;
+    padding: 11px 18px;
+    border: 0;
+    border-radius: var(--radius-m);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 0.35s var(--uit),
+      padding 0.45s var(--uit);
+  }
+
+  .hf:hover {
+    background: color-mix(in srgb, var(--k) 7%, transparent);
+  }
+
+  .hf[aria-selected='true'] {
+    padding-block: 18px 24px;
+    background: var(--hemel-licht);
+  }
+
+  .hf__icoon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-s);
+    background: var(--k);
+    color: var(--k-ink);
+    transition:
+      background-color 0.35s,
+      color 0.35s,
+      transform 0.6s var(--veer),
+      box-shadow 0.35s;
+  }
+
+  .hf:hover .hf__icoon {
+    transform: rotate(-6deg);
+  }
+
+  /* Actief: het icoon krijgt de kleur van zijn beeldvlak */
+  .hf[aria-selected='true'] .hf__icoon {
+    transform: rotate(-8deg) scale(1.06);
+    box-shadow: 0 8px 16px -8px color-mix(in srgb, var(--k) 70%, var(--nacht));
+  }
+
+  .hf__icoon svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .hf__titel {
+    font-family: var(--font-kop);
+    font-weight: 650;
+    font-size: clamp(1.08rem, 1.45vw, 1.25rem);
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .hf__tekst {
+    grid-column: 2;
+    display: grid;
+    grid-template-rows: 0fr;
+    color: var(--ink-zacht);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.5s var(--uit),
+      opacity 0.4s,
+      margin 0.5s var(--uit);
+  }
+
+  .hf__tekst > span {
+    overflow: hidden;
+  }
+
+  .hf[aria-selected='true'] .hf__tekst {
+    grid-template-rows: 1fr;
+    margin-top: 6px;
+    opacity: 1;
+  }
+
+  .hf__balk {
+    position: absolute;
+    left: 74px;
+    right: 22px;
+    bottom: 11px;
+    height: 3px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--k) 22%, transparent);
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .hf[aria-selected='true'] .hf__balk {
+    opacity: 1;
+  }
+
+  /* Tomaatdetail: de voortgangsbalk */
+  .hf__balk span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--tomaat);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  .is-in-beeld:not(.is-gepauzeerd) .hf[aria-selected='true'] .hf__balk span {
+    animation: hf-balk 6.5s linear forwards;
+  }
+
+  .is-gepauzeerd .hf__balk {
+    display: none;
+  }
+
+  @keyframes hf-balk {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* ---------- Beeldvlak ---------- */
+  .hbeeld {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: clamp(420px, calc(100svh - 380px), 520px);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+  }
+
+  .hbeeld__vlak {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(60% 70% at 15% 20%, var(--b) 0%, transparent 70%),
+      radial-gradient(55% 65% at 85% 85%, var(--c) 0%, transparent 70%),
+      radial-gradient(40% 50% at 80% 15%, color-mix(in srgb, var(--c) 55%, white) 0%, transparent 70%),
+      var(--a);
+    opacity: 0;
+    transform: scale(1.08);
+    transition:
+      opacity 0.8s var(--uit),
+      transform 1.6s var(--uit);
+  }
+
+  .hbeeld__vlak.is-actief {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Zachte vorm: een grote, langzaam draaiende Kees-bloem in elk vlak */
+  .hbeeld__vlak :global(.hbeeld__bloem) {
+    --duur: 70s;
+    width: 74%;
+    height: auto;
+    aspect-ratio: 1;
+    right: -22%;
+    top: -26%;
+    opacity: 0.9;
+    transition: translate 1.6s var(--uit);
+    translate: 8% -8%;
+  }
+
+  .hbeeld__vlak:nth-child(even) :global(.hbeeld__bloem) {
+    right: auto;
+    top: auto;
+    left: -24%;
+    bottom: -30%;
+    translate: -8% 8%;
+  }
+
+  .hbeeld__vlak.is-actief :global(.hbeeld__bloem) {
+    translate: 0 0;
+  }
+
+  /* ---------- Zwevende kaarten ---------- */
+  .hui {
+    position: absolute;
+    width: min(80%, 380px);
+    padding: 22px 24px;
+    border-radius: 22px;
+    background: var(--wit);
+    color: var(--ink);
+    font-size: 0.92rem;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.6) inset,
+      0 40px 70px -30px rgb(15 15 50 / 0.5);
+    opacity: 0;
+    transform: translateY(56px) scale(0.9) rotate(calc(var(--r, 0deg) * -3));
+    transition:
+      opacity 0.4s var(--uit),
+      transform 0.9s var(--veer);
+    pointer-events: none;
+  }
+
+  /* Kaarten liggen licht scheef, zoals bij Kees */
+  .hui.is-actief {
+    opacity: 1;
+    transform: rotate(var(--r, 0deg));
+    transition-delay: 0.15s;
+  }
+
+  /* ---------- Sticker of chip die op de kaart plakt ---------- */
+  .hbeeld :global(.hplak) {
+    position: absolute;
+    z-index: 3;
+    top: -18px;
+    right: 24px;
+    rotate: var(--pr, 7deg);
+    pointer-events: none;
+  }
+
+  .hbeeld .hui.is-actief :global(.hplak) {
+    animation: hplak-in 0.7s var(--veer) 0.75s both;
+  }
+
+  @keyframes hplak-in {
+    from {
+      opacity: 0;
+      scale: 0.3;
+      rotate: -30deg;
+    }
+  }
+
+  .hplak--chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    box-shadow: 0 12px 20px -12px rgb(15 15 50 / 0.5);
+  }
+
+  .hplak--boter {
+    background: var(--boter);
+    color: var(--nacht);
+  }
+
+  .hplak--indigo {
+    background: var(--indigo);
+    color: var(--wit);
+  }
+
+  .hbeeld :global(.hplak--sticker) {
+    top: -40px;
+    right: -30px;
+    width: 92px;
+    font-size: 1rem;
+    --pr: 10deg;
+    filter: drop-shadow(0 14px 18px rgb(15 15 50 / 0.3));
+  }
+
+  .hbeeld :global(.hplak--mail) {
+    width: 104px;
+    font-size: 0.86rem;
+  }
+
+  .hbeeld .hui--bon :global(.hplak) {
+    top: 20px;
+    right: -34px;
+    --pr: 9deg;
+  }
+
+  .hbeeld .hui--ochtend :global(.hplak--klok) {
+    top: -42px;
+    right: auto;
+    left: -28px;
+    width: 80px;
+    font-size: 1.1rem;
+    --pr: -12deg;
+  }
+
+  .hbeeld :global(.hplak--stempel) {
+    top: -36px;
+    right: -30px;
+    width: 92px;
+    height: 92px;
+    --pr: 12deg;
+    filter: drop-shadow(0 14px 18px rgb(90 30 10 / 0.3));
+  }
+
+  /* De stempel valt pas als er op akkoord is getikt */
+  .hbeeld .hui.is-actief :global(.hplak--stempel) {
+    animation: hplak-stempel 0.5s var(--veer) 1.85s both;
+  }
+
+  @keyframes hplak-stempel {
+    from {
+      opacity: 0;
+      scale: 1.9;
+      rotate: 40deg;
+    }
+  }
+
+  .hui p {
+    margin: 0;
+  }
+
+  .hui__kop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 14px !important;
+  }
+
+  .hui__kop b {
+    font-family: var(--font-kop);
+    font-size: 1.3rem;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+
+  .hui__kop span {
+    font-size: 0.8rem;
+    color: var(--ink-stil);
+  }
+
+  @keyframes hui-regel {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  /* Taken */
+  .taken {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .taken li {
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 11px 0;
+    border-top: 1px solid var(--lijn);
+  }
+
+  .taken li.is-nieuw {
+    margin-inline: -10px;
+    padding-inline: 10px;
+    border-top: 0;
+    border-radius: var(--radius-s);
+    background: var(--hemel-licht);
+  }
+
+  .taken li.is-nieuw + li {
+    border-top: 0;
+  }
+
+  .taken__vak {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--nacht) 28%, transparent);
+  }
+
+  .is-klaar .taken__vak {
+    background: var(--primair);
+    box-shadow: none;
+    color: var(--wit);
+  }
+
+  .taken__vak :global(svg) {
+    width: 13px;
+    height: 13px;
+  }
+
+  .taken span,
+  .inbox span {
+    display: grid;
+    line-height: 1.3;
+  }
+
+  .taken b,
+  .inbox b {
+    font-weight: 600;
+  }
+
+  .taken small,
+  .inbox small {
+    font-size: 0.8rem;
+    color: var(--ink-stil);
+  }
+
+  .is-klaar b {
+    color: var(--ink-stil);
+    text-decoration: line-through;
+    text-decoration-color: color-mix(in srgb, var(--nacht) 30%, transparent);
+  }
+
+  .taken em,
+  .inbox em {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--hemel-zacht);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+
+  .taken em {
+    background: var(--primair);
+    color: var(--wit);
+  }
+
+  .hui.is-actief .taken li {
+    animation: hui-regel 0.5s var(--uit) both;
+  }
+
+  .hui.is-actief .taken li:nth-child(1) {
+    animation: taak-nieuw 0.8s var(--veer) 0.45s both;
+  }
+
+  .hui.is-actief .taken li:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .hui.is-actief .taken li:nth-child(3) {
+    animation-delay: 0.28s;
+  }
+
+  @keyframes taak-nieuw {
+    from {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.97);
+    }
+  }
+
+  /* Doorsturen */
+  .door__van {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--ink-stil);
+  }
+
+  .door__van span {
+    display: grid;
+    width: 15px;
+  }
+
+  .door__bericht {
+    margin-top: 8px !important;
+    padding: 12px 14px;
+    border-radius: 16px 16px 16px 5px;
+    background: var(--hemel-licht);
+    line-height: 1.45;
+  }
+
+  .door__taak {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--lijn);
+  }
+
+  .door__icoon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-s);
+    background: var(--primair);
+    color: var(--wit);
+  }
+
+  .door__icoon svg {
+    width: 18px;
+  }
+
+  .door__taak > span:last-child {
+    display: grid;
+    line-height: 1.35;
+  }
+
+  .door__taak b {
+    font-weight: 600;
+  }
+
+  .door__taak small {
+    font-size: 0.8rem;
+    color: var(--ink-stil);
+  }
+
+  .hui.is-actief .door__bericht {
+    animation: hui-regel 0.6s var(--veer) 0.25s both;
+  }
+
+  .hui.is-actief .door__taak {
+    animation: hui-regel 0.6s var(--veer) 0.9s both;
+  }
+
+  /* Bonnetjes */
+  .hui--bon {
+    width: min(70%, 300px);
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .bon {
+    display: grid;
+    padding: 22px 22px 30px;
+    background: var(--wit);
+    font-variant-numeric: tabular-nums;
+    filter: drop-shadow(0 30px 40px rgb(15 15 50 / 0.3));
+    /* Afgescheurde onderkant */
+    --tand: 8px;
+    border-radius: 14px 14px 0 0;
+    mask:
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--tand)) 100%;
+  }
+
+  .bon b {
+    font-family: var(--font-kop);
+    font-size: 1.15rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .bon small {
+    margin-bottom: 12px;
+    font-size: 0.78rem;
+    color: var(--ink-stil);
+  }
+
+  .bon p {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-top: 1px dashed color-mix(in srgb, var(--nacht) 18%, transparent);
+    font-size: 0.86rem;
+  }
+
+  .bon .bon__totaal {
+    margin-top: 4px !important;
+    padding-top: 10px;
+    border-top-style: solid;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .bon__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    max-width: 100%;
+    margin: 14px auto 0 !important;
+    padding: 8px 14px 8px 10px;
+    border-radius: 999px;
+    background: var(--wit);
+    font-weight: 600;
+    font-size: 0.82rem;
+    box-shadow: 0 20px 30px -18px rgb(15 15 50 / 0.45);
+  }
+
+  .bon__status span {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primair);
+    color: var(--wit);
+  }
+
+  .bon__status span :global(svg) {
+    width: 12px;
+  }
+
+  .hui.is-actief .bon {
+    animation: bon-uit 0.9s var(--uit) 0.2s both;
+  }
+
+  .hui.is-actief .bon__status {
+    animation: hui-regel 0.6s var(--veer) 1s both;
+  }
+
+  @keyframes bon-uit {
+    from {
+      clip-path: inset(0 0 100% 0);
+      transform: translateY(-16px);
+    }
+    to {
+      clip-path: inset(0 0 -20% 0);
+    }
+  }
+
+  /* Mail */
+  .inbox {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .inbox li {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--lijn);
+  }
+
+  .inbox i {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--hemel-licht);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.72rem;
+  }
+
+  .inbox em.is-vol {
+    background: var(--primair);
+    color: var(--wit);
+  }
+
+  .inbox em.is-stil {
+    background: none;
+    box-shadow: inset 0 0 0 1px var(--lijn);
+    color: var(--ink-stil);
+  }
+
+  .hui.is-actief .inbox li {
+    animation: hui-regel 0.5s var(--uit) both;
+  }
+
+  .hui.is-actief .inbox li:nth-child(1) {
+    animation-delay: 0.25s;
+  }
+
+  .hui.is-actief .inbox li:nth-child(2) {
+    animation-delay: 0.33s;
+  }
+
+  .hui.is-actief .inbox li:nth-child(3) {
+    animation-delay: 0.41s;
+  }
+
+  /* Ochtendbericht */
+  .hui--ochtend {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .melding {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 3px;
+    padding: 16px 20px 18px;
+    border-radius: 22px;
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 40px 70px -30px rgb(15 15 50 / 0.55);
+    line-height: 1.5;
+  }
+
+  .melding b {
+    font-family: var(--font-kop);
+    font-size: 1.1rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+
+  .melding__app {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.76rem;
+    color: var(--ink-stil);
+  }
+
+  .melding__app i {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+    background: var(--primair);
+  }
+
+  .melding--achter {
+    z-index: 1;
+    margin: -16px 18px 0;
+    padding-top: 28px;
+    background: rgb(255 255 255 / 0.82);
+  }
+
+  .melding--achter b {
+    font-family: var(--font-tekst);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .melding--achter .melding__app i {
+    background: var(--hemel);
+  }
+
+  .hui.is-actief .melding {
+    animation: melding-val 0.8s var(--veer) 0.15s both;
+  }
+
+  .hui.is-actief .melding--achter {
+    animation-delay: 0.35s;
+  }
+
+  @keyframes melding-val {
+    from {
+      opacity: 0;
+      transform: translateY(-30px) scale(0.95);
+    }
+  }
+
+  /* Akkoord */
+  .akk__van {
+    font-size: 0.8rem;
+    color: var(--ink-stil);
+  }
+
+  .akk__groot {
+    display: block;
+    margin-top: 4px;
+    font-family: var(--font-kop);
+    font-size: 1.9rem;
+    font-weight: 650;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .akk__tekst {
+    margin-top: 8px !important;
+    color: var(--ink-zacht);
+    line-height: 1.5;
+  }
+
+  .akk__knoppen {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .akk__knoppen span {
+    display: inline-flex;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.86rem;
+  }
+
+  .akk__ja {
+    background: var(--primair);
+    color: var(--wit);
+    box-shadow: 0 3px 0 var(--nacht);
+  }
+
+  .akk__nee {
+    box-shadow: inset 0 0 0 1.5px var(--lijn);
+  }
+
+  .akk__klaar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px !important;
+    padding-top: 14px;
+    border-top: 1px solid var(--lijn);
+    font-weight: 500;
+    font-size: 0.84rem;
+  }
+
+  .akk__klaar span {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--hemel-zacht);
+    color: var(--primair);
+  }
+
+  .akk__klaar span :global(svg) {
+    width: 12px;
+  }
+
+  .hui.is-actief .akk__ja {
+    animation: akk-tik 0.5s var(--uit) 1.4s both;
+  }
+
+  .hui.is-actief .akk__klaar {
+    animation: hui-regel 0.6s var(--veer) 1.75s both;
+  }
+
+  @keyframes akk-tik {
+    40% {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 var(--nacht);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hoe__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hbeeld {
+      order: -1;
+      min-height: 400px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hbeeld {
+      min-height: 400px;
+      border-radius: var(--radius-m);
+    }
+
+    .hbeeld :global(.hplak--sticker),
+    .hbeeld :global(.hplak--stempel) {
+      top: -34px;
+      right: -8px;
+      width: 70px;
+      height: auto;
+      font-size: 0.8rem;
+    }
+
+    .hbeeld .hui--ochtend :global(.hplak--klok) {
+      top: -38px;
+      left: -6px;
+      width: 66px;
+      font-size: 0.95rem;
+    }
+
+    .hbeeld .hui--bon :global(.hplak) {
+      right: -10px;
+      top: -14px;
+    }
+
+    .hui {
+      width: calc(100% - 48px);
+      padding: 18px 18px;
+    }
+
+    .hui--bon {
+      width: min(76%, 280px);
+    }
+
+    .hf {
+      padding-inline: 12px;
+      column-gap: 14px;
+    }
+
+    .hf__balk {
+      left: 66px;
+      right: 16px;
+    }
+  }
+</style>

@@ -14,19 +14,22 @@ export type BerichtOpties = {
   staart?: boolean;
   verborgen?: boolean;
   attrs?: string;
+  afzender?: { naam: string; kleur: string };
 };
 
 function rij(binnen: string, klassen: string[], attrs = '') {
   return `<div class="${['wa-rij', ...klassen].join(' ')}" ${attrs}><div class="wa-rij__binnen">${binnen}</div></div>`;
 }
 
-export function bericht({ van, html, tijd, staart = false, verborgen = false, attrs = '' }: BerichtOpties) {
+export function bericht({ van, html, tijd, staart = false, verborgen = false, attrs = '', afzender }: BerichtOpties) {
   const bubbelKlassen = ['wa-bubbel', van === 'uit' ? 'wa-bubbel--uit' : '', staart ? 'wa-bubbel--staart' : '']
     .filter(Boolean)
     .join(' ');
   const meta = `<span class="wa-meta">${tijd}${van === 'uit' ? VINKJES : ''}</span>`;
+  // In een groepsapp staat de naam van de afzender boven het bericht
+  const naam = afzender ? `<span class="wa-afzender" style="color:${afzender.kleur}">${afzender.naam}</span>` : '';
   return rij(
-    `<div class="${bubbelKlassen}">${html}${meta}</div>`,
+    `<div class="${bubbelKlassen}">${naam}${html}${meta}</div>`,
     [staart ? 'wa-rij--nieuw-afzender' : '', verborgen ? 'is-verborgen' : ''].filter(Boolean),
     attrs,
   );

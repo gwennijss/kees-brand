@@ -1,0 +1,309 @@
+---
+import Sticker from '../../../../src/components/Sticker.astro';
+import { dagen } from './data';
+
+// Rechterpagina van de agenda: het bericht van Kees, met plakband in de agenda geplakt.
+// Er wordt op de knop getikt, Kees bevestigt en er komt een "Geregeld"-stempel op.
+interface Props {
+  i: number;
+}
+
+const { i } = Astro.props;
+const d = dagen[i];
+const kees = d.agenda.find((a) => a.kees)!;
+const draai = [-2.5, 1.8, -1.2, 2.2, -1.8][i];
+---
+
+<div class="ar" data-dag={i} style={`--draai:${draai}deg`}>
+  <!-- Alleen op mobiel: daar is er geen linkerpagina -->
+  <header class="ar__mobiel">
+    <p><b>{d.dag}</b> {d.datum}</p>
+    <span class="ar__mobiel-afspraak">{kees.tijd} · {kees.wat}</span>
+  </header>
+
+  <div class="ar__kaart">
+    <span class="ar__plakband" aria-hidden="true"></span>
+    <p class="ar__van">
+      <Sticker class="ar__avatar" kleur="var(--indigo)" lobes={10}>k</Sticker>
+      <b>Kees</b>
+      <span>{d.tijd}</span>
+    </p>
+    <p class="ar__tekst">{d.tekst}</p>
+    <div class="ar__knoppen">
+      {
+        d.knoppen.map((k, n) => (
+          <span class:list={['ar__knop', { 'ar__knop--ja': n === 0 }]}>
+            {n === 0 && (
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.4l2.6 2.6L12 5.4" /></svg>
+            )}
+            {k}
+          </span>
+        ))
+      }
+    </div>
+
+    {
+      d.opties && (
+        <ul class="ar__opties">
+          {d.opties.map((o, n) => (
+            <li style={`--n:${n}`}>
+              <b>{o.titel}</b>
+              {o.partner && <span class="ar__partner">Partner</span>}
+              <span>{o.meta}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+
+  <p class="ar__status">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.4l2.6 2.6L12 5.4"></path></svg>
+    {d.status}
+  </p>
+
+</div>
+
+<style>
+  .ar {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: calc(var(--ph) * 0.03);
+    height: 100%;
+    padding: calc(var(--ph) * 0.1) calc(var(--pw) * 0.09) calc(var(--ph) * 0.05) calc(var(--pw) * 0.1);
+  }
+
+  .ar__mobiel {
+    display: none;
+  }
+
+  .ar__notities {
+    padding-bottom: calc(var(--ph) * 0.02);
+    border-bottom: 2px solid var(--nacht);
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: calc(var(--ph) * 0.034);
+    letter-spacing: -0.03em;
+    color: var(--ink-stil);
+  }
+
+  /* ---------- Het ingeplakte bericht ---------- */
+  .ar__kaart {
+    position: relative;
+    display: grid;
+    gap: calc(var(--ph) * 0.02);
+    margin-top: calc(var(--ph) * 0.02);
+    padding: calc(var(--ph) * 0.035) calc(var(--pw) * 0.05) calc(var(--ph) * 0.03);
+    border-radius: 14px;
+    background: var(--wit);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--nacht) 8%, transparent),
+      0 18px 30px -18px rgb(20 20 60 / 0.35);
+    rotate: var(--draai);
+    opacity: 0;
+    translate: 0 -24px;
+    scale: 1.06;
+    transition:
+      opacity 0.4s var(--uit),
+      translate 0.7s var(--veer),
+      scale 0.7s var(--veer);
+  }
+
+  .is-bericht .ar__kaart {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  .ar__plakband {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 34%;
+    height: 24px;
+    translate: -50% 0;
+    rotate: calc(var(--draai) * -1.4);
+    background: color-mix(in srgb, var(--boter) 80%, transparent);
+    box-shadow: 0 1px 2px rgb(20 20 60 / 0.12);
+    clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%);
+  }
+
+  .ar__van {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: calc(var(--ph) * 0.025);
+  }
+
+  .ar__van b {
+    color: var(--indigo);
+  }
+
+  .ar__van span {
+    margin-left: auto;
+    color: var(--ink-stil);
+    font-size: 0.9em;
+  }
+
+  .ar :global(.ar__avatar) {
+    width: calc(var(--ph) * 0.05);
+    font-size: calc(var(--ph) * 0.024);
+  }
+
+  .ar__tekst {
+    font-size: calc(var(--ph) * 0.032);
+    line-height: 1.5;
+    color: var(--nacht);
+  }
+
+  .ar__knoppen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ar__knop {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.5em 1.05em;
+    border-radius: 999px;
+    background: var(--hemel-licht);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--indigo) 20%, transparent);
+    font-size: calc(var(--ph) * 0.024);
+    font-weight: 600;
+    color: var(--indigo);
+    transition:
+      background-color 0.35s,
+      color 0.35s,
+      scale 0.35s var(--veer);
+  }
+
+  .ar__knop svg {
+    width: 1em;
+    display: none;
+  }
+
+  /* De verantwoordelijke tikt op de knop */
+  .is-getikt .ar__knop--ja {
+    background: var(--indigo);
+    color: var(--wit);
+    box-shadow: none;
+    animation: tik 0.45s var(--veer);
+  }
+
+  .is-getikt .ar__knop--ja svg {
+    display: block;
+  }
+
+  .is-getikt .ar__knop:not(.ar__knop--ja) {
+    opacity: 0.45;
+  }
+
+  @keyframes tik {
+    40% {
+      scale: 0.9;
+    }
+  }
+
+  .ar__opties {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ar__opties li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.55em 0.8em;
+    border-radius: 10px;
+    background: var(--hemel-licht);
+    font-size: calc(var(--ph) * 0.022);
+    opacity: 0;
+    translate: 0 8px;
+    transition:
+      opacity 0.4s var(--uit),
+      translate 0.5s var(--uit);
+    transition-delay: calc(var(--n) * 90ms + 150ms);
+  }
+
+  .ar__opties li > span:last-child {
+    margin-left: auto;
+    color: var(--ink-zacht);
+  }
+
+  .ar__partner {
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--boter);
+    font-size: 0.8em;
+    font-weight: 600;
+  }
+
+  .is-getikt .ar__opties li {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .ar__status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: calc(var(--ph) * 0.01);
+    font-size: calc(var(--ph) * 0.025);
+    font-weight: 600;
+    color: var(--nacht);
+    opacity: 0;
+    translate: 0 8px;
+    transition:
+      opacity 0.4s var(--uit),
+      translate 0.6s var(--uit);
+  }
+
+  .ar__status svg {
+    flex: none;
+    width: calc(var(--ph) * 0.034);
+    padding: 3px;
+    border-radius: 50%;
+    background: var(--indigo);
+    color: var(--wit);
+  }
+
+  .is-klaar .ar__status {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* Stempel "Geregeld" */
+  .ar__stempel {
+    position: absolute;
+    right: calc(var(--pw) * 0.1);
+    bottom: calc(var(--ph) * 0.07);
+    padding: 0.3em 0.75em;
+    border: 3px solid var(--indigo);
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 2px var(--wit), inset 0 0 0 4px var(--indigo);
+    font-family: var(--font-kop);
+    font-weight: 800;
+    font-size: calc(var(--ph) * 0.04);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--indigo);
+    rotate: -10deg;
+    opacity: 0;
+    scale: 1.8;
+    mix-blend-mode: multiply;
+    transition:
+      opacity 0.25s,
+      scale 0.45s var(--veer);
+  }
+
+  .is-klaar .ar__stempel {
+    opacity: 0.85;
+    scale: 1;
+  }
+</style>
