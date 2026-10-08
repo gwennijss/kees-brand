@@ -15,9 +15,9 @@ import Bloem from '../../../src/components/Bloem.astro';
 
     <div class="bst__stempel" aria-hidden="true">
       <Bloem class="bst__vorm" kleur="var(--hemel)" lobes={14} amp={0.06} />
-      <svg class="bst__ring" viewBox="0 0 200 200">
+      <svg class="bst__ring" viewBox="0 0 200 200" fill="none">
         <defs>
-          <path id="bst-cirkel" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0"></path>
+          <path id="bst-cirkel" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0" fill="none" stroke="none"></path>
         </defs>
         <text>
           <textPath href="#bst-cirkel" textLength="464" lengthAdjust="spacing">JE OFFICE MANAGER <tspan class="bst__ster">✦</tspan> SINDS 2026 <tspan class="bst__ster">✦</tspan> KLAAR IS KEES <tspan class="bst__ster">✦</tspan>&nbsp;</textPath>
@@ -107,6 +107,9 @@ import Bloem from '../../../src/components/Bloem.astro';
     height: 100%;
     max-width: none;
     animation: draai 60s linear infinite;
+    /* Eigen laag: voorkomt een donker randje bij het draaien in Safari op iOS */
+    will-change: rotate;
+    backface-visibility: hidden;
   }
 
   .bst__ring {
@@ -116,6 +119,8 @@ import Bloem from '../../../src/components/Bloem.astro';
     height: 82%;
     overflow: visible;
     animation: bst-tik 4s var(--in-uit) infinite;
+    will-change: transform;
+    backface-visibility: hidden;
   }
 
   .bst__ring text {

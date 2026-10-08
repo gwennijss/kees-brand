@@ -214,6 +214,10 @@ const pijl =
           <p class="akk__klaar"><span set:html={vink} />Mark tikte op akkoord. De taart is besteld.</p>
         </div>
       </div>
+
+      <div class="hoe__uitleg" aria-hidden="true">
+        {functies.map((f, i) => <p class:list={['hoe__uitleg-tekst', { 'is-actief': i === 0 }]} data-uitleg={i}>{f.tekst}</p>)}
+      </div>
     </div>
   </div>
 </section>
@@ -224,7 +228,18 @@ const pijl =
   const vlakken = [...sectie.querySelectorAll<HTMLElement>('[data-vlak]')];
   const uis = [...sectie.querySelectorAll<HTMLElement>('[data-ui]')];
   const beeld = sectie.querySelector<HTMLElement>('[data-beeld]')!;
+  const uitleg = [...sectie.querySelectorAll<HTMLElement>('[data-uitleg]')];
+  const rij = sectie.querySelector<HTMLElement>('.hoe__lijst')!;
   const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Op mobiel is de lijst een horizontale scrollrij: schuif de actieve functie in beeld
+  function schuifInBeeld(i: number) {
+    if (rij.scrollWidth <= rij.clientWidth + 1) return;
+    const li = knoppen[i].parentElement!;
+    const marge = parseFloat(getComputedStyle(rij).scrollPaddingLeft) || 0;
+    const links = rij.scrollLeft + li.getBoundingClientRect().left - rij.getBoundingClientRect().left - marge;
+    rij.scrollTo({ left: links, behavior: rustig ? 'auto' : 'smooth' });
+  }
   const DUUR = 6500;
   let huidig = 0;
   let timer: number | undefined;
@@ -249,6 +264,8 @@ const pijl =
     beeld.setAttribute('aria-labelledby', knoppen[i].id);
     vlakken.forEach((v, n) => v.classList.toggle('is-actief', n === i));
     uis.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    uitleg.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    if (zichtbaar) schuifInBeeld(i);
     plan();
   }
 
@@ -270,12 +287,16 @@ const pijl =
     }),
   );
 
+  // Zelf door de rij vegen stopt het automatisch doorlopen
+  rij.addEventListener('touchstart', pauzeer, { passive: true });
+
   sectie.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
     const t = (e as KeyboardEvent).key;
-    if (t !== 'ArrowDown' && t !== 'ArrowUp') return;
+    const volgende = t === 'ArrowDown' || t === 'ArrowRight';
+    if (!volgende && t !== 'ArrowUp' && t !== 'ArrowLeft') return;
     e.preventDefault();
     pauzeer();
-    kies((huidig + (t === 'ArrowDown' ? 1 : -1) + knoppen.length) % knoppen.length, true);
+    kies((huidig + (volgende ? 1 : -1) + knoppen.length) % knoppen.length, true);
   });
 
   new IntersectionObserver(
@@ -1147,14 +1168,125 @@ const pijl =
     }
   }
 
+  .hoe__uitleg {
+    display: none;
+  }
+
+  /* Mobiel: kop, dan een veegbare rij functies, dan het beeld, dan de uitleg (zoals op de Kees-site) */
   @media (max-width: 900px) {
     .hoe__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .hoe__lijst {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      gap: 8px;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 4px var(--gutter) 10px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .hoe__lijst::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hoe__lijst li {
+      scroll-snap-align: start;
+    }
+
+    .hf,
+    .hf[aria-selected='true'] {
+      grid-template-columns: 32px auto;
+      column-gap: 10px;
+      min-height: 48px;
+      padding: 7px 18px 7px 8px;
+      border-radius: 999px;
+      background: var(--wit);
+      box-shadow: inset 0 0 0 1.5px var(--lijn);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hf:hover {
+      background: var(--wit);
+    }
+
+    .hf[aria-selected='true'] {
+      background: var(--hemel-licht);
+      box-shadow: inset 0 0 0 1.5px var(--nacht);
+    }
+
+    .hf__icoon,
+    .hf[aria-selected='true'] .hf__icoon,
+    .hf:hover .hf__icoon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .hf__icoon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .hf__titel {
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    /* De beschrijving blijft voor schermlezers in de tab en staat zichtbaar onder het beeld */
+    .hf__tekst,
+    .hf[aria-selected='true'] .hf__tekst {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .hf__balk,
+    .hf[aria-selected='true'] .hf__balk {
+      left: 48px;
+      right: 18px;
+      bottom: 5px;
+      height: 2px;
+      margin: 0;
     }
 
     .hbeeld {
-      order: -1;
-      min-height: 400px;
+      min-height: 380px;
+    }
+
+    .hoe__uitleg {
+      display: grid;
+      min-height: 3lh;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--ink-zacht);
+    }
+
+    .hoe__uitleg-tekst {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transform: translateY(6px);
+      transition:
+        opacity 0.35s var(--uit),
+        transform 0.5s var(--uit);
+    }
+
+    .hoe__uitleg-tekst.is-actief {
+      opacity: 1;
+      transform: none;
     }
   }
 
@@ -1194,14 +1326,5 @@ const pijl =
       width: min(76%, 280px);
     }
 
-    .hf {
-      padding-inline: 12px;
-      column-gap: 14px;
-    }
-
-    .hf__balk {
-      left: 66px;
-      right: 16px;
-    }
   }
 </style>

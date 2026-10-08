@@ -434,14 +434,21 @@ const bedragen = dagen.map((d) => d.bedrag);
     }
 
     /* Kop en agenda samen verticaal gecentreerd onder de navigatie */
+    /* Kop en agenda samen in het midden, met duidelijk lucht tussen titel en agenda */
     .ag__pin {
       grid-template-rows: auto auto;
       align-content: center;
+      row-gap: clamp(28px, 6svh, 56px);
       padding-top: 84px;
+      padding-bottom: 0;
     }
 
     .ag__podium {
-      padding: 20px 0 36px;
+      padding: 0 0 24px;
+    }
+
+    .ag__kaft {
+      box-shadow: 0 18px 30px -22px rgb(20 20 60 / 0.45);
     }
 
     .ag__sticker {
@@ -509,7 +516,7 @@ const bedragen = dagen.map((d) => d.bedrag);
 
     .ag__lint {
       left: 80%;
-      top: calc(var(--ph) - 14px);
+      top: calc(var(--ph) + 2px);
       width: 16px;
       height: 52px;
     }
@@ -548,7 +555,7 @@ const bedragen = dagen.map((d) => d.bedrag);
   /* Lage schermen (adresbalk zichtbaar, kleine telefoons): kop en pagina iets compacter */
   @media (max-width: 820px) and (max-height: 720px) {
     .ag {
-      --ph: clamp(380px, calc(100svh - 194px), 500px);
+      --ph: clamp(360px, calc(100svh - 236px), 480px);
     }
 
     .ag__pin {

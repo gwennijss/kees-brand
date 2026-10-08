@@ -732,5 +732,16 @@ const euro = (n: number) => `€${n}`;
       display: none;
     }
 
+    /* Compacter op mobiel, zodat de kaart in één scherm past */
+    .vg-ui__eu,
+    .vg-ui__akkoord-tekst span,
+    .vg-tabel tbody tr:nth-child(4),
+    .vg-budget li:nth-child(n + 2) {
+      display: none;
+    }
+
+    .vg-ui__kop {
+      padding-bottom: 4px;
+    }
   }
 </style>
