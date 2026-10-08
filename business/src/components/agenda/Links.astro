@@ -1,0 +1,180 @@
+---
+import Sticker from '../../../../src/components/Sticker.astro';
+import { dagen, UREN, positie } from './data';
+
+// Linkerpagina van de agenda: de dag met zijn afspraken op een tijdlijn.
+interface Props {
+  i: number;
+}
+
+const { i } = Astro.props;
+const d = dagen[i];
+---
+
+<div class="al" data-dag={i}>
+  <header class="al__kop">
+    <p class="al__dag">{d.dag}</p>
+    <p class="al__datum">{d.datum} <span>week 42</span></p>
+  </header>
+
+  <div class="al__tijdlijn">
+    {
+      UREN.map((u) => (
+        <div class="al__uur">
+          <span>{u}:00</span>
+        </div>
+      ))
+    }
+    {
+      d.agenda.map((a, n) => (
+        <div class:list={['al__afspraak', { 'al__afspraak--kees': a.kees, 'al__afspraak--boter': n % 2 === 1 }]} style={`--p:${positie(a.tijd)};--n:${n}`}>
+          <span class="al__tijd">{a.tijd}</span>
+          <span class="al__wat">{a.wat}</span>
+          {a.kees && (
+            <span class="al__vink" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.4l2.6 2.6L12 5.4" /></svg>
+            </span>
+          )}
+          {a.kees && <Sticker class="al__k" kleur="var(--indigo)" lobes={10}>k</Sticker>}
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .al {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
+    padding: calc(var(--ph) * 0.06) calc(var(--pw) * 0.08) calc(var(--ph) * 0.05) calc(var(--pw) * 0.09);
+  }
+
+  .al__kop {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: calc(var(--ph) * 0.025);
+    border-bottom: 2px solid var(--nacht);
+  }
+
+  .al__dag {
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: calc(var(--ph) * 0.07);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .al__datum {
+    display: grid;
+    justify-items: end;
+    font-size: calc(var(--ph) * 0.024);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink-zacht);
+  }
+
+  .al__datum span {
+    font-weight: 500;
+    color: var(--ink-stil);
+  }
+
+  .al__tijdlijn {
+    --rij: calc(100% / 10);
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(10, 1fr);
+    margin-top: calc(var(--ph) * 0.015);
+  }
+
+  .al__uur {
+    display: flex;
+    align-items: flex-start;
+    border-top: 1px solid color-mix(in srgb, var(--nacht) 9%, transparent);
+    font-size: calc(var(--ph) * 0.019);
+    font-weight: 500;
+    color: var(--ink-stil);
+  }
+
+  .al__uur span {
+    padding-top: 3px;
+  }
+
+  .al__afspraak {
+    position: absolute;
+    left: 15%;
+    right: 0;
+    top: calc(var(--p) * var(--rij) + 3px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: calc(var(--rij) * 0.82);
+    padding: 0 12px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--nacht) 5%, transparent);
+    border-left: 3px solid color-mix(in srgb, var(--nacht) 18%, transparent);
+    font-size: calc(var(--ph) * 0.023);
+    font-weight: 600;
+    color: var(--nacht);
+    white-space: nowrap;
+  }
+
+
+
+  .al__tijd {
+    font-weight: 500;
+    color: var(--ink-zacht);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .al__wat {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* De afspraak die Kees regelt */
+  .al__afspraak--kees {
+    background: var(--indigo);
+    border-left-color: var(--nacht);
+    color: var(--wit);
+    box-shadow: 0 8px 18px -10px rgb(43 43 110 / 0.7);
+  }
+
+  .al__afspraak--kees .al__tijd {
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  .al :global(.al__k) {
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    width: calc(var(--ph) * 0.05);
+    translate: 0 -50%;
+    rotate: -12deg;
+    font-size: calc(var(--ph) * 0.024);
+    filter: drop-shadow(0 3px 4px rgb(20 20 60 / 0.25));
+  }
+
+  .al__vink {
+    display: grid;
+    place-items: center;
+    width: calc(var(--ph) * 0.034);
+    aspect-ratio: 1;
+    margin-left: auto;
+    border-radius: 50%;
+    background: var(--wit);
+    color: var(--indigo);
+    scale: 0;
+    transition: scale 0.5s var(--veer);
+  }
+
+  .al__vink svg {
+    width: 70%;
+  }
+
+  .al.is-klaar .al__vink {
+    scale: 1;
+  }
+</style>

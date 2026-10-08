@@ -1,0 +1,364 @@
+---
+import { Image } from 'astro:assets';
+import Bloem from '../../../src/components/Bloem.astro';
+import koffie from '../assets/laptop.jpg';
+import pantry from '../assets/gang.jpg';
+import borrel from '../assets/vergaderzaal.jpg';
+
+// Wat Kees regelt: een bento met drie cijfers en drie foto's.
+// Op de foto's plakt Kees een kaartje met wat er geregeld is.
+---
+
+<section class="sectie wkr" id="regelt" data-wkr>
+  <div class="container">
+    <h2 class="kop-l wkr__kop" data-reveal>
+      Van wc-papier tot aandeelhoudersregister.
+    </h2>
+
+    <div class="wkr__grid">
+      <!-- Cijfer: ochtendbericht -->
+      <article class="wkr-tegel wkr-tegel--cijfer wkr-tegel--hemel" data-reveal style="--d:0">
+        <p class="wkr-tegel__label">Ochtendbericht</p>
+        <div>
+          <p class="wkr-tegel__getal">8:00</p>
+          <p class="wkr-tegel__tekst">Elke ochtend weet iedereen wie er is, wie er jarig is en wat er speelt.</p>
+        </div>
+      </article>
+
+      <!-- Foto: koffie -->
+      <figure class="wkr-tegel wkr-tegel--foto wkr-tegel--koffie" data-reveal style="--d:2">
+        <Image src={koffie} alt="Iemand wijst iets aan op een laptop" widths={[400, 800]} sizes="(max-width: 900px) 50vw, 300px" />
+        <figcaption class="wkr-kaartje">
+          <span class="wkr-kaartje__vink" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.4l2.6 2.6L12 5.4"></path></svg>
+          </span>
+          <span><b>Offerte Van Dijk</b><small>Staat in monday, vrijdag 12:00</small></span>
+        </figcaption>
+      </figure>
+
+      <!-- Foto: pantry (hoog) -->
+      <figure class="wkr-tegel wkr-tegel--foto wkr-tegel--hoog" data-reveal style="--d:1">
+        <Image src={pantry} alt="Twee collega's lopen pratend door een lichte kantoorgang" widths={[500, 1000]} sizes="(max-width: 900px) 50vw, 300px" />
+        <figcaption class="wkr-kaartje">
+          <span class="wkr-kaartje__vink" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.4l2.6 2.6L12 5.4"></path></svg>
+          </span>
+          <span><b>Lisa begint maandag</b><small>Pas en laptop liggen klaar</small></span>
+        </figcaption>
+      </figure>
+
+      <!-- Cijfer: taken -->
+      <article class="wkr-tegel wkr-tegel--cijfer wkr-tegel--wit" data-reveal style="--d:1">
+        <p class="wkr-tegel__label">Takenlijst</p>
+        <div>
+          <p class="wkr-tegel__getal"><span data-tel-tot="16">16</span></p>
+          <p class="wkr-tegel__tekst">Soorten klussen die Kees van je overneemt, van de taart voor Sanne tot de KvK.</p>
+        </div>
+      </article>
+
+      <!-- Foto: borrel -->
+      <figure class="wkr-tegel wkr-tegel--foto" data-reveal style="--d:2">
+        <Image src={borrel} alt="Collega's in overleg in een vergaderzaal met grote ramen" widths={[400, 800]} sizes="(max-width: 900px) 50vw, 300px" />
+        <figcaption class="wkr-kaartje">
+          <span class="wkr-kaartje__vink" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.4l2.6 2.6L12 5.4"></path></svg>
+          </span>
+          <span><b>Zaal 2 geboekt</b><small>Koffie en lunch voor 4</small></span>
+        </figcaption>
+      </figure>
+
+      <!-- Cijfer: één groepsapp (breed) -->
+      <article class="wkr-tegel wkr-tegel--cijfer wkr-tegel--boter wkr-tegel--breed" data-reveal style="--d:3">
+        <p class="wkr-tegel__label">Werkt in WhatsApp</p>
+        <div>
+          <p class="wkr-tegel__getal">1</p>
+          <p class="wkr-tegel__tekst">Groepsapp voor alles. Kees werkt in de WhatsApp die jullie al hebben.</p>
+        </div>
+        <svg class="wkr-cirkel" viewBox="0 0 400 400" aria-hidden="true">
+          <circle cx="200" cy="200" r="190" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 7"></circle>
+        </svg>
+        <span class="wkr-baan" aria-hidden="true">
+          <Bloem class="wkr-baan__bloem" kleur="var(--sticker)" lobes={10} amp={0.11} />
+        </span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .wkr {
+    padding-block: clamp(56px, 5.5vw, 80px);
+  }
+
+  .wkr__kop {
+    max-width: none;
+    margin-bottom: clamp(28px, 3.4vw, 44px);
+  }
+
+  .wkr :global(.wkr__punt) {
+    display: inline-block;
+    vertical-align: baseline;
+    width: 0.22em;
+    max-width: none;
+    margin-left: 0.04em;
+  }
+
+  /* ---------- Bento ---------- */
+  .wkr__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(2, clamp(210px, 29vh, 270px));
+    gap: 16px;
+  }
+
+  .wkr-tegel {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+  }
+
+  .wkr-tegel--hoog {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .wkr-tegel--koffie {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .wkr-tegel--breed {
+    grid-column: 3 / span 2;
+    grid-row: 2;
+  }
+
+  /* Cijfertegels */
+  .wkr-tegel--cijfer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(22px, 2.2vw, 32px);
+  }
+
+  .wkr-tegel--hemel {
+    background: var(--hemel-zacht);
+  }
+
+  .wkr-tegel--wit {
+    background: var(--wit);
+    box-shadow: 0 0 0 1px var(--lijn);
+  }
+
+  .wkr-tegel--boter {
+    background: var(--boter);
+  }
+
+  .wkr-tegel__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-zacht);
+  }
+
+  .wkr-tegel__getal {
+    font-family: var(--font-kop);
+    font-weight: 600;
+    font-size: clamp(3rem, 4.4vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    margin-bottom: 14px;
+  }
+
+  .wkr-tegel__tekst {
+    max-width: 22em;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--ink-zacht);
+  }
+
+  .wkr-tegel--breed .wkr-tegel__tekst {
+    max-width: 19em;
+  }
+
+  /* Gestippelde cirkel met een tomaat bloempje dat eromheen draait */
+  .wkr-cirkel {
+    position: absolute;
+    right: -6%;
+    top: 16%;
+    width: 56%;
+    color: color-mix(in srgb, var(--nacht) 45%, transparent);
+    pointer-events: none;
+  }
+
+  .wkr-baan {
+    position: absolute;
+    right: -6%;
+    top: 16%;
+    width: 56%;
+    aspect-ratio: 1;
+    animation: draai 26s linear infinite;
+    pointer-events: none;
+  }
+
+  .wkr-baan :global(.wkr-baan__bloem) {
+    position: absolute;
+    top: 0.5%;
+    left: 50%;
+    width: 26px;
+    translate: -50% 0;
+  }
+
+  /* Fototegels */
+  .wkr-tegel--foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--uit);
+  }
+
+  .wkr-tegel--foto:hover :global(img) {
+    transform: scale(1.05);
+  }
+
+  .wkr-kaartje {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 10px 10px;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 14px 30px -18px rgb(20 20 60 / 0.6);
+    font-size: 0.85rem;
+    line-height: 1.3;
+    color: var(--nacht);
+    opacity: 0;
+    translate: 0 12px;
+    transition:
+      opacity 0.6s var(--uit),
+      translate 0.8s var(--veer);
+    transition-delay: calc(var(--d, 0) * 110ms + 700ms);
+  }
+
+  .is-zichtbaar .wkr-kaartje {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .wkr-kaartje > span:last-child {
+    display: grid;
+  }
+
+  .wkr-kaartje small {
+    font-size: 0.78rem;
+    color: var(--ink-zacht);
+  }
+
+  .wkr-kaartje__vink {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--indigo);
+    color: var(--wit);
+  }
+
+  .wkr-kaartje__vink svg {
+    width: 15px;
+  }
+
+  @media (max-width: 1000px) {
+    .wkr__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: none;
+      grid-auto-rows: 240px;
+    }
+
+    .wkr-tegel--hoog {
+      grid-column: 2;
+      grid-row: span 2;
+    }
+
+    .wkr-tegel--koffie {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .wkr-tegel--breed {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    /* "aandeelhoudersregister." moet op een smal scherm op één regel passen */
+    .wkr__kop {
+      font-size: min(2rem, 8.3vw);
+    }
+
+    .wkr__grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-auto-rows: auto;
+      gap: 12px;
+    }
+
+    .wkr-tegel--hoog {
+      grid-column: auto;
+      grid-row: span 1;
+    }
+
+    .wkr-tegel--foto {
+      aspect-ratio: 16 / 10;
+    }
+
+    /* Cijfertegels compact: het getal links, label en tekst ernaast */
+    .wkr-tegel--cijfer {
+      display: grid;
+      grid-template-columns: 2.1em minmax(0, 1fr);
+      align-items: center;
+      column-gap: 18px;
+      row-gap: 4px;
+      padding: 20px 22px;
+      font-size: clamp(2.5rem, 12vw, 2.9rem);
+    }
+
+    .wkr-tegel--cijfer > div {
+      display: contents;
+    }
+
+    .wkr-tegel__label {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+    }
+
+    .wkr-tegel__getal {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      margin: 0;
+      font-size: 1em;
+    }
+
+    .wkr-tegel__tekst,
+    .wkr-tegel--breed .wkr-tegel__tekst {
+      position: relative;
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+      max-width: none;
+    }
+
+    .wkr-cirkel,
+    .wkr-baan {
+      right: -12%;
+      top: -58%;
+      width: 40%;
+    }
+  }
+</style>

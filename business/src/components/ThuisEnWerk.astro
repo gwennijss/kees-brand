@@ -1,0 +1,696 @@
+---
+import Logo from '../../../src/components/Logo.astro';
+import BusinessLogo from '../../../src/components/BusinessLogo.astro';
+import Bloem from '../../../src/components/Bloem.astro';
+import Sticker from '../../../src/components/Sticker.astro';
+import { KEES_URL } from '../../../src/lib/sites';
+
+const werk = [
+  ['9:00', 'De koffie wordt bezorgd'],
+  ['10:00', 'Overleg met Van Dijk'],
+  ['', 'Sanne is jarig'],
+];
+
+const thuis = [
+  ['16:00', 'Sem heeft zwemles'],
+  ['18:00', 'De boodschappen komen, uiterlijk 19:00'],
+];
+---
+
+<section class="sectie sectie--wit tew" id="thuis" data-tew>
+  <div class="container tew__grid">
+    <!-- Demo: de gecombineerde dagstart -->
+    <div class="tew__demo" data-reveal>
+      <!-- Decor: een grote draaiende bloem en de twee merken als stickers -->
+      <Sticker class="tew-plak tew-plak--thuis" lobes={13}>
+        <span class="tew-plak__inhoud"><Logo kleur="var(--wit)" punt="var(--boter)" /><small>thuis</small></span>
+      </Sticker>
+      <Sticker class="tew-plak tew-plak--werk" kleur="var(--indigo)" lobes={13}>
+        <span class="tew-plak__inhoud"><small>business</small><Logo kleur="var(--wit)" punt="var(--tomaat)" /></span>
+      </Sticker>
+      <div class="tew-demo">
+        <div class="tew-demo__balk">
+          <p class="tew-demo__titel">
+            <span><b>Dagstart</b><small>Elke ochtend om 8:00</small></span>
+          </p>
+
+          <div class="tew-schakel" role="group" aria-label="Werk en thuis in je ochtendbericht">
+            <span class="tew-schakel__duim" aria-hidden="true"></span>
+            <button type="button" data-tew-knop="samen" aria-pressed="true">Samen</button>
+            <button type="button" data-tew-knop="gescheiden" aria-pressed="false">Gescheiden</button>
+          </div>
+        </div>
+
+        <div class="tew-chat" data-tew-chat data-modus="samen" aria-live="polite">
+          <span class="tew-chat__datum">Vandaag</span>
+
+          <div class="tew-stapel">
+            <!-- Werk -->
+            <article class="tew-deel tew-deel--werk">
+              <div class="tew-deel__afzender">
+                <span class="tew-wissel">
+                  <span class="tew-wissel__a">Kees</span>
+                  <span class="tew-wissel__b"><span class="tew-merk tew-merk--business"><BusinessLogo variant="regel" /></span></span>
+                </span>
+              </div>
+              <p class="tew-groet">Goedemorgen!</p>
+              <h3 class="tew-kopje">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7.5" width="16" height="12" rx="2"></rect><path d="M9 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5v2M4 12.5h16"></path></svg>
+                Op kantoor
+              </h3>
+              <ul class="tew-lijst">
+                {
+                  werk.map(([t, w]) => (
+                    <li>
+                      <span class:list={['tew-lijst__tijd', !t && 'tew-lijst__tijd--punt']}>{t}</span>
+                      <span>{w}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+              <div class="tew-klap tew-klap--meta-werk"><div><span class="tew-meta">8:00</span></div></div>
+            </article>
+
+            <!-- Thuis -->
+            <article class="tew-deel tew-deel--thuis">
+              <div class="tew-klap tew-klap--kop">
+                <div>
+                  <div class="tew-deel__afzender">
+                    <span class="tew-merk tew-merk--thuis"><Logo /><span>thuis</span></span>
+                  </div>
+                  <p class="tew-groet">Goedemorgen!</p>
+                </div>
+              </div>
+              <h3 class="tew-kopje">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4.5l8 6.5v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path><path d="M10 20v-5h4v5"></path></svg>
+                Thuis
+              </h3>
+              <ul class="tew-lijst">
+                {
+                  thuis.map(([t, w]) => (
+                    <li>
+                      <span class="tew-lijst__tijd">{t}</span>
+                      <span>{w}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+              <span class="tew-meta">8:00</span>
+            </article>
+          </div>
+        </div>
+
+        <p class="tew-demo__voet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"></rect><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"></path></svg>
+          <span data-tew-voet>Alleen jij ziet dit bericht. Werk en thuis staan in één planning.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Tekst -->
+    <div class="tew__tekst">
+      <h2 class="kop-l" data-reveal style="--d:1">Kees thuis én op je werk</h2>
+      <p class="lead" data-reveal style="--d:2">
+        Wie beide gebruikt, kiest zelf of werk en thuis samenkomen in één ochtendbericht. Als werkgever kun je Kees thuis
+        ook aanbieden als arbeidsvoorwaarde.
+      </p>
+      <ul class="tew-lijstje" data-reveal style="--d:3">
+        <li>De werkgever ziet alleen hoeveel collega's Kees thuis gebruiken.</li>
+        <li>Wie vertrekt, houdt Kees thuis.</li>
+        <li>Collega's zien van je privé-agenda alleen "bezet".</li>
+      </ul>
+      <a class="tew__link" href={KEES_URL} data-reveal style="--d:4">
+        Bekijk Kees voor thuis
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-tew]');
+  if (root) {
+    const chat = root.querySelector<HTMLElement>('[data-tew-chat]')!;
+    const knoppen = [...root.querySelectorAll<HTMLButtonElement>('[data-tew-knop]')];
+    const voet = root.querySelector<HTMLElement>('[data-tew-voet]')!;
+    const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let aangeraakt = false;
+
+    const voetTekst = {
+      samen: 'Alleen jij ziet dit bericht. Werk en thuis staan in één planning.',
+      gescheiden: 'Twee aparte berichten. Je werkgever ziet niets van Kees thuis.',
+    } as const;
+
+    function zet(modus: 'samen' | 'gescheiden') {
+      chat.dataset.modus = modus;
+      root!.dataset.modus = modus;
+      knoppen.forEach((k) => k.setAttribute('aria-pressed', String(k.dataset.tewKnop === modus)));
+      voet.textContent = voetTekst[modus];
+    }
+
+    knoppen.forEach((k) =>
+      k.addEventListener('click', () => {
+        aangeraakt = true;
+        zet(k.dataset.tewKnop as 'samen' | 'gescheiden');
+      }),
+    );
+
+    // Eén keer laten zien dat het bericht kan splitsen, zodra de demo in beeld komt.
+    if (!rustig) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((e) => e.isIntersecting)) return;
+          io.disconnect();
+          setTimeout(() => {
+            if (aangeraakt) return;
+            zet('gescheiden');
+            setTimeout(() => !aangeraakt && zet('samen'), 3400);
+          }, 2200);
+        },
+        { threshold: 0.6 },
+      );
+      io.observe(chat);
+    }
+  }
+</script>
+
+<style>
+  .tew {
+    padding-block: clamp(64px, 6.5vw, 96px);
+    overflow: clip;
+  }
+
+  .tew__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 80px);
+  }
+
+  /* ---------- Decor ---------- */
+  .tew__demo {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .tew__demo :global(.tew__bloem) {
+    --duur: 90s;
+    z-index: -1;
+    width: 125%;
+    height: auto;
+    aspect-ratio: 1;
+    left: -36%;
+    top: 58%;
+    translate: 0 -50%;
+  }
+
+  .tew__demo :global(.tew-plak) {
+    position: absolute;
+    z-index: 2;
+    width: 108px;
+    filter: drop-shadow(0 14px 18px rgb(20 20 60 / 0.25));
+  }
+
+  .tew__demo :global(.tew-plak--thuis) {
+    top: -38px;
+    left: -40px;
+    rotate: -12deg;
+  }
+
+  .tew__demo :global(.tew-plak--werk) {
+    top: 44%;
+    right: -58px;
+    rotate: 9deg;
+  }
+
+  .tew__demo.is-zichtbaar :global(.tew-plak) {
+    animation: tew-plak 0.8s var(--veer) 0.7s both;
+  }
+
+  .tew__demo.is-zichtbaar :global(.tew-plak--werk) {
+    animation-delay: 0.95s;
+  }
+
+  @keyframes tew-plak {
+    from {
+      opacity: 0;
+      scale: 0.3;
+      rotate: 40deg;
+    }
+  }
+
+  .tew-plak__inhoud {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    color: var(--wit);
+  }
+
+  .tew-plak__inhoud :global(.logo) {
+    font-size: 1.5rem;
+  }
+
+  .tew-plak__inhoud small {
+    font-family: var(--font-kop);
+    font-size: 0.82rem;
+    font-weight: 450;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  /* ---------- Demo ---------- */
+  .tew-demo {
+    position: relative;
+    display: grid;
+    border-radius: var(--radius-l);
+    background: var(--wit);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 50px 80px -44px rgb(20 20 60 / 0.5);
+    overflow: hidden;
+  }
+
+  .tew-demo__balk {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 16px 16px 82px;
+    border-bottom: 1px solid var(--lijn);
+  }
+
+  .tew-demo__titel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.2;
+  }
+
+  .tew-demo__titel b {
+    display: block;
+    font-family: var(--font-kop);
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+  }
+
+  .tew-demo__titel small {
+    font-size: 0.8rem;
+    color: var(--ink-stil);
+  }
+
+  /* Schakelaar Samen / Gescheiden */
+  .tew-schakel {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--hemel-licht);
+    box-shadow: inset 0 0 0 1px var(--lijn);
+  }
+
+  .tew-schakel button {
+    position: relative;
+    z-index: 1;
+    min-height: 36px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font-weight: 700;
+    font-size: 0.86rem;
+    color: var(--ink-zacht);
+    cursor: pointer;
+    transition: color 0.4s var(--uit);
+  }
+
+  .tew-schakel button[aria-pressed='true'] {
+    color: var(--wit);
+  }
+
+  .tew-schakel__duim {
+    position: absolute;
+    inset: 4px auto 4px 4px;
+    width: calc(50% - 4px);
+    border-radius: 999px;
+    background: var(--primair);
+    box-shadow: 0 2px 0 var(--nacht);
+    transition: translate 0.6s var(--veer);
+  }
+
+  [data-modus='gescheiden'] .tew-schakel__duim {
+    translate: 100% 0;
+  }
+
+  /* Chatvlak */
+  .tew-chat {
+    position: relative;
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 14px;
+    min-height: 410px;
+    padding: 18px 22px 22px;
+    background-color: var(--hemel-licht);
+    background-image: radial-gradient(circle, rgb(43 43 110 / 0.07) 1px, transparent 1.4px);
+    background-size: 16px 16px;
+  }
+
+  .tew-chat__datum {
+    justify-self: center;
+    padding: 3px 12px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.9);
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--ink-stil);
+    box-shadow: 0 1px 0 rgb(20 20 60 / 0.06);
+  }
+
+  .tew-stapel {
+    display: grid;
+    width: min(100%, 400px);
+  }
+
+  .tew-deel {
+    position: relative;
+    padding: 12px 16px 10px;
+    background: var(--wit);
+    border-radius: 6px 18px 18px 18px;
+    box-shadow:
+      0 1px 1px rgb(20 20 60 / 0.08),
+      0 10px 24px -18px rgb(20 20 60 / 0.3);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    transition:
+      border-radius 0.7s var(--uit),
+      padding 0.7s var(--uit),
+      margin 0.8s var(--veer),
+      translate 0.8s var(--veer),
+      rotate 0.8s var(--veer),
+      box-shadow 0.6s var(--uit);
+  }
+
+  /* Samen: twee helften vormen één bericht */
+  .tew-chat[data-modus='samen'] .tew-deel--werk {
+    border-radius: 6px 18px 0 0;
+  }
+
+  .tew-deel--thuis {
+    z-index: 1;
+  }
+
+  .tew-chat[data-modus='samen'] .tew-deel--thuis {
+    padding-top: 0;
+    border-radius: 0 0 18px 18px;
+  }
+
+  .tew-chat[data-modus='samen'] .tew-deel--thuis .tew-kopje {
+    padding-top: 10px;
+    border-top: 1px dashed var(--lijn);
+  }
+
+  /* Gescheiden: twee losse berichten */
+  .tew-chat[data-modus='gescheiden'] .tew-deel--thuis {
+    margin-top: 22px;
+    translate: 18px 0;
+    rotate: 1.8deg;
+    border-radius: 6px 18px 18px 18px;
+  }
+
+  .tew-chat[data-modus='gescheiden'] .tew-deel--werk {
+    rotate: -1.5deg;
+  }
+
+  .tew-deel__afzender {
+    display: flex;
+    align-items: center;
+    min-height: 22px;
+    margin-bottom: 2px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--primair);
+  }
+
+  /* Wisselt "Kees" in voor het Business Kees-logo */
+  .tew-wissel {
+    display: grid;
+  }
+
+  .tew-wissel > span {
+    grid-area: 1 / 1;
+    align-self: center;
+    transition:
+      opacity 0.5s var(--uit),
+      translate 0.6s var(--uit);
+  }
+
+  .tew-wissel__b,
+  [data-modus='gescheiden'] .tew-wissel__a {
+    opacity: 0;
+    translate: 0 6px;
+  }
+
+  [data-modus='gescheiden'] .tew-wissel__b {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .tew-merk {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  .tew-merk :global(.blogo),
+  .tew-merk :global(.logo) {
+    font-size: 1.05rem;
+  }
+
+  .tew-merk--thuis {
+    color: var(--bordeaux);
+  }
+
+  .tew-merk--thuis > span:last-child {
+    font-family: var(--font-kop);
+    font-weight: 350;
+    font-size: 1.05rem;
+    letter-spacing: -0.04em;
+    line-height: 0.8;
+  }
+
+  .tew-groet {
+    font-weight: 600;
+  }
+
+  .tew-kopje {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 8px;
+    font-family: var(--font-tekst);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-stil);
+    transition:
+      padding 0.6s var(--uit),
+      border-color 0.4s;
+    border-top: 1px dashed transparent;
+  }
+
+  .tew-kopje svg {
+    width: 15px;
+    color: var(--primair);
+  }
+
+  .tew-deel--thuis .tew-kopje svg {
+    color: var(--bordeaux);
+  }
+
+  .tew-lijst {
+    display: grid;
+    gap: 3px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tew-lijst li {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 6px;
+  }
+
+  .tew-lijst__tijd {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .tew-lijst__tijd--punt::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    margin: 0.55em 0 0 1px;
+    border-radius: 50%;
+    background: var(--primair);
+  }
+
+  .tew-meta {
+    display: block;
+    margin-top: 2px;
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--ink-stil);
+  }
+
+  /* Inklapbare stukjes */
+  .tew-klap {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition:
+      grid-template-rows 0.7s var(--uit),
+      opacity 0.5s var(--uit);
+  }
+
+  .tew-klap > div {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  [data-modus='samen'] .tew-klap--kop,
+  [data-modus='samen'] .tew-klap--meta-werk {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .tew-demo__voet {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--lijn);
+    font-size: 0.84rem;
+    color: var(--ink-zacht);
+  }
+
+  .tew-demo__voet svg {
+    flex: none;
+    width: 17px;
+    color: var(--primair);
+  }
+
+  /* ---------- Tekst ---------- */
+  .tew__tekst {
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+    max-width: 30em;
+  }
+
+  .tew-lijstje {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink-zacht);
+  }
+
+  .tew-lijstje li {
+    position: relative;
+    padding-left: 22px;
+  }
+
+  .tew-lijstje li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.62em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--hemel);
+  }
+
+  .tew__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--primair);
+    text-decoration: none;
+  }
+
+  .tew__link svg {
+    width: 1em;
+    transition: transform 0.4s var(--uit);
+  }
+
+  .tew__link:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Responsief ---------- */
+  @media (max-width: 1000px) {
+    .tew__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tew__demo {
+      order: 2;
+    }
+  }
+
+  @media (max-width: 640px) {
+    /* Ruimte voor de stickers die boven de demo uitsteken */
+    .tew__grid {
+      gap: 64px;
+    }
+
+    .tew-demo__balk {
+      flex-direction: column;
+      align-items: stretch;
+      padding-left: 16px;
+    }
+
+    .tew-demo__titel {
+      padding-left: 64px;
+      min-height: 40px;
+    }
+
+    .tew__demo :global(.tew-plak) {
+      width: 80px;
+    }
+
+    .tew__demo :global(.tew-plak--thuis) {
+      top: -28px;
+      left: -8px;
+    }
+
+    .tew__demo :global(.tew-plak--werk) {
+      top: -28px;
+      right: -8px;
+    }
+
+    .tew-plak__inhoud :global(.logo) {
+      font-size: 1.1rem;
+    }
+
+    .tew-plak__inhoud small {
+      font-size: 0.66rem;
+    }
+
+    .tew-chat {
+      min-height: 430px;
+      padding-inline: 14px;
+    }
+
+    .tew-chat[data-modus='gescheiden'] .tew-deel--thuis {
+      translate: 10px 0;
+    }
+
+  }
+</style>

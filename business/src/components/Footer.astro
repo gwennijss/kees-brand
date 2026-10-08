@@ -1,0 +1,200 @@
+---
+import BusinessLogo from '../../../src/components/BusinessLogo.astro';
+import Bloem from '../../../src/components/Bloem.astro';
+import { KEES_URL } from '../../../src/lib/sites';
+---
+
+<footer class="footer" data-footer>
+  <span class="footer__vorm" aria-hidden="true">
+    <Bloem class="footer__bloem" kleur="var(--nacht)" lobes={12} amp={0.07} />
+  </span>
+
+  <div class="container footer__binnen">
+    <div class="footer__groot">
+      <p class="footer__slogan">
+        Klaar is Kees<Bloem class="footer__punt" kleur="var(--tomaat)" lobes={10} amp={0.11} />
+      </p>
+      <a href="#wachtlijst" class="knop footer__knop">Op de wachtlijst</a>
+    </div>
+
+    <div class="footer__onder">
+      <BusinessLogo variant="regel" kleur="var(--wit)" class="footer__logo" />
+      <p>© 2026 Business Kees · Klaar is Kees</p>
+      <ul>
+        <li><a href="#vragen">Vragen</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href={KEES_URL}>Kees voor thuis</a></li>
+        <li><a href="mailto:hallo@example.com">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    padding-block: clamp(64px, 8vw, 112px) 28px;
+    background: var(--indigo);
+    color: var(--wit);
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  /* Grote nachtblauwe bloem die langzaam draait, half buiten beeld */
+  .footer__vorm {
+    position: absolute;
+    z-index: -1;
+    top: -38%;
+    right: -12%;
+    width: min(62vw, 820px);
+    aspect-ratio: 1;
+    pointer-events: none;
+  }
+
+  .footer__vorm :global(.footer__bloem) {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    animation: draai 90s linear infinite;
+  }
+
+  .footer__groot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    padding-bottom: clamp(48px, 6vw, 80px);
+  }
+
+  .footer__slogan {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-size: clamp(3.5rem, 12vw, 10.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.055em;
+    white-space: nowrap;
+  }
+
+  .footer :global(.footer__punt) {
+    flex: none;
+    width: 0.22em;
+    max-width: none;
+    margin-left: 0.04em;
+    animation: draai 12s linear infinite;
+  }
+
+  /* Boter-sticker scheef op de slogan geplakt */
+  .footer__sticker {
+    position: absolute;
+    top: -0.62em;
+    right: -0.62em;
+    width: clamp(84px, 9vw, 124px);
+    rotate: 12deg;
+    filter: drop-shadow(0 12px 16px rgb(20 20 60 / 0.3));
+    transition:
+      rotate 0.6s var(--veer),
+      scale 0.6s var(--veer);
+  }
+
+  .footer__slogan:hover .footer__sticker {
+    rotate: -6deg;
+    scale: 1.08;
+  }
+
+  .footer__sticker :global(.footer__sticker-vorm) {
+    width: 100%;
+    font-size: clamp(0.8rem, 1vw, 1.05rem);
+    letter-spacing: -0.02em;
+    white-space: normal;
+  }
+
+  .footer__sticker :global(.sticker__vorm) {
+    animation: draai 40s linear infinite;
+  }
+
+  .footer__knop {
+    --knop-bg: var(--wit);
+    --knop-fg: var(--nacht);
+    --knop-schaduw: var(--hemel);
+  }
+
+  .footer__onder {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgb(255 255 255 / 0.3);
+    font-size: 0.92rem;
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .footer__onder :global(.footer__logo) {
+    font-size: 1.6rem;
+  }
+
+  .footer__onder ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__onder a {
+    font-weight: 600;
+    color: var(--wit);
+    text-decoration: none;
+  }
+
+  .footer__onder a:hover {
+    color: var(--boter);
+  }
+
+  @media (max-width: 900px) {
+    .footer__vorm {
+      top: -12%;
+      right: -40%;
+      width: 110vw;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer {
+      padding-top: 80px;
+    }
+
+    /* Links met een tikvlak van 44px hoog */
+    .footer__onder {
+      row-gap: 8px;
+    }
+
+    .footer__onder ul {
+      gap: 0 24px;
+      margin-block: -4px -10px;
+    }
+
+    .footer__onder a {
+      display: inline-block;
+      padding-block: 12px;
+    }
+
+    .footer__groot {
+      gap: 36px;
+    }
+
+    .footer__sticker {
+      top: -1.5em;
+      right: -0.3em;
+    }
+
+    .footer__onder ul {
+      margin-left: 0;
+    }
+  }
+</style>

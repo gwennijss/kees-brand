@@ -1,0 +1,412 @@
+---
+// Kanalen: hoe Kees in WhatsApp zit. Links de belofte (rust in de groep), rechts drie kanalen met een klein schema.
+import Bloem from '../../../src/components/Bloem.astro';
+import Sticker from '../../../src/components/Sticker.astro';
+
+// Schema-bouwstenen: personen en Kees krijgen per kleurvlak een eigen contrasterende kleur (zie CSS-variabelen).
+const ontvangers = [18, 46, 74, 102];
+---
+
+<section class="sectie kn" id="kanalen" data-kanalen>
+  <div class="container kn__grid">
+    <div class="kn__kop" data-reveal>
+      <h2 class="kop-l kn__titel">Rust in de groep<Bloem class="kn__punt" kleur="var(--sticker)" lobes={10} amp={0.11} /></h2>
+      <p class="kn__tekst">
+        Kees praat privé met wie het aangaat. In de groep komt alleen wat iedereen moet weten, gebundeld in één kort
+        bericht per dag.
+      </p>
+    </div>
+
+    <ul class="kn__lijst">
+      <li class="kn__item kn__item--hemel" data-reveal style="--d:1">
+        <div class="kn__beeld" aria-hidden="true">
+          <svg viewBox="0 0 220 120" class="kn__svg">
+            <g class="kn-b" style="--v:0">
+              <circle cx="24" cy="28" r="8" class="kn-p" />
+              <rect x="40" y="17" width="96" height="22" rx="11" class="kn-bel" />
+              <rect x="51" y="26" width="62" height="4" rx="2" class="kn-regel" />
+            </g>
+            <g class="kn-b" style="--v:1">
+              <circle cx="24" cy="60" r="8" class="kn-p kn-p--2" />
+              <rect x="40" y="49" width="132" height="22" rx="11" class="kn-bel" />
+              <rect x="51" y="58" width="96" height="4" rx="2" class="kn-regel" />
+            </g>
+            <g class="kn-b" style="--v:2">
+              <circle cx="24" cy="92" r="8" class="kn-k" />
+              <rect x="40" y="81" width="112" height="22" rx="11" class="kn-bel kn-bel--kees" />
+              <rect x="51" y="90" width="76" height="4" rx="2" class="kn-regel kn-regel--kees" />
+            </g>
+          </svg>
+        </div>
+        <div class="kn__tekstblok">
+          <span class="kn__voor">Kleine teams</span>
+          <h3 class="kn__naam">Groepsapp</h3>
+          <p>Kees maakt de kantoorgroep aan en iedereen doet mee via een link.</p>
+        </div>
+      </li>
+
+      <li class="kn__item kn__item--indigo" data-reveal style="--d:2">
+        <Sticker class="kn__sticker" kleur="var(--sticker)">8:00</Sticker>
+        <div class="kn__beeld" aria-hidden="true">
+          <svg viewBox="0 0 220 120" class="kn__svg">
+            {
+              ontvangers.map((y, i) => (
+                <g>
+                  <path d={`M50 60 C 92 60, 96 ${y}, 142 ${y}`} class="kn-lijn" />
+                  <path d={`M50 60 C 92 60, 96 ${y}, 142 ${y}`} class="kn-stroom" pathLength="100" style={`--v:${i}`} />
+                </g>
+              ))
+            }
+            <circle cx="38" cy="60" r="13" class="kn-k" />
+            {
+              ontvangers.map((y, i) => (
+                <g class="kn-b" style={`--v:${i * 0.5 + 0.6}`}>
+                  <circle cx="152" cy={y} r="7" class:list={['kn-p', { 'kn-p--2': i % 2 }]} />
+                  <rect x="165" y={y - 7} width="40" height="14" rx="7" class="kn-bel" />
+                </g>
+              ))
+            }
+          </svg>
+        </div>
+        <div class="kn__tekstblok">
+          <span class="kn__voor">Grotere teams</span>
+          <h3 class="kn__naam">Kees-kanaal</h3>
+          <p>Het teambericht komt privé bij iedereen binnen.</p>
+        </div>
+      </li>
+
+      <li class="kn__item kn__item--boter" data-reveal style="--d:3">
+        <div class="kn__beeld" aria-hidden="true">
+          <svg viewBox="0 0 220 120" class="kn__svg">
+            <g class="kn-b" style="--v:0">
+              <circle cx="196" cy="36" r="8" class="kn-p" />
+              <rect x="82" y="25" width="98" height="22" rx="11" class="kn-bel" />
+              <rect x="93" y="34" width="60" height="4" rx="2" class="kn-regel" />
+            </g>
+            <g class="kn-b" style="--v:1.4">
+              <circle cx="24" cy="80" r="8" class="kn-k" />
+              <rect x="40" y="69" width="122" height="22" rx="11" class="kn-bel kn-bel--kees" />
+              <rect x="51" y="78" width="84" height="4" rx="2" class="kn-regel kn-regel--kees" />
+              <circle cx="156" cy="71" r="6" class="kn-stip" />
+            </g>
+          </svg>
+        </div>
+        <div class="kn__tekstblok">
+          <span class="kn__voor">Eén-op-één</span>
+          <h3 class="kn__naam">Privé</h3>
+          <p>Iedereen kan Kees ook persoonlijk iets vragen of een taak doorgeven.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .kn {
+    padding-block: clamp(64px, 6.5vw, 96px);
+  }
+
+  .kn__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 2fr);
+    gap: clamp(32px, 4.5vw, 64px);
+    align-items: center;
+  }
+
+  .kn__kop {
+    display: grid;
+    gap: 18px;
+  }
+
+  .kn__titel {
+    display: block;
+  }
+
+  /* Tomaatdetail: de Kees-bloem als punt */
+  .kn :global(.kn__punt) {
+    display: inline-block;
+    width: 0.22em;
+    max-width: none;
+    margin-left: 0.04em;
+    vertical-align: baseline;
+  }
+
+  .kn__tekst {
+    max-width: 24em;
+    color: var(--ink-zacht);
+    line-height: 1.6;
+  }
+
+  .kn__lijst {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(14px, 1.6vw, 22px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---------- Kleurvlakken ---------- */
+  .kn__item {
+    position: relative;
+    display: grid;
+    align-content: space-between;
+    gap: 18px;
+    padding: clamp(18px, 1.6vw, 24px);
+    border-radius: 26px;
+    background: var(--vlak);
+    color: var(--op-vlak);
+    box-shadow: 0 30px 60px -40px rgb(43 43 110 / 0.45);
+    rotate: var(--draai, 0deg);
+    transition:
+      opacity 1.1s var(--uit),
+      transform 1.4s var(--uit),
+      filter 1.1s var(--uit),
+      rotate 0.7s var(--veer),
+      translate 0.7s var(--veer),
+      box-shadow 0.6s var(--uit);
+  }
+
+  .kn__item:hover {
+    rotate: 0deg;
+    translate: 0 -6px;
+    box-shadow: 0 40px 70px -40px rgb(43 43 110 / 0.55);
+  }
+
+  .kn__item--hemel {
+    --vlak: var(--hemel);
+    --op-vlak: var(--nacht);
+    --draai: -2deg;
+    /* schema */
+    --s-p: var(--wit);
+    --s-p2: var(--hemel-licht);
+    --s-k: var(--nacht);
+    --s-bel: var(--wit);
+    --s-regel: var(--hemel-zacht);
+    --s-kbel: var(--indigo);
+    --s-kregel: rgb(255 255 255 / 0.5);
+  }
+
+  .kn__item--indigo {
+    --vlak: var(--indigo);
+    --op-vlak: var(--wit);
+    --draai: 1.5deg;
+    --s-p: var(--hemel);
+    --s-p2: var(--wit);
+    --s-k: var(--boter);
+    --s-bel: rgb(255 255 255 / 0.22);
+    --s-lijn: rgb(255 255 255 / 0.28);
+    --s-stroom: var(--boter);
+    margin-top: 18px;
+  }
+
+  .kn__item--boter {
+    --vlak: var(--boter);
+    --op-vlak: var(--nacht);
+    --draai: -1deg;
+    --s-p: var(--indigo);
+    --s-k: var(--nacht);
+    --s-bel: var(--wit);
+    --s-regel: var(--indigo-zacht);
+    --s-kbel: var(--nacht);
+    --s-kregel: rgb(255 255 255 / 0.45);
+  }
+
+  /* Tomaat-sticker: het teambericht om 8:00 */
+  .kn__item :global(.kn__sticker) {
+    position: absolute;
+    top: -20px;
+    right: -14px;
+    z-index: 1;
+    width: 62px;
+    font-size: 0.95rem;
+    rotate: 12deg;
+    transition: rotate 0.8s var(--veer);
+  }
+
+  .kn__item:hover :global(.kn__sticker) {
+    rotate: -14deg;
+  }
+
+  .kn__beeld {
+    padding: 4px 2px 0;
+  }
+
+  .kn__svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .kn__tekstblok {
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+  }
+
+  .kn__voor {
+    margin-bottom: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--op-vlak) 12%, transparent);
+    font-size: 0.74rem;
+    font-weight: 600;
+  }
+
+  .kn__naam {
+    font-size: 1.3rem;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+
+  .kn__item p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    opacity: 0.82;
+  }
+
+  /* ---------- Schema's ---------- */
+  .kn-p {
+    fill: var(--s-p);
+  }
+
+  .kn-p--2 {
+    fill: var(--s-p2, var(--s-p));
+  }
+
+  .kn-k {
+    fill: var(--s-k);
+  }
+
+  .kn-bel {
+    fill: var(--s-bel);
+  }
+
+  .kn-bel--kees {
+    fill: var(--s-kbel);
+  }
+
+  .kn-regel {
+    fill: var(--s-regel);
+  }
+
+  .kn-regel--kees {
+    fill: var(--s-kregel);
+  }
+
+  /* Een klein bolletje bij het privé-antwoord */
+  .kn-stip {
+    fill: var(--tomaat);
+    stroke: var(--boter);
+    stroke-width: 2.5;
+  }
+
+  .kn-lijn {
+    fill: none;
+    stroke: var(--s-lijn);
+    stroke-width: 1.5;
+  }
+
+  .kn-stroom {
+    fill: none;
+    stroke: var(--s-stroom);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 10 110;
+    stroke-dashoffset: 10;
+    opacity: 0;
+  }
+
+  /* Binnenkomen: de berichtjes verschijnen één voor één */
+  .kn-b {
+    opacity: 0;
+    transform: translateY(6px);
+    transform-box: fill-box;
+    transition:
+      opacity 0.6s var(--uit),
+      transform 0.8s var(--veer);
+    transition-delay: calc(0.35s + var(--v, 0) * 0.22s);
+  }
+
+  .is-zichtbaar .kn-b {
+    opacity: 1;
+    transform: none;
+  }
+
+  .is-zichtbaar .kn-stroom {
+    animation: kn-stroom 4.2s var(--in-uit) infinite;
+    animation-delay: calc(0.6s + var(--v) * 0.12s);
+  }
+
+  @keyframes kn-stroom {
+    0% {
+      stroke-dashoffset: 10;
+      opacity: 1;
+    }
+    45% {
+      stroke-dashoffset: -100;
+      opacity: 1;
+    }
+    46%,
+    100% {
+      stroke-dashoffset: -100;
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .kn__grid {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .kn__lijst {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .kn__item {
+      grid-template-columns: 96px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      margin-top: 0;
+      padding: 16px 18px;
+      border-radius: 22px;
+      rotate: calc(var(--draai) * 0.5);
+    }
+
+    .kn__beeld {
+      padding: 0;
+    }
+
+    .kn__naam {
+      font-size: 1.12rem;
+    }
+
+    .kn__item p {
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .kn__item :global(.kn__sticker) {
+      top: -14px;
+      right: -6px;
+      width: 50px;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kn-b {
+      opacity: 1;
+      transform: none;
+    }
+
+    .is-zichtbaar .kn-stroom {
+      animation: none;
+    }
+  }
+</style>

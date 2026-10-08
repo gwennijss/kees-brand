@@ -1,0 +1,46 @@
+---
+import Bloem from './Bloem.astro';
+
+// De Kees-sticker: de golvende bloem met tekst erin, als een prijs- of kortingssticker.
+interface Props {
+  kleur?: string;
+  tekst?: string;
+  lobes?: number;
+  class?: string;
+  style?: string;
+}
+
+const { kleur = 'var(--sticker)', tekst = 'var(--op-sticker)', lobes = 14, class: className, style } = Astro.props;
+---
+
+<span class:list={['sticker', className]} style={`--st-tekst:${tekst};${style ?? ''}`}>
+  <Bloem kleur={kleur} lobes={lobes} class="sticker__vorm" />
+  <span class="sticker__tekst"><slot /></span>
+</span>
+
+<style>
+  .sticker {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    aspect-ratio: 1;
+    color: var(--st-tekst);
+  }
+
+  .sticker :global(.sticker__vorm) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sticker__tekst {
+    position: relative;
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    letter-spacing: var(--kop-spatiering);
+    line-height: 0.95;
+    text-align: center;
+  }
+</style>

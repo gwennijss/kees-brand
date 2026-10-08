@@ -1,0 +1,327 @@
+---
+import Sticker from '../../../src/components/Sticker.astro';
+import Bloem from '../../../src/components/Bloem.astro';
+import Calculator from './Calculator.astro';
+
+// Prijzen zijn aannames (te toetsen in de pilot). Founding: eerste jaar de helft.
+const pakketten = [
+  { id: 'klein', naam: 'Klein', max: 10, prijs: 99, voor: 'Voor kleine bedrijven zonder office manager.' },
+  { id: 'team', naam: 'Team', max: 50, prijs: 249, voor: 'Voor groeiende teams en hun office manager.', uitgelicht: true },
+  { id: 'bedrijf', naam: 'Bedrijf', max: 100, prijs: 449, voor: 'Voor grotere teams die rust in de groep willen.' },
+];
+---
+
+<section class="sectie prijzen" id="prijzen">
+  <div class="container">
+    <div class="sectie-kop prijzen__kop" data-reveal>
+      <h2 class="kop-l">Goedkoper dan een uur per week zelf regelen.</h2>
+      <p class="lead">Eén vast bedrag per maand voor het hele team. Elk pakket heeft alle functies.</p>
+    </div>
+
+    <div class="pakketten">
+      {
+        pakketten.map((p, i) => (
+          <div class="pk-plek" data-reveal style={`--d:${i + 1}`}>
+            <article class:list={['pk', `pk--${p.id}`]}>
+              <span class="pk__achter" aria-hidden="true">
+                <Bloem class="pk__vorm" kleur="var(--pk-vorm)" lobes={12} amp={0.08} />
+              </span>
+
+              {p.uitgelicht && (
+                <span class="pk__sticker" aria-hidden="true">
+                  <Sticker class="pk__sticker-vorm">
+                    Founding
+                    <br />
+                    <span class="pk__sticker-groot">−50%</span>
+                  </Sticker>
+                </span>
+              )}
+
+              <div class="pk__kop">
+                <h3 class="pk__naam">{p.naam}</h3>
+                <span class="pk__max">Tot {p.max} mensen</span>
+              </div>
+
+              <p class="pk__prijs">
+                <span class="pk__bedrag">€{p.prijs}</span>
+                <span class="pk__per">per maand</span>
+              </p>
+
+              <p class="pk__voor">{p.voor}</p>
+
+              <a href="#wachtlijst" class="knop knop--klein pk__knop">
+                Op de wachtlijst
+              </a>
+            </article>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="prijzen__noot" data-reveal style="--d:3">
+      Bedragen excl. btw. Je probeert Kees 30 dagen gratis en zegt daarna maandelijks op. De eerste 50 bedrijven krijgen het
+      eerste jaar de helft korting.
+    </p>
+
+    <Calculator pakketten={pakketten} />
+  </div>
+</section>
+
+<style>
+  .prijzen {
+    padding-block: clamp(64px, 6vw, 88px) clamp(56px, 5vw, 72px);
+    overflow-x: clip;
+  }
+
+  .prijzen__kop {
+    gap: 14px;
+    max-width: 640px;
+    margin-bottom: 34px;
+  }
+
+  /* ---------- Pakketten: drie volle kleurkaarten, licht waaierend ---------- */
+  .pakketten {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: center;
+  }
+
+  .pk {
+    --pk-bg: var(--hemel);
+    --pk-tekst: var(--nacht);
+    --pk-vorm: rgb(255 255 255 / 0.4);
+    --kantel: -2deg;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 30px 30px;
+    border-radius: var(--radius-l);
+    background: var(--pk-bg);
+    color: var(--pk-tekst);
+    box-shadow: 0 30px 50px -36px rgb(20 20 60 / 0.55);
+    rotate: var(--kantel);
+    isolation: isolate;
+    transition:
+      rotate 0.7s var(--veer),
+      translate 0.7s var(--veer),
+      box-shadow 0.6s var(--uit);
+  }
+
+  .pk--team {
+    --pk-bg: var(--indigo);
+    --pk-tekst: var(--wit);
+    --pk-vorm: rgb(255 255 255 / 0.12);
+    --kantel: 1.5deg;
+    padding-block: 36px 38px;
+    translate: 0 -6px;
+    box-shadow: 0 40px 60px -34px rgb(20 20 60 / 0.7);
+  }
+
+  .pk--bedrijf {
+    --pk-bg: var(--boter);
+    --pk-vorm: rgb(255 255 255 / 0.65);
+    --kantel: 2.5deg;
+  }
+
+  .pk:hover {
+    rotate: 0deg;
+    translate: 0 -8px;
+    box-shadow: 0 44px 60px -36px rgb(20 20 60 / 0.6);
+  }
+
+  .pk--team:hover {
+    translate: 0 -14px;
+  }
+
+  /* Grote, langzaam draaiende bloem in de hoek */
+  .pk__achter {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+
+  .pk :global(.pk__vorm) {
+    position: absolute;
+    right: -20%;
+    bottom: -28%;
+    width: 64%;
+    max-width: none;
+    pointer-events: none;
+    animation: draai 60s linear infinite;
+  }
+
+  .pk__kop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .pk--team .pk__kop {
+    padding-right: 72px;
+  }
+
+  .pk__naam {
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .pk__max {
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.6);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .pk--team .pk__max {
+    background: rgb(255 255 255 / 0.16);
+  }
+
+  .pk__prijs {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-top: 22px;
+  }
+
+  .pk__bedrag {
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    letter-spacing: -0.055em;
+    font-size: clamp(3.6rem, 5.4vw, 4.75rem);
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pk__per {
+    font-size: 0.92rem;
+    font-weight: 500;
+    opacity: 0.72;
+  }
+
+  .pk__voor {
+    max-width: 16em;
+    margin: 14px 0 24px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.82;
+  }
+
+  .pk__knop {
+    align-self: flex-start;
+    margin-top: auto;
+    --knop-bg: var(--wit);
+    --knop-fg: var(--nacht);
+    --knop-schaduw: var(--nacht);
+  }
+
+  .pk--team .pk__knop {
+    --knop-schaduw: var(--nacht);
+  }
+
+  /* De Kees-sticker: het founding-signaal */
+  .pk__sticker {
+    position: absolute;
+    z-index: 2;
+    top: -30px;
+    right: -20px;
+    width: 104px;
+    rotate: 10deg;
+    filter: drop-shadow(0 10px 14px rgb(20 20 60 / 0.25));
+    transition:
+      rotate 0.6s var(--veer),
+      scale 0.6s var(--veer);
+  }
+
+  .pk:hover .pk__sticker {
+    rotate: -4deg;
+    scale: 1.08;
+  }
+
+  .pk__sticker :global(.pk__sticker-vorm) {
+    width: 100%;
+    font-size: 0.82rem;
+  }
+
+  .pk__sticker :global(.sticker__vorm) {
+    animation: draai 40s linear infinite;
+  }
+
+  .pk__sticker-groot {
+    font-size: 1.6em;
+  }
+
+  .prijzen__noot {
+    margin-top: 26px;
+    font-size: 0.86rem;
+    color: var(--ink-stil);
+  }
+
+  @media (max-width: 900px) {
+    .pakketten {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 520px;
+    }
+
+    .pk {
+      --kantel: -1.5deg;
+    }
+
+    .pk--team {
+      --kantel: 1deg;
+      translate: none;
+      padding-block: 30px 32px;
+    }
+
+    .pk--bedrijf {
+      --kantel: -1deg;
+    }
+
+    .pk__knop {
+      margin-top: 0;
+    }
+
+    .pk :global(.pk__vorm) {
+      width: 50%;
+      bottom: -34%;
+      right: -14%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .pakketten {
+      gap: 18px;
+    }
+
+    /* Op mobiel maar een klein beetje scheef, zodat geen hoek buiten beeld valt */
+    .pk {
+      --kantel: -0.8deg;
+      padding: 24px 22px 26px;
+    }
+
+    .pk--team {
+      --kantel: 0.6deg;
+    }
+
+    .pk--bedrijf {
+      --kantel: -0.5deg;
+    }
+
+    .pk__sticker {
+      top: -26px;
+      right: -2px;
+      width: 84px;
+    }
+
+    .pk--team .pk__kop {
+      padding-right: 64px;
+    }
+  }
+</style>

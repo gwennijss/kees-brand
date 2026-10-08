@@ -1,0 +1,216 @@
+---
+import BusinessLogo from '../../../src/components/BusinessLogo.astro';
+import Bloem from '../../../src/components/Bloem.astro';
+
+// Statement: een grote zin die inkleurt terwijl je scrolt (nachtblauw naar indigo),
+// met een draaiend stempel ernaast: het Business Kees-logo met tekst op een cirkel.
+---
+
+<section class="bst" aria-label="Waar Business Kees voor staat" data-statement style="--p:0">
+  <div class="container bst__grid">
+    <p class="bst__zin">
+      Bij Business Kees geloven we dat een kantoor runnen geen bijbaan hoort te zijn. Kees regelt de koffie, de cadeaus en de borrel. Zo hebben
+      jullie weer tijd voor het echte werk.
+    </p>
+
+    <div class="bst__stempel" aria-hidden="true">
+      <Bloem class="bst__vorm" kleur="var(--hemel)" lobes={14} amp={0.06} />
+      <svg class="bst__ring" viewBox="0 0 200 200" fill="none">
+        <defs>
+          <path id="bst-cirkel" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0" fill="none" stroke="none"></path>
+        </defs>
+        <text>
+          <textPath href="#bst-cirkel" textLength="464" lengthAdjust="spacing">JE OFFICE MANAGER <tspan class="bst__ster">✦</tspan> SINDS 2026 <tspan class="bst__ster">✦</tspan> KLAAR IS KEES <tspan class="bst__ster">✦</tspan>&nbsp;</textPath>
+        </text>
+      </svg>
+      <BusinessLogo variant="regel" class="bst__logo" />
+    </div>
+  </div>
+</section>
+
+<script>
+  // De zin kleurt in terwijl je scrolt: van bijna onzichtbaar naar een verloop van nachtblauw naar indigo.
+  const sectie = document.querySelector<HTMLElement>('[data-statement]');
+  if (sectie) {
+    const zin = sectie.querySelector<HTMLElement>('.bst__zin')!;
+    const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let frame = 0;
+
+    const update = () => {
+      const r = zin.getBoundingClientRect();
+      const vh = innerHeight;
+      const p = Math.min(1, Math.max(0, (vh * 0.9 - r.top) / (vh * 0.6 + r.height * 0.4)));
+      sectie.style.setProperty('--p', rustig ? '1' : p.toFixed(4));
+    };
+
+    addEventListener(
+      'scroll',
+      () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(update);
+      },
+      { passive: true },
+    );
+    addEventListener('resize', update);
+    update();
+  }
+</script>
+
+<style>
+  .bst {
+    position: relative;
+    padding-block: clamp(72px, 8vw, 120px);
+  }
+
+  .bst__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .bst__zin {
+    --vol: calc(var(--p) * 130% - 15%);
+    max-width: 19em;
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: var(--kop-spatiering);
+    text-wrap: pretty;
+    color: transparent;
+    background-image: linear-gradient(
+      172deg,
+      var(--nacht) 0%,
+      var(--indigo) calc(var(--vol) - 8%),
+      color-mix(in srgb, var(--indigo) 16%, transparent) calc(var(--vol) + 8%),
+      color-mix(in srgb, var(--nacht) 12%, transparent) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  /* ---------- Stempel ---------- */
+  .bst__stempel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(240px, 25vw, 330px);
+    aspect-ratio: 1;
+  }
+
+  .bst__stempel :global(.bst__vorm) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    animation: draai 60s linear infinite;
+    /* Eigen laag: voorkomt een donker randje bij het draaien in Safari op iOS */
+    will-change: rotate;
+    backface-visibility: hidden;
+  }
+
+  .bst__ring {
+    position: absolute;
+    inset: 9%;
+    width: 82%;
+    height: 82%;
+    overflow: visible;
+    animation: bst-tik 4s var(--in-uit) infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .bst__ring text {
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: 14px;
+    fill: var(--nacht);
+  }
+
+  .bst__ster {
+    fill: var(--tomaat);
+  }
+
+  .bst__stempel :global(.bst__logo) {
+    position: relative;
+    font-size: clamp(1.35rem, 1.8vw, 1.7rem);
+  }
+
+  /* Speels draaien: een kwartslag, kleine vering, even stil */
+  @keyframes bst-tik {
+    0% {
+      transform: rotate(0deg);
+    }
+    12% {
+      transform: rotate(98deg);
+    }
+    18%,
+    25% {
+      transform: rotate(90deg);
+    }
+    37% {
+      transform: rotate(188deg);
+    }
+    43%,
+    50% {
+      transform: rotate(180deg);
+    }
+    62% {
+      transform: rotate(278deg);
+    }
+    68%,
+    75% {
+      transform: rotate(270deg);
+    }
+    87% {
+      transform: rotate(368deg);
+    }
+    93%,
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .bst__grid {
+      grid-template-columns: 1fr;
+    }
+    .bst__stempel {
+      justify-self: start;
+      width: 250px;
+    }
+    .bst__stempel :global(.bst__logo) {
+      font-size: 1.3rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .bst {
+      padding-block: 48px 64px;
+      overflow-x: clip;
+    }
+
+    .bst__grid {
+      gap: 20px;
+    }
+
+    .bst__zin {
+      font-size: clamp(1.75rem, 8.2vw, 2.1rem);
+      line-height: 1.08;
+    }
+
+    /* Stempel kleiner en rechts, als een stempel onder de zin */
+    .bst__stempel {
+      justify-self: end;
+      width: 200px;
+      margin-right: 4px;
+    }
+
+    .bst__stempel :global(.bst__logo) {
+      font-size: 1.1rem;
+    }
+  }
+</style>

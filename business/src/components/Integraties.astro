@@ -1,0 +1,384 @@
+---
+// Koppelingen als nette tekst-wordmarks met een generiek icoon per categorie.
+// Bewust geen echte merklogo's.
+const ICONEN: Record<string, string> = {
+  chat: '<path d="M4 18.5l1.2-3.6A7.5 7.5 0 1 1 8.6 18z"/><path d="M9 11.5h.01M12 11.5h.01M15 11.5h.01"/>',
+  agenda: '<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  mail: '<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M4 7.5l8 6 8-6"/>',
+  taken: '<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 12.2l2.6 2.6L16 9.4"/>',
+  boodschappen: '<path d="M4 9h16l-1.6 9.2a2 2 0 0 1-2 1.8H7.6a2 2 0 0 1-2-1.8z"/><path d="M8.5 9l3.5-5 3.5 5"/>',
+  boekhouding: '<path d="M6 3.5h12v17l-3-1.8-3 1.8-3-1.8-3 1.8z"/><path d="M9 8.5h6M9 12h6M9 15.5h3"/>',
+  catering: '<path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8.5 3.5v2.5M12.5 3.5v2.5"/>',
+  cadeau: '<rect x="4" y="9" width="16" height="11" rx="2"/><path d="M3 9h18M12 9v11M12 9c-1.5-3.5-5.5-4-5.5-1.5S10 9 12 9zm0 0c1.5-3.5 5.5-4 5.5-1.5S14 9 12 9z"/>',
+  parkeren: '<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M10 16.5v-9h3a2.7 2.7 0 0 1 0 5.4h-3"/>',
+};
+
+const rijen = [
+  [
+    { naam: 'WhatsApp', soort: 'Chat', icoon: 'chat' },
+    { naam: 'Google Agenda', soort: 'Agenda', icoon: 'agenda' },
+    { naam: 'Outlook', soort: 'Agenda en mail', icoon: 'mail' },
+    { naam: 'monday.com', soort: 'Taken', icoon: 'taken' },
+    { naam: 'Asana', soort: 'Taken', icoon: 'taken' },
+    { naam: 'Trello', soort: 'Taken', icoon: 'taken' },
+  ],
+  [
+    { naam: 'Albert Heijn', soort: 'Boodschappen', icoon: 'boodschappen' },
+    { naam: 'Picnic', soort: 'Boodschappen', icoon: 'boodschappen' },
+    { naam: 'Jullie boekhoudpakket', soort: 'Administratie', icoon: 'boekhouding' },
+    { naam: 'Cateraars', soort: 'Lunch en borrels', icoon: 'catering' },
+    { naam: 'Cadeaupartners', soort: 'Cadeaus', icoon: 'cadeau' },
+    { naam: 'Parkeerapps', soort: 'Parkeren', icoon: 'parkeren' },
+  ],
+];
+
+// Elke chip een eigen kleurvlak en een kleine kanteling, zodat de band vrolijk loopt.
+const kleuren = [
+  ['wit', 'hemel', 'indigo', 'boter', 'tomaat', 'hemel-zacht'],
+  ['boter', 'indigo', 'wit', 'hemel', 'nacht', 'hemel-zacht'],
+];
+const kanteling = [
+  [-2, 0, 2.5, -1.5, 3, 0],
+  [1.5, -2.5, 0, 2, -1.5, 0],
+];
+---
+
+<section class="sectie sectie--wit kp" id="koppelingen">
+  <div class="container kp__kop">
+    <div class="kp__titel" data-reveal>
+      <h2 class="kop-l">Kees werkt met wat jullie al gebruiken.</h2>
+    </div>
+    <div class="kp__noot" data-reveal style="--d:1">
+      <p>
+        Kees koppelt met jullie agenda, mail en takenlijst en bestelt bij de winkels en partners die jullie kennen. Er komt
+        geen nieuwe app bij.
+      </p>
+      <span class="kp__status"><i aria-hidden="true"></i>Koppelingen in ontwikkeling</span>
+    </div>
+  </div>
+
+  <div class="kp__band" data-reveal style="--d:2">
+    {
+      rijen.map((rij, r) => (
+        <div class:list={['kp__rij', r === 1 && 'kp__rij--terug']}>
+          <ul class="kp__spoor" role="list" aria-label={r === 0 ? 'Chat, agenda en taken' : 'Boodschappen, administratie en partners'}>
+            {[0, 1].map((kopie) =>
+              rij.map((k, i) => (
+                <li
+                  class:list={['kp-chip', `kp-chip--${kleuren[r][i]}`, kopie === 1 && 'kp-chip--kopie']}
+                  style={`--kant:${kanteling[r][i]}deg`}
+                  aria-hidden={kopie === 1 ? 'true' : undefined}
+                >
+                  <span class="kp-chip__icoon">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                      set:html={ICONEN[k.icoon]}
+                    />
+                  </span>
+                  <span class="kp-chip__tekst">
+                    <b>{k.naam}</b>
+                    <span>{k.soort}</span>
+                  </span>
+                </li>
+              )),
+            )}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .kp {
+    padding-block: clamp(56px, 5vw, 72px);
+    overflow: clip;
+  }
+
+  .kp__kop {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 24px 64px;
+    margin-bottom: clamp(28px, 3vw, 40px);
+  }
+
+  .kp__titel {
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+  }
+
+  .kp__noot {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    max-width: 30em;
+    justify-self: end;
+    color: var(--ink-zacht);
+  }
+
+  .kp__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 14px 6px 11px;
+    border-radius: 999px;
+    background: var(--boter-zacht);
+    box-shadow: inset 0 0 0 1px var(--lijn);
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .kp__status i {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tomaat);
+  }
+
+  .kp__status i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--tomaat);
+    animation: kp-puls 2.2s var(--uit) infinite;
+  }
+
+  @keyframes kp-puls {
+    from {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  /* ---------- Lopende band ---------- */
+  .kp__band {
+    display: grid;
+    gap: 0;
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .kp__rij {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .kp__spoor {
+    display: flex;
+    flex: none;
+    gap: 16px;
+    margin: 0;
+    padding: 8px 8px 20px;
+    list-style: none;
+    animation: kp-loop 46s linear infinite;
+  }
+
+  .kp__rij--terug .kp__spoor {
+    animation-direction: reverse;
+    animation-duration: 52s;
+  }
+
+  .kp__band:hover .kp__spoor {
+    animation-play-state: paused;
+  }
+
+  @keyframes kp-loop {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .kp-chip {
+    --c-bg: var(--wit);
+    --c-fg: var(--nacht);
+    --c-ic-bg: var(--hemel-zacht);
+    --c-ic-fg: var(--indigo);
+    --c-rand: var(--lijn);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: none;
+    padding: 9px 26px 9px 9px;
+    border-radius: 999px;
+    background: var(--c-bg);
+    color: var(--c-fg);
+    box-shadow:
+      inset 0 0 0 1px var(--c-rand),
+      0 14px 26px -20px rgb(20 20 60 / 0.45);
+    rotate: var(--kant, 0deg);
+    transition:
+      rotate 0.6s var(--veer),
+      scale 0.6s var(--veer),
+      box-shadow 0.4s var(--uit);
+  }
+
+  .kp-chip:hover {
+    rotate: calc(var(--kant, 0deg) * -1.4 + 1deg);
+    scale: 1.05;
+    box-shadow:
+      inset 0 0 0 1px var(--c-rand),
+      0 22px 34px -20px rgb(20 20 60 / 0.5);
+  }
+
+  /* Kleurvlakken */
+  .kp-chip--hemel {
+    --c-bg: var(--hemel);
+    --c-ic-bg: var(--wit);
+    --c-rand: transparent;
+  }
+
+  .kp-chip--hemel-zacht {
+    --c-bg: var(--hemel-zacht);
+    --c-ic-bg: var(--indigo);
+    --c-ic-fg: var(--wit);
+    --c-rand: transparent;
+  }
+
+  .kp-chip--boter {
+    --c-bg: var(--boter);
+    --c-ic-bg: var(--nacht);
+    --c-ic-fg: var(--boter);
+    --c-rand: transparent;
+  }
+
+  .kp-chip--indigo {
+    --c-bg: var(--indigo);
+    --c-fg: var(--wit);
+    --c-ic-bg: var(--wit);
+    --c-ic-fg: var(--indigo);
+    --c-rand: transparent;
+  }
+
+  .kp-chip--nacht {
+    --c-bg: var(--nacht);
+    --c-fg: var(--wit);
+    --c-ic-bg: var(--hemel);
+    --c-ic-fg: var(--nacht);
+    --c-rand: transparent;
+  }
+
+  .kp-chip--tomaat {
+    --c-bg: var(--tomaat);
+    --c-fg: var(--wit);
+    --c-ic-bg: var(--wit);
+    --c-ic-fg: var(--tomaat);
+    --c-rand: transparent;
+  }
+
+  .kp-chip__icoon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--c-ic-bg);
+    color: var(--c-ic-fg);
+    transition: rotate 0.6s var(--veer);
+  }
+
+  .kp-chip:hover .kp-chip__icoon {
+    rotate: -14deg;
+  }
+
+  .kp-chip__icoon svg {
+    width: 27px;
+  }
+
+  .kp-chip__tekst {
+    display: grid;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .kp-chip__tekst b {
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+  }
+
+  .kp-chip__tekst span {
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 900px) {
+    .kp__kop {
+      grid-template-columns: 1fr;
+    }
+
+    .kp__noot {
+      justify-self: start;
+    }
+  }
+
+  @media (max-width: 520px) {
+
+    .kp__spoor {
+      gap: 10px;
+    }
+
+    .kp-chip {
+      gap: 10px;
+      padding: 8px 18px 8px 8px;
+    }
+
+    .kp-chip__icoon {
+      width: 42px;
+      height: 42px;
+    }
+
+    .kp-chip__icoon svg {
+      width: 22px;
+    }
+
+    .kp-chip__tekst b {
+      font-size: 1.02rem;
+    }
+  }
+
+  /* Rustige modus: geen beweging, alles netjes op een rij */
+  @media (prefers-reduced-motion: reduce) {
+    .kp__band {
+      mask-image: none;
+    }
+
+    .kp__rij {
+      justify-content: center;
+    }
+
+    .kp__spoor {
+      flex: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: var(--container);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+      animation: none;
+    }
+
+    .kp-chip--kopie {
+      display: none;
+    }
+
+    .kp__status i::after {
+      animation: none;
+    }
+  }
+</style>

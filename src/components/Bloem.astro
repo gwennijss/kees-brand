@@ -1,0 +1,49 @@
+---
+import { flowerPath } from '../lib/flower';
+
+interface Props {
+  kleur?: string;
+  lobes?: number;
+  amp?: number;
+  class?: string;
+  style?: string;
+  vinkje?: string | false;
+  label?: string;
+}
+
+const {
+  kleur = 'var(--tomaat)',
+  lobes = 12,
+  amp = 0.085,
+  class: className,
+  style,
+  vinkje = false,
+  label,
+} = Astro.props;
+const d = flowerPath(lobes, amp, vinkje ? 46 : 42);
+---
+
+<svg
+  class={className}
+  style={style}
+  viewBox="0 0 100 100"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <path d={d} fill={kleur}></path>
+  {
+    vinkje && (
+      <path
+        class="bloem-vinkje"
+        d="M31 52l13 13 26-29"
+        fill="none"
+        stroke={vinkje}
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        pathLength="1"
+      />
+    )
+  }
+</svg>

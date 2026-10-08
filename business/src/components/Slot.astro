@@ -1,0 +1,537 @@
+---
+import Bloem from '../../../src/components/Bloem.astro';
+import WachtlijstForm from './WachtlijstForm.astro';
+---
+
+<section class="sectie slot" id="wachtlijst" data-slot>
+  <div class="container">
+    <div class="slot__paneel" data-reveal>
+      <div class="slot__raster" aria-hidden="true"></div>
+
+      <div class="slot__inhoud">
+        <h2 class="kop-xl slot__kop">Kees, nu ook op <span class="slot__streep">jullie werk?</span></h2>
+        <p class="lead slot__lead">Doe mee aan de pilot of zet je op de wachtlijst.</p>
+        <WachtlijstForm id="wl-slot" />
+        <p class="slot__founding">
+          <span class="slot__founding-tag">Founding</span>
+          De eerste 50 bedrijven krijgen het eerste jaar de helft korting.
+        </p>
+      </div>
+
+      <div class="slot__kaartjes" aria-hidden="true">
+        <div class="bk bk--1" style="--r:-4deg;--dz:0s" data-akkoord>
+          <p class="bk__kop"><span class="bk__avatar">k</span><b>Kees</b><span>dinsdag 9:00</span></p>
+          <p class="bk__tekst">Sanne is morgen jarig. Zal ik taart laten bezorgen om 10:00? Kosten €32 uit het kantoorbudget.</p>
+          <div class="bk__knoppen">
+            <span class="bk__knop bk__knop--ja">Akkoord</span>
+            <span class="bk__knop">Iets anders</span>
+          </div>
+          <p class="bk__status"><i></i>Besteld voor woensdag 10:00</p>
+        </div>
+
+        <div class="bk bk--2" style="--r:3deg;--dz:-2.5s">
+          <p class="bk__kop"><span class="bk__avatar">k</span><b>Nieuwe collega</b><span>maandag</span></p>
+          <ul class="bk__lijst">
+            <li><i></i>Sleutel en toegangspas</li>
+            <li><i></i>Laptop en accounts</li>
+            <li><i></i>Welkomstpakket klaar</li>
+          </ul>
+          <p class="bk__voet">Lisa kan beginnen.</p>
+        </div>
+
+        <div class="bk bk--3" style="--r:3deg;--dz:-1.2s">
+          <p class="bk__kop"><span class="bk__avatar">k</span><b>Kees</b><span>donderdag 14:10</span></p>
+          <p class="bk__tekst">Het internetabonnement loopt 1 maart af en kost €89 per maand. Ik heb twee goedkopere opties gevonden.</p>
+          <div class="bk__knoppen">
+            <span class="bk__knop bk__knop--ja">Bekijk</span>
+          </div>
+        </div>
+
+        <div class="bk bk--4" style="--r:-3deg;--dz:-3.6s">
+          <p class="bk__kop"><span class="bk__avatar">k</span><b>Borrel</b><span>vrijdag 16:30</span></p>
+          <div class="bk__meter">
+            <span class="bk__meter-tekst"><b>9</b> van de 12 collega’s komen</span>
+            <span class="bk__meter-spoor"><span></span></span>
+          </div>
+          <p class="bk__voet">Bitterballen en drankjes zijn besteld. Klaar is Kees.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-slot]')!;
+  const kaart = root.querySelector<HTMLElement>('[data-akkoord]')!;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Zodra het paneel in beeld komt, tikt "iemand" op Akkoord.
+  const io = new IntersectionObserver(
+    ([e]) => {
+      if (!e.isIntersecting) return;
+      root.classList.add('is-in-beeld');
+      setTimeout(() => kaart.classList.add('is-akkoord'), rustig ? 0 : 2200);
+      io.disconnect();
+    },
+    { threshold: 0.35 },
+  );
+  io.observe(root);
+</script>
+
+<style>
+  .slot {
+    padding-block: clamp(32px, 4vw, 56px) clamp(56px, 6vw, 88px);
+  }
+
+  .slot__paneel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: min(640px, calc(100svh - 140px));
+    padding: clamp(56px, 6vw, 88px) clamp(20px, 4vw, 48px);
+    border-radius: var(--radius-l);
+    background:
+      radial-gradient(circle at 50% 38%, rgb(255 255 255 / 0.55), transparent 55%),
+      linear-gradient(165deg, var(--hemel-zacht), var(--hemel));
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  .slot__raster {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(43 43 110 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(43 43 110 / 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: center;
+    mask-image: radial-gradient(ellipse at 50% 50%, #000 20%, transparent 75%);
+  }
+
+  .slot :global(.slot__bloem) {
+    position: absolute;
+    z-index: -1;
+    max-width: none;
+    pointer-events: none;
+    animation: slot-draai 90s linear infinite;
+  }
+
+  .slot :global(.slot__bloem--groot) {
+    width: 560px;
+    left: 50%;
+    top: 50%;
+    margin: -280px 0 0 -280px;
+    opacity: 0.5;
+  }
+
+  .slot :global(.slot__bloem--klein) {
+    width: 220px;
+    right: -60px;
+    bottom: -70px;
+    opacity: 0.9;
+    animation-duration: 60s;
+    animation-direction: reverse;
+  }
+
+  @keyframes slot-draai {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  /* ---------- Inhoud ---------- */
+  .slot__inhoud {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 20px;
+    max-width: 540px;
+    text-align: center;
+  }
+
+  .slot__kop {
+    font-size: clamp(2.5rem, 4.6vw, 4.1rem);
+  }
+
+  .slot__streep {
+    white-space: nowrap;
+  }
+
+  .slot__lead {
+    color: var(--ink-zacht);
+    margin-bottom: 6px;
+  }
+
+  .slot__inhoud :global(.wl) {
+    justify-items: stretch;
+  }
+
+  .slot__inhoud :global(.wl__melding) {
+    text-align: center;
+    padding-left: 0;
+  }
+
+  .slot__inhoud :global(.wl__melding:empty) {
+    display: none;
+  }
+
+  .slot__founding {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 10px;
+    padding: 6px 16px 6px 6px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.7);
+    box-shadow: 0 0 0 1px var(--lijn);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .slot__founding-tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--boter);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Zwevende Kees-kaartjes ---------- */
+  .slot__kaartjes {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .bk {
+    position: absolute;
+    width: 250px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--wit);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 30px 50px -26px rgb(20 20 60 / 0.4);
+    font-size: 0.84rem;
+    line-height: 1.45;
+    opacity: 0;
+    translate: 0 24px;
+    rotate: var(--r);
+    transition:
+      opacity 0.9s var(--uit),
+      translate 1.2s var(--uit);
+  }
+
+  .is-in-beeld .bk {
+    opacity: 1;
+    translate: 0 0;
+    animation: zweef 8s var(--in-uit) infinite;
+    animation-delay: var(--dz);
+  }
+
+  .is-in-beeld .bk--1 {
+    transition-delay: 0.3s;
+  }
+  .is-in-beeld .bk--2 {
+    transition-delay: 0.5s;
+  }
+  .is-in-beeld .bk--3 {
+    transition-delay: 0.4s;
+  }
+  .is-in-beeld .bk--4 {
+    transition-delay: 0.6s;
+  }
+
+  @keyframes zweef {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .bk--1 {
+    left: 4%;
+    top: 12%;
+  }
+
+  .bk--2 {
+    left: 7%;
+    bottom: 11%;
+    width: 220px;
+  }
+
+  .bk--3 {
+    right: 4%;
+    top: 14%;
+  }
+
+  .bk--4 {
+    right: 7%;
+    bottom: 12%;
+    width: 230px;
+  }
+
+  .bk__kop {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .bk__kop b {
+    font-size: 0.86rem;
+  }
+
+  .bk__kop span:last-child {
+    margin-left: auto;
+    font-size: 0.72rem;
+    color: var(--ink-stil);
+  }
+
+  .bk__avatar {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--tomaat);
+    color: var(--wit);
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-size: 0.8rem;
+    line-height: 1;
+    padding-bottom: 2px;
+  }
+
+  .bk__tekst {
+    color: var(--ink-zacht);
+  }
+
+  .bk__knoppen {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .bk__knop {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: var(--hemel-licht);
+    color: var(--primair);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    transition:
+      background-color 0.3s,
+      color 0.3s,
+      scale 0.4s var(--veer);
+  }
+
+  .bk__knop--ja {
+    background: var(--indigo-zacht);
+  }
+
+  .bk--1.is-akkoord .bk__knop--ja {
+    background: var(--primair);
+    color: var(--wit);
+    animation: tik 0.5s var(--veer);
+  }
+
+  .bk--1.is-akkoord .bk__knop:not(.bk__knop--ja) {
+    opacity: 0.45;
+  }
+
+  @keyframes tik {
+    40% {
+      scale: 0.92;
+    }
+  }
+
+  .bk__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-height: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--nacht);
+    opacity: 0;
+    transition:
+      max-height 0.6s var(--uit),
+      opacity 0.5s var(--uit) 0.15s,
+      margin 0.6s var(--uit);
+  }
+
+  .bk--1.is-akkoord .bk__status {
+    max-height: 40px;
+    margin-top: 10px;
+    opacity: 1;
+  }
+
+  .bk__status i,
+  .bk__lijst i {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primair)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-5' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / 100% no-repeat;
+  }
+
+  .bk__lijst {
+    display: grid;
+    gap: 7px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bk__lijst li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 600;
+  }
+
+  .bk__lijst i {
+    scale: 0;
+    transition: scale 0.5s var(--veer);
+  }
+
+  .is-in-beeld .bk__lijst li:nth-child(1) i {
+    scale: 1;
+    transition-delay: 1.1s;
+  }
+  .is-in-beeld .bk__lijst li:nth-child(2) i {
+    scale: 1;
+    transition-delay: 1.4s;
+  }
+  .is-in-beeld .bk__lijst li:nth-child(3) i {
+    scale: 1;
+    transition-delay: 1.7s;
+  }
+
+  .bk__voet {
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px dashed var(--lijn);
+    font-size: 0.78rem;
+    color: var(--ink-zacht);
+  }
+
+  .bk__meter {
+    display: grid;
+    gap: 7px;
+  }
+
+  .bk__meter-tekst b {
+    font-family: var(--font-kop);
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+    margin-right: 2px;
+  }
+
+  .bk__meter-spoor {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--hemel-licht);
+    overflow: hidden;
+  }
+
+  .bk__meter-spoor span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--primair);
+    transition: width 1.4s var(--uit) 1s;
+  }
+
+  .is-in-beeld .bk__meter-spoor span {
+    width: 75%;
+  }
+
+  @media (max-width: 1240px) {
+    .bk--1,
+    .bk--3 {
+      top: 8%;
+    }
+    .bk--1 {
+      left: 2%;
+    }
+    .bk--3 {
+      right: 2%;
+    }
+    .bk--2 {
+      left: 3%;
+    }
+    .bk--4 {
+      right: 3%;
+    }
+    .bk {
+      width: 220px;
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .slot__paneel {
+      min-height: 0;
+      gap: 40px;
+    }
+
+    .slot__kaartjes {
+      position: relative;
+      inset: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .bk {
+      position: relative;
+      inset: auto;
+      width: min(100%, 280px);
+    }
+
+    .bk--2,
+    .bk--3 {
+      display: none;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .slot__paneel {
+      padding-inline: 18px;
+      border-radius: var(--radius-m);
+    }
+
+    .slot :global(.slot__bloem--groot) {
+      width: 420px;
+      margin: -260px 0 0 -210px;
+    }
+
+    .slot__founding {
+      border-radius: var(--radius-s);
+      padding: 10px 14px;
+    }
+
+    .bk {
+      rotate: none;
+    }
+  }
+</style>

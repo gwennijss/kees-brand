@@ -1,0 +1,347 @@
+---
+import Base from '../layouts/Base.astro';
+import BusinessLogo, { type Variant } from '../../../src/components/BusinessLogo.astro';
+import Logo from '../../../src/components/Logo.astro';
+
+const varianten: { id: Variant; naam: string; uitleg: string }[] = [
+  {
+    id: 'pil',
+    naam: 'A · Label',
+    uitleg: '"business" als pil in indigo, zoals de knoppen en chips. Het meest direct en werkt goed klein.',
+  },
+  {
+    id: 'stapel',
+    naam: 'B · Stapel',
+    uitleg: 'Rustig en zakelijk: "business" klein en gespatieerd onder het woordmerk. Leest als een divisie van Kees.',
+  },
+  {
+    id: 'regel',
+    naam: 'C · Regel',
+    uitleg: 'De naam zoals je hem uitspreekt: "business kees." op één regel, met "business" licht en "kees" vet.',
+  },
+  {
+    id: 'pas',
+    naam: 'D · Kantoorpasje',
+    uitleg: 'Het woordmerk op een toegangspasje met een indigo band. Een knipoog naar kantoor, en meteen een herkenbaar icoon.',
+  },
+  {
+    id: 'super',
+    naam: 'E · Voetnoot',
+    uitleg: '"business" klein rechtsboven, als een toevoeging. Het minst nadrukkelijk; Kees blijft de hoofdrol spelen.',
+  },
+  {
+    id: 'boven',
+    naam: 'F · Kopregel',
+    uitleg: 'Het spiegelbeeld van B: "business" klein en gespatieerd boven het woordmerk, als de kopregel van een briefpapier.',
+  },
+  {
+    id: 'boven-licht',
+    naam: 'G · Boven, licht',
+    uitleg: 'Zoals C, maar gestapeld: "business" licht in de koppenletter, met "kees." er vet onder. Leest als één naam.',
+  },
+  {
+    id: 'boven-pil',
+    naam: 'H · Label boven',
+    uitleg: 'Het indigo label van A, nu boven het woordmerk. Compacter in de breedte, zodat het beter in een vierkant past.',
+  },
+];
+---
+
+<Base title="Business Kees · Logo-varianten" kaal>
+  <main class="pagina">
+    <header class="kop container">
+      <div>
+        <p class="label">Business Kees · logo</p>
+        <h1 class="kop-l">Acht varianten</h1>
+        <p class="lead">
+          Alle varianten houden het Kees-woordmerk intact, met de tomaatkleurige bloem als punt. Alleen "business"
+          verschilt. Rechts kun je de inktkleur wisselen.
+        </p>
+      </div>
+      <div class="schakel" role="group" aria-label="Inktkleur">
+        <button type="button" data-inkt="nacht" aria-pressed="true">Nachtblauw</button>
+        <button type="button" data-inkt="bordeaux" aria-pressed="false">Bordeaux (zoals Kees)</button>
+      </div>
+    </header>
+
+    <div class="container lijst">
+      {
+        varianten.map((v) => (
+          <section class="variant" id={v.id}>
+            <div class="variant__tekst">
+              <h2 class="kop-m">{v.naam}</h2>
+              <p>{v.uitleg}</p>
+            </div>
+
+            <div class="vlak vlak--groot">
+              <BusinessLogo variant={v.id} class="groot" />
+            </div>
+
+            <div class="vlak vlak--donker">
+              <BusinessLogo
+                variant={v.id}
+                kleur={v.id === 'pas' ? 'var(--ink)' : 'var(--wit)'}
+                accent={v.id === 'pas' ? 'var(--indigo)' : 'var(--hemel)'}
+                opAccent={v.id === 'pas' ? 'var(--wit)' : 'var(--nacht)'}
+                class={v.id === 'pas' ? 'middel pas-donker' : 'middel'}
+              />
+            </div>
+
+            <div class="vlak vlak--nav">
+              <span class="label">Losse knop rechtsboven op de Kees-site</span>
+              <div class="nep-nav">
+                <span class="nep-nav__pil">
+                  <span class="nep-nav__link">Vragen</span>
+                  <span class="nep-nav__cta">Aanmelden</span>
+                </span>
+                <a class="nep-nav__business" href="/">
+                  <BusinessLogo variant={v.id} class="klein" />
+                </a>
+              </div>
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+
+  <script>
+    const knoppen = document.querySelectorAll<HTMLButtonElement>('[data-inkt]');
+    knoppen.forEach((k) =>
+      k.addEventListener('click', () => {
+        const inkt = k.dataset.inkt!;
+        if (inkt === 'bordeaux') document.documentElement.dataset.inkt = 'bordeaux';
+        else delete document.documentElement.dataset.inkt;
+        knoppen.forEach((b) => b.setAttribute('aria-pressed', String(b === k)));
+      }),
+    );
+  </script>
+
+  <style>
+    .pagina {
+      padding-block: 56px 96px;
+    }
+
+    .kop {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .kop > div:first-child {
+      display: grid;
+      gap: 14px;
+    }
+
+    .label {
+      font-weight: 750;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-stil);
+    }
+
+    .schakel {
+      display: inline-flex;
+      gap: 4px;
+      padding: 5px;
+      border-radius: 999px;
+      background: var(--wit);
+      box-shadow: 0 0 0 1px var(--lijn);
+    }
+
+    .schakel button {
+      height: 38px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .schakel button[aria-pressed='true'] {
+      background: var(--ink);
+      color: var(--wit);
+    }
+
+    .lijst {
+      display: grid;
+      gap: 20px;
+    }
+
+    .variant {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--radius-l);
+      background: var(--wit);
+      box-shadow: 0 0 0 1px var(--lijn);
+    }
+
+    .variant__tekst {
+      grid-row: span 2;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+      padding: 14px 6px 14px 12px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--ink-zacht);
+    }
+
+    .variant__tekst h2 {
+      color: var(--ink);
+    }
+
+    .vlak {
+      display: grid;
+      place-items: center;
+      min-height: 200px;
+      padding: 24px;
+      border-radius: var(--radius-m);
+      background: var(--achtergrond);
+    }
+
+    .vlak--donker {
+      background: var(--ink);
+    }
+
+    .vlak--nav {
+      grid-column: 2 / -1;
+      grid-template-columns: 1fr auto;
+      min-height: 0;
+      padding: 20px 24px;
+      background: var(--hemel-licht);
+    }
+
+    .vlak--nav .label {
+      justify-self: start;
+    }
+
+    .vlak :global(.groot) {
+      font-size: 4.2rem;
+    }
+
+    .vlak :global(.groot.blogo--regel) {
+      font-size: 3.2rem;
+    }
+
+    .vlak :global(.middel.blogo--regel) {
+      font-size: 2.1rem;
+    }
+
+    .vlak :global(.middel) {
+      font-size: 2.6rem;
+    }
+
+    .vlak :global(.pas-donker) {
+      box-shadow: none;
+    }
+
+    /* Rechterkant van de Kees-navigatie op ware grootte, met de losse Business-knop */
+    .vlak--nav {
+      overflow: hidden;
+    }
+
+    .nep-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nep-nav__pil,
+    .nep-nav__business {
+      display: inline-flex;
+      align-items: center;
+      height: 54px;
+      border-radius: 999px;
+      background: var(--wit);
+      box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--bordeaux) 11%, transparent),
+        0 10px 30px -18px rgb(40 10 10 / 0.35);
+    }
+
+    .nep-nav__pil {
+      gap: 6px;
+      padding: 0 7px 0 20px;
+      font-weight: 750;
+      font-size: 0.76rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--bordeaux);
+    }
+
+    .nep-nav__link {
+      padding: 0 10px;
+    }
+
+    .nep-nav__cta {
+      display: inline-flex;
+      align-items: center;
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--tomaat);
+      color: var(--wit);
+    }
+
+    .nep-nav__business {
+      padding: 0 20px;
+      text-decoration: none;
+    }
+
+    .nep-nav__business :global(.klein) {
+      font-size: 1.75rem;
+    }
+
+    .nep-nav__business :global(.blogo--pil) {
+      font-size: 1.9rem;
+    }
+
+    .nep-nav__business :global(.blogo--stapel) {
+      font-size: 1.6rem;
+      translate: 0 0.08em;
+    }
+
+    .nep-nav__business :global(.blogo--super) {
+      font-size: 1.9rem;
+    }
+
+    .nep-nav__business :global(.blogo--pas) {
+      font-size: 1.05rem;
+    }
+
+    .nep-nav__business :global(.blogo--boven),
+    .nep-nav__business :global(.blogo--boven-pil) {
+      font-size: 1.5rem;
+      translate: 0 -0.06em;
+    }
+
+    .nep-nav__business :global(.blogo--boven-licht) {
+      font-size: 1.45rem;
+      translate: 0 -0.08em;
+    }
+
+    @media (max-width: 1100px) {
+      .variant {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .variant__tekst {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
+
+      .vlak--nav {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</Base>

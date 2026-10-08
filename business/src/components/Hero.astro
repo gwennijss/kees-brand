@@ -1,0 +1,641 @@
+---
+import Telefoon from '../../../src/components/Telefoon.astro';
+import Sticker from '../../../src/components/Sticker.astro';
+import Bloem from '../../../src/components/Bloem.astro';
+import WachtlijstForm from './WachtlijstForm.astro';
+---
+
+<section class="hero" data-hero>
+  <div class="container hero__grid">
+    <div class="hero__tekst">
+      <h1 class="kop-xl hero__kop">
+        <span class="visually-hidden">Kantoor geregeld? Klaar is Kees.</span>
+        <span class="regel" aria-hidden="true">
+          <span style="--i:1" class="wissel" data-wissel>
+            <span class="wissel__woord is-actief">Kantoor geregeld?</span>
+            <span class="wissel__woord">Koffie besteld?</span>
+            <span class="wissel__woord">Borrel gepland?</span>
+            <span class="wissel__woord">Taart voor Sanne?</span>
+            <span class="wissel__woord">Lisa ingewerkt?</span>
+          </span>
+        </span>
+        <span class="regel" aria-hidden="true">
+          <span style="--i:2" class="hero__kees">Klaar is Kees<Bloem class="hero__punt" kleur="var(--sticker)" lobes={10} amp={0.11} /></span>
+        </span>
+      </h1>
+
+      <p class="lead hero__in" style="--i:3">
+        Business Kees is de office manager in de WhatsApp-groep van kantoor. Van koffie en wc-papier tot de borrel en het
+        contract dat bijna afloopt: Kees regelt het, jij keurt goed.
+      </p>
+
+      <div class="hero__in hero__form" style="--i:4">
+        <WachtlijstForm id="wl-hero" />
+      </div>
+
+    </div>
+
+    <div class="hero__beeld" aria-hidden="true">
+      <div class="hero__decor">
+        <Bloem class="hero__bloem" kleur="var(--hemel)" lobes={12} amp={0.07} />
+      </div>
+
+      <div class="hero__toestel" data-toestel>
+        <Telefoon class="hero__telefoon" naam="Kantoor" status="Kees, Mark, Sanne, jij" tijd="16:42">
+          <Fragment slot="avatar">
+            <svg viewBox="0 0 36 36" class="groep-avatar"><rect width="36" height="36" fill="#2b2b6e"></rect><path d="M11 27V12.5l7-3.5 7 3.5V27M15 15h1.5M19.5 15H21M15 19h1.5M19.5 19H21M16.5 27v-4h3v4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          </Fragment>
+        </Telefoon>
+
+        <div class="zweef zweef--bestelling" data-bestelling>
+          <p class="zweef__kop"><span class="zweef__icoon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h2l2 10h11l2-7H6.2"></path><circle cx="9" cy="19" r="1.4"></circle><circle cx="17" cy="19" r="1.4"></circle></svg>
+          </span><b>Bestelling</b><span>morgen 9:00</span></p>
+          <ul>
+            <li><span>Koffiebonen</span><b>2 kg</b></li>
+            <li><span>Melk</span><b>6 liter</b></li>
+          </ul>
+          <p class="zweef__voet"><span>Open doen</span><b data-opendoen>…</b></p>
+        </div>
+
+        <div class="zweef zweef--taak" data-taak>
+          <span class="zweef__icoon zweef__icoon--monday">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-10"></path></svg>
+          </span>
+          <span class="zweef__taak">
+            <b>Offerte Van Dijk</b>
+            <span>monday · vr 12:00 · Joost</span>
+          </span>
+        </div>
+
+        <div class="stempel" data-stempel>
+          <Sticker class="stempel__sticker">Klaar<br />is Kees!</Sticker>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { bericht, typen } from '../../../src/lib/wa';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]')!;
+  const spoor = hero.querySelector<HTMLElement>('.wa-chat__spoor')!;
+  const status = hero.querySelector<HTMLElement>('[data-status]')!;
+  const bestelling = hero.querySelector<HTMLElement>('[data-bestelling]')!;
+  const opendoen = hero.querySelector<HTMLElement>('[data-opendoen]')!;
+  const taak = hero.querySelector<HTMLElement>('[data-taak]')!;
+  const stempel = hero.querySelector<HTMLElement>('[data-stempel]')!;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const groep = status.textContent!;
+  const pauze = (ms: number) => new Promise((r) => setTimeout(r, rustig ? 0 : ms));
+
+  const mensen = {
+    Sanne: '#c2410c',
+    Mark: '#0f7b6c',
+    Kees: '#4f4fc1',
+  } as const;
+
+  function voeg(html: string) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const el = tmp.firstElementChild as HTMLElement;
+    el.classList.add('is-verborgen');
+    spoor.append(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('is-verborgen')));
+    while (spoor.children.length > 12) spoor.firstElementChild?.remove();
+    return el;
+  }
+
+  function weg(el: HTMLElement) {
+    el.classList.add('is-verborgen');
+    setTimeout(() => el.remove(), 700);
+  }
+
+  let vorige = '';
+  async function zeg(wie: keyof typeof mensen | 'jij', html: string, tijd: string, typ = 900) {
+    const nieuw = wie !== vorige;
+    vorige = wie;
+    if (wie === 'jij') {
+      await pauze(typ);
+      voeg(bericht({ van: 'uit', html, tijd, staart: nieuw }));
+      return;
+    }
+    status.textContent = `${wie} typt…`;
+    const t = voeg(typen({ verborgen: false }));
+    await pauze(typ);
+    weg(t);
+    status.textContent = groep;
+    await pauze(120);
+    voeg(bericht({ van: 'in', html, tijd, staart: nieuw, afzender: nieuw ? { naam: wie, kleur: mensen[wie] } : undefined }));
+  }
+
+  async function speel() {
+    await pauze(1300);
+    await zeg('Sanne', 'Koffie is bijna op en morgen komt er een klant.', '16:42', 1000);
+    await pauze(500);
+    await zeg('Kees', 'Ik zet koffie en melk in de bestelling voor morgen 9:00. Wie doet er open? Mark staat ingeroosterd.', '16:42', 1500);
+    bestelling.classList.add('is-zichtbaar');
+    await pauze(700);
+    await zeg('Mark', 'Ik ben er.', '16:43', 900);
+    opendoen.textContent = 'Mark';
+    opendoen.classList.add('is-gezet');
+    await pauze(300);
+    await zeg('Kees', 'Top, Mark krijgt een seintje als de bezorger onderweg is. Klaar is Kees.', '16:43', 1200);
+    await pauze(900);
+    await zeg('jij', 'Kees, zet de offerte voor Van Dijk op vrijdag in monday.', '16:45', 1100);
+    await pauze(300);
+    await zeg('Kees', 'Staat erin, vrijdag 12:00. Ik herinner je donderdagmiddag.', '16:45', 1300);
+    taak.classList.add('is-zichtbaar');
+    await pauze(900);
+    stempel.classList.add('is-gezet');
+  }
+
+  speel();
+
+  // Wisselend woord in de kop, net als op de Kees-site
+  const woorden = [...hero.querySelectorAll<HTMLElement>('.wissel__woord')];
+  let w = 0;
+  if (!rustig) {
+    window.setTimeout(() => {
+      window.setInterval(() => {
+        if (document.hidden) return;
+        const oud = woorden[w];
+        w = (w + 1) % woorden.length;
+        const nieuw = woorden[w];
+        oud.classList.remove('is-actief');
+        oud.classList.add('is-weg');
+        nieuw.classList.remove('is-weg');
+        void nieuw.offsetWidth;
+        nieuw.classList.add('is-actief');
+        window.setTimeout(() => oud.classList.remove('is-weg'), 900);
+      }, 2600);
+    }, 1400);
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: 110px 48px;
+    overflow: clip;
+  }
+
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: center;
+    gap: clamp(32px, 5vw, 72px);
+  }
+
+  .hero__tekst {
+    display: grid;
+    justify-items: start;
+    gap: 26px;
+  }
+
+  .hero__kop {
+    display: grid;
+    font-size: clamp(2.8rem, 5.4vw, 4.9rem);
+  }
+
+  .regel {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+
+  .regel > span {
+    display: inline-block;
+    transform: translateY(105%);
+    animation: regel-op 1.1s var(--uit) forwards;
+    animation-delay: calc(var(--i) * 120ms + 100ms);
+  }
+
+  @keyframes regel-op {
+    to {
+      transform: none;
+    }
+  }
+
+  .hero__kees {
+    display: inline-flex !important;
+    align-items: baseline;
+  }
+
+  .hero :global(.hero__punt) {
+    flex: none;
+    width: 0.24em;
+    max-width: none;
+    margin-left: 0.04em;
+  }
+
+  .hero__in {
+    opacity: 0;
+    transform: translateY(16px);
+    animation: in 1s var(--uit) forwards;
+    animation-delay: calc(var(--i) * 120ms + 150ms);
+  }
+
+  @keyframes in {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ---------- Beeld ---------- */
+  .hero__beeld {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: min(76svh, 700px);
+  }
+
+  /* Kees-bloemen achter de telefoon */
+  .hero__decor {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .hero__decor :global(.hero__bloem) {
+    position: absolute;
+    width: min(118%, 720px);
+    max-width: none;
+    aspect-ratio: 1;
+    animation:
+      bloem-in 1.8s var(--uit) both,
+      draai 90s linear infinite;
+  }
+
+  .hero__decor :global(.hero__bloem-klein) {
+    position: absolute;
+    left: 6%;
+    bottom: 10%;
+    width: 92px;
+    animation:
+      bloem-in 1.4s var(--uit) 0.9s both,
+      draai 24s linear infinite reverse;
+  }
+
+  .hero__decor :global(.hero__bloem-mini) {
+    position: absolute;
+    right: 12%;
+    top: 4%;
+    width: 46px;
+    animation:
+      bloem-in 1.4s var(--uit) 1.1s both,
+      draai 18s linear infinite;
+  }
+
+  @keyframes bloem-in {
+    from {
+      opacity: 0;
+      scale: 0.8;
+    }
+  }
+
+  /* Wisselend woord: rolt omhoog uit beeld, het volgende rolt erin */
+  .wissel {
+    display: grid !important;
+  }
+
+  .wissel__woord {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(70%) rotateX(-60deg);
+    transform-origin: 50% 100%;
+    filter: blur(6px);
+    transition:
+      transform 0.9s var(--uit),
+      opacity 0.6s var(--uit),
+      filter 0.6s var(--uit);
+  }
+
+  .wissel__woord.is-actief {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .wissel__woord.is-weg {
+    opacity: 0;
+    transform: translateY(-70%) rotateX(60deg);
+    transform-origin: 50% 0;
+    filter: blur(6px);
+  }
+
+  .hero__toestel {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 418 / 877;
+    max-height: 640px;
+    opacity: 0;
+    transform: translateY(40px) rotate(2deg);
+    animation: toestel 1.4s var(--uit) 0.45s forwards;
+  }
+
+  @keyframes toestel {
+    to {
+      opacity: 1;
+      transform: rotate(-2deg);
+    }
+  }
+
+  .hero__toestel :global(.hero__telefoon) {
+    width: 100%;
+  }
+
+  .hero :global(.groep-avatar) {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Zwevende kaartjes */
+  .zweef {
+    position: absolute;
+    z-index: 3;
+    border-radius: 18px;
+    background: var(--wit);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 30px 50px -24px rgb(20 20 60 / 0.4);
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+    transition:
+      opacity 0.7s var(--uit),
+      transform 0.9s var(--veer);
+  }
+
+  .zweef.is-zichtbaar {
+    opacity: 1;
+    transform: rotate(var(--r, 0deg));
+  }
+
+  .zweef__icoon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--hemel-zacht);
+    color: var(--indigo);
+  }
+
+  .zweef__icoon svg {
+    width: 17px;
+  }
+
+  .zweef--bestelling {
+    --r: 3deg;
+    top: 12%;
+    left: -56%;
+    width: 256px;
+    padding: 14px 16px 12px;
+  }
+
+  .zweef__kop {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .zweef__kop b {
+    font-family: var(--font-kop);
+    font-size: 1.02rem;
+    letter-spacing: -0.02em;
+  }
+
+  .zweef__kop > span:last-child {
+    margin-left: auto;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: var(--ink-stil);
+  }
+
+  .zweef ul {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0 0 10px;
+    list-style: none;
+    border-bottom: 1px dashed var(--lijn);
+  }
+
+  .zweef li,
+  .zweef__voet {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .zweef li span,
+  .zweef__voet span {
+    color: var(--ink-zacht);
+  }
+
+  .zweef__voet {
+    padding-top: 9px;
+  }
+
+  .zweef__voet b {
+    padding: 0 8px;
+    border-radius: 999px;
+    transition: background-color 0.4s;
+  }
+
+  .zweef__voet b.is-gezet {
+    background: var(--boter);
+  }
+
+  .zweef--taak {
+    --r: -2deg;
+    right: -40%;
+    bottom: 10%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px 12px 12px;
+  }
+
+  .zweef__icoon--monday {
+    background: var(--indigo);
+    color: var(--wit);
+    border-radius: 50%;
+  }
+
+  .zweef__taak {
+    display: grid;
+    line-height: 1.3;
+  }
+
+  .zweef__taak b {
+    font-size: 0.95rem;
+  }
+
+  .zweef__taak span {
+    font-size: 0.78rem;
+    color: var(--ink-stil);
+  }
+
+  .stempel {
+    position: absolute;
+    z-index: 4;
+    right: -14%;
+    top: 6%;
+    width: 128px;
+    opacity: 0;
+    transform: scale(1.8) rotate(-30deg);
+    pointer-events: none;
+  }
+
+  .stempel.is-gezet {
+    animation: stempel 0.7s var(--veer) forwards;
+  }
+
+  .stempel :global(.stempel__sticker) {
+    width: 100%;
+    font-size: 1.15rem;
+  }
+
+  @keyframes stempel {
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(-12deg);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .zweef--bestelling {
+      left: -30%;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .hero {
+      min-height: 0;
+      padding-top: 104px;
+    }
+
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero__beeld {
+      height: 600px;
+    }
+
+    .zweef--bestelling {
+      left: -8%;
+      top: 8%;
+    }
+
+    .zweef--taak {
+      right: -8%;
+    }
+
+    .stempel {
+      right: -4%;
+      width: 100px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero {
+      padding-block: 100px 32px;
+    }
+
+    .hero__grid {
+      gap: 8px;
+    }
+
+    .hero__tekst {
+      gap: 20px;
+    }
+
+    /* Langste wisselwoord ("Kantoor geregeld?") moet op 360px op één regel passen */
+    .hero__kop {
+      font-size: min(2.8rem, calc((100vw - 2 * var(--gutter)) / 7.9));
+    }
+
+    .hero__form {
+      justify-self: stretch;
+    }
+
+    .hero__form :global(.wl) {
+      width: 100%;
+    }
+
+    .hero__beeld {
+      height: 500px;
+    }
+
+    .hero__decor :global(.hero__bloem) {
+      width: 112%;
+    }
+
+    .zweef {
+      font-size: 0.8rem;
+    }
+
+    .zweef--bestelling {
+      top: 9%;
+      left: -11%;
+      width: 204px;
+      padding: 12px 14px 10px;
+    }
+
+    .zweef__kop {
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .zweef__kop b {
+      font-size: 0.92rem;
+    }
+
+    .zweef__kop > span:last-child {
+      font-size: 0.7rem;
+    }
+
+    .zweef__icoon {
+      width: 26px;
+      height: 26px;
+    }
+
+    .zweef--taak {
+      right: -11%;
+      bottom: 9%;
+      gap: 10px;
+      padding: 10px 14px 10px 10px;
+    }
+
+    .zweef__taak b {
+      font-size: 0.9rem;
+    }
+
+    .zweef__taak span {
+      font-size: 0.74rem;
+    }
+
+    .stempel {
+      top: 1%;
+      right: -9%;
+      width: 88px;
+    }
+
+    .stempel :global(.stempel__sticker) {
+      font-size: 0.9rem;
+    }
+  }
+</style>

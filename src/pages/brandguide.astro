@@ -1,0 +1,1165 @@
+---
+// Printbare brandguide (A4 liggend). Wordt omgezet naar PDF; staat niet in de navigatie.
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import Logo from '../components/Logo.astro';
+import Bloem from '../components/Bloem.astro';
+import Sticker from '../components/Sticker.astro';
+import gezinFoto from '../assets/lenneke-gezin.jpg';
+
+const rgb = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `${(n >> 16) & 255} · ${(n >> 8) & 255} · ${n & 255}`;
+};
+
+const kleuren = [
+  { naam: 'Bordeaux', hex: '#67000A', rol: 'Tekst, logo en koppen', licht: false },
+  { naam: 'Tomaat', hex: '#F4532C', rol: 'Kees-sticker en hoofdknoppen', licht: false },
+  { naam: 'Indigo', hex: '#4F4FC1', rol: 'Vertrouwen, rust, de avond', licht: false },
+  { naam: 'Hemel', hex: '#ABC9FB', rol: 'Zachte vlakken en de bloem', licht: true },
+  { naam: 'Lime', hex: '#C4E252', rol: 'Vrolijk accent, footer', licht: true },
+  { naam: 'Lila', hex: '#DAA3E0', rol: 'Speels accent', licht: true },
+  { naam: 'Boter', hex: '#FDF8A7', rol: 'Warm accent, highlights', licht: true },
+];
+
+const basis = [
+  { naam: 'Achtergrond', hex: '#F6F5F2', rol: 'Pagina-achtergrond' },
+  { naam: 'Wit', hex: '#FFFFFF', rol: 'Kaarten en vlakken' },
+];
+
+const toon = [
+  { titel: 'Nuchter en warm', wel: 'Sem is donderdag jarig. Zal ik woensdag een seintje geven?', niet: 'Hey superouder! 🚀 Jouw AI-powered verjaardagsflow staat klaar!' },
+  { titel: 'Een knipoog mag', wel: 'Vorige week bleef de badmuts thuis 😉', niet: 'Want laten we eerlijk zijn: je man vergeet het tóch.' },
+  { titel: 'Geen techtaal', wel: 'Kees onthoudt, plant en regelt.', niet: 'Ons slimme algoritme optimaliseert je huishouden.' },
+  { titel: 'Kees is gewoon Kees', wel: 'Kees doet een voorstel. Jij tikt op akkoord.', niet: 'Hij doet een voorstel en zij regelt de rest.' },
+  { titel: 'Geen trucjes met tegenstellingen', wel: 'Kees denkt een paar dagen vooruit.', niet: 'Zeven dagen, nul vergeten gymtassen.' },
+];
+
+const totaal = 12;
+let nr = 0;
+const pagina = () => String(++nr).padStart(2, '0');
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kees · Brandguide</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <!-- 01 Cover -->
+    <section class="pagina cover">
+      <Bloem class="cover__bloem" kleur="var(--hemel)" lobes={12} amp={0.07} />
+      <Bloem class="cover__bloem-klein" kleur="var(--lila)" lobes={10} amp={0.11} />
+      <Sticker class="cover__sticker">Klaar<br />is Kees!</Sticker>
+      <div class="cover__logo"><Logo /></div>
+      <div class="cover__voet">
+        <p><b>Brandguide</b> · versie 1.0</p>
+        <p>Oktober 2026</p>
+      </div>
+      <span class="paginanr">{pagina()} / {totaal}</span>
+    </section>
+
+    <!-- 02 Het merk -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Het merk</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="twee">
+        <div>
+          <h1 class="groot">Het hele huishouden? Klaar is Kees.</h1>
+          <p class="tekst">
+            Kees is de gezinsassistent in WhatsApp. Kees onthoudt, plant en regelt alles wat een gezin draaiende houdt: de agenda,
+            het weekmenu, verjaardagen en alles daartussen. Elke ochtend een appje met wat er speelt, plus een voorstel. Jij tikt
+            alleen op akkoord.
+          </p>
+          <p class="tekst">
+            Kees moet voelen als een fijn onderdeel van het gezin. Betrouwbaar genoeg om alles aan toe te vertrouwen, en vrolijk
+            genoeg om er zin in te hebben.
+          </p>
+        </div>
+        <div class="kernwaarden">
+          {
+            [
+              ['Betrouwbaar', 'var(--indigo)', 'var(--wit)'],
+              ['Vrolijk voor het hele gezin', 'var(--tomaat)', 'var(--wit)'],
+              ['Makkelijk', 'var(--lime)', 'var(--bordeaux)'],
+              ['Licht', 'var(--hemel)', 'var(--bordeaux)'],
+              ['Met een knipoog', 'var(--boter)', 'var(--bordeaux)'],
+              ['Niet te vrouwelijk, niet sassy', 'var(--lila)', 'var(--bordeaux)'],
+            ].map(([t, bg, fg], i) => (
+              <span class="kernwaarde" style={`background:${bg};color:${fg};rotate:${[-3, 2, -1, 3, -2, 1][i]}deg`}>
+                {t}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 Logo -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Logo</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="logo-hoofd">
+        <div class="logo-groot"><Logo /></div>
+        <div class="uitleg">
+          <h2 class="middel">Het woordmerk</h2>
+          <p class="tekst">
+            Een stevig woordmerk in kleine letters, gezet in Bricolage Grotesque ExtraBold met krappe spatiëring. Achter "kees" staat
+            een Kees-bloempje als punt: kees. Klaar.
+          </p>
+          <p class="tekst">Het bloempje is altijd tomaat, tenzij het woordmerk op een tomaatkleurig vlak staat. Dan wordt het bordeaux.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 Logo-varianten -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Logo · varianten</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="varianten">
+        <div class="variant" style="background:var(--wit);box-shadow:inset 0 0 0 1px var(--lijn)"><Logo /><small>Primair op wit</small></div>
+        <div class="variant" style="background:var(--achtergrond);box-shadow:inset 0 0 0 1px var(--lijn)"><Logo /><small>Op achtergrond</small></div>
+        <div class="variant" style="background:var(--bordeaux);color:var(--wit)"><Logo kleur="var(--wit)" /><small>Negatief op bordeaux</small></div>
+        <div class="variant" style="background:var(--tomaat);color:var(--wit)"><Logo kleur="var(--wit)" punt="var(--bordeaux)" /><small>Op tomaat</small></div>
+        <div class="variant" style="background:var(--indigo);color:var(--wit)"><Logo kleur="var(--wit)" punt="var(--lime)" /><small>Op indigo</small></div>
+        <div class="variant" style="background:var(--hemel)"><Logo /><small>Op hemel</small></div>
+        <div class="variant" style="background:var(--lime)"><Logo /><small>Op lime</small></div>
+        <div class="variant" style="background:var(--boter)"><Logo /><small>Op boter</small></div>
+      </div>
+    </section>
+
+    <!-- 05 Logo-regels -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Logo · regels</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="regels-grid">
+        <div class="vrijruimte">
+          <div class="vrijruimte__kader">
+            <span class="vrijruimte__maat vrijruimte__maat--boven">k</span>
+            <span class="vrijruimte__maat vrijruimte__maat--links">k</span>
+            <Logo />
+          </div>
+          <p class="tekst klein">
+            <b>Vrije ruimte.</b> Houd rondom het logo minimaal de hoogte van de "k" vrij.<br />
+            <b>Minimale grootte.</b> 24 px breed op scherm, 15 mm in print.
+          </p>
+        </div>
+        <div class="niet-doen">
+          {
+            [
+              ['Niet uitrekken', 'transform:scaleX(1.5)'],
+              ['Geen andere kleur', 'color:var(--lime)'],
+              ['Geen schaduw', 'text-shadow:4px 4px 0 var(--hemel)'],
+              ['Niet draaien', 'transform:rotate(-14deg)'],
+              ['Niet te licht of transparant', 'opacity:0.22'],
+              ['Geen vinkje toevoegen', ''],
+            ].map(([t, stijl]) => (
+              <div class="niet">
+                <div class="niet__vlak">
+                  <span class="niet__logo" style={stijl}>
+                    <Logo kleur={stijl.includes('lime') ? 'var(--lime)' : 'var(--bordeaux)'} />
+                    {t === 'Geen vinkje toevoegen' && <span class="niet__vink">✓</span>}
+                  </span>
+                </div>
+                <p><span class="kruis">✕</span> {t}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 Bloem en sticker -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Vorm · de Kees-bloem</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="twee">
+        <div>
+          <h2 class="middel">Half bloem, half kortingssticker.</h2>
+          <p class="tekst">
+            Ons vaste vormelement is een cirkel met zachte golven. Als groot vlak in hemelsblauw staat de bloem achter de telefoon
+            en draait hij heel langzaam. Met tekst erin wordt hij de Kees-sticker: het app-icoon, de avatar in WhatsApp en de
+            beloning na elke actie.
+          </p>
+          <ul class="lijst">
+            <li>Sticker altijd in tomaat met witte tekst, of in boter of hemel met bordeaux tekst.</li>
+            <li>Licht gedraaid plaatsen (−8° tot −14°), alsof hij net is opgeplakt.</li>
+            <li>Maximaal één sticker per scherm of pagina.</li>
+          </ul>
+        </div>
+        <div class="vorm-demo">
+          <Bloem class="vorm-demo__bloem" kleur="var(--hemel)" lobes={12} amp={0.07} />
+          <Sticker class="vorm-demo__a">Klaar<br />is Kees!</Sticker>
+          <Sticker class="vorm-demo__b" kleur="var(--boter)" tekst="var(--bordeaux)">Bedacht<br />in Marokko</Sticker>
+          <Sticker class="vorm-demo__c">k</Sticker>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 Kleur -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Kleur</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="kleur-intro">
+        <h2 class="middel">Vrolijk en bubbly, op een rustige basis.</h2>
+        <p class="tekst">Bordeaux draagt de tekst. De andere kleuren zijn om mee te spelen, op een neutrale achtergrond.</p>
+      </div>
+      <div class="swatches">
+        {
+          kleuren.map((k) => (
+            <div class="swatch" style={`background:${k.hex};color:${k.licht ? 'var(--bordeaux)' : 'var(--wit)'}`}>
+              <b>{k.naam}</b>
+              <span class="swatch__codes">
+                HEX {k.hex}
+                <br />
+                RGB {rgb(k.hex)}
+              </span>
+              <span class="swatch__rol">{k.rol}</span>
+            </div>
+          ))
+        }
+      </div>
+      <div class="basis">
+        {
+          basis.map((k) => (
+            <div class="basis__kleur">
+              <span class="basis__stip" style={`background:${k.hex}`} />
+              <span>
+                <b>{k.naam}</b> · HEX {k.hex} · RGB {rgb(k.hex)} · {k.rol}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- 08 Kleurgebruik -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Kleur · gebruik</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="twee">
+        <div>
+          <h2 class="middel">Kleurrijk, niet druk.</h2>
+          <ul class="lijst">
+            <li><b>Eén fel vlak per element.</b> Wat erin staat is wit of een zachte tint.</li>
+            <li><b>Tekst is bordeaux</b>, of wit op indigo, tomaat en bordeaux.</li>
+            <li><b>Geen markeerstift en geen gekleurde woorden</b> in koppen.</li>
+            <li><b>Oranje en lime niet direct naast elkaar</b> als grote vlakken.</li>
+            <li>Geen nieuwe kleuren toevoegen buiten dit palet.</li>
+          </ul>
+          <p class="label verhouding-label">Verhouding op een pagina</p>
+          <div class="verhouding">
+            <span style="flex:46;background:var(--achtergrond);box-shadow:inset 0 0 0 1px var(--lijn)">Basis</span>
+            <span style="flex:12;background:var(--bordeaux);color:var(--wit)">Tekst</span>
+            <span style="flex:10;background:var(--hemel)"></span>
+            <span style="flex:8;background:var(--indigo)"></span>
+            <span style="flex:8;background:var(--tomaat)"></span>
+            <span style="flex:6;background:var(--lime)"></span>
+            <span style="flex:5;background:var(--lila)"></span>
+            <span style="flex:5;background:var(--boter)"></span>
+          </div>
+        </div>
+        <div class="combis">
+          {
+            [
+              ['var(--indigo)', 'var(--wit)', 'Agenda'],
+              ['var(--tomaat)', 'var(--wit)', 'Verjaardagen'],
+              ['var(--lime)', 'var(--bordeaux)', 'School'],
+              ['var(--boter)', 'var(--bordeaux)', 'Eten'],
+              ['var(--lila)', 'var(--bordeaux)', 'Thuis'],
+              ['var(--hemel)', 'var(--bordeaux)', 'Weekmenu'],
+            ].map(([bg, fg, t], i) => (
+              <div class="combi" style={`background:${bg};color:${fg};rotate:${[-4, 2, -2, 3, -3, 1][i]}deg`}>
+                <b>{t}</b>
+                <span>○ Gymtas Noor</span>
+                <span>○ Zwemles 9:15</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 Typografie -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Typografie</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="type">
+        <div class="type__kaart" style="background:var(--bordeaux);color:var(--wit)">
+          <span class="label licht">Koppen</span>
+          <p class="type__aa kopfont">Aa</p>
+          <p class="type__naam kopfont">Bricolage Grotesque</p>
+          <p class="tekst klein licht">Semibold tot Bold (600–700) · spatiëring −4% tot −5% · regelhoogte 1,0</p>
+        </div>
+        <div class="type__kaart" style="background:var(--wit);box-shadow:inset 0 0 0 1px var(--lijn)">
+          <span class="label">Lopende tekst</span>
+          <p class="type__aa tekstfont">Aa</p>
+          <p class="type__naam tekstfont">Figtree</p>
+          <p class="tekst klein">Regular tot Bold (400–700) · regelhoogte 1,55–1,6</p>
+        </div>
+        <div class="schaal">
+          <div><span class="label">Hero</span><p class="kopfont s-hero">Klaar is Kees.</p></div>
+          <div><span class="label">Sectiekop</span><p class="kopfont s-l">Wat er allemaal in je hoofd zit.</p></div>
+          <div><span class="label">Kaartkop</span><p class="kopfont s-m">Ochtendbericht om 7:00</p></div>
+          <div><span class="label">Tekst</span><p class="tekstfont s-tekst">Kees doet een voorstel en jij tikt op akkoord. Daarna is het geregeld.</p></div>
+        </div>
+      </div>
+      <p class="tekst klein voetnoot">
+        Beide fonts zijn gratis Google Fonts. Koppen staan altijd in één stijl: geen cursief, geen serif-accenten en geen markeerstift.
+      </p>
+    </section>
+
+    <!-- 10 Interface -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Interface</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <div class="twee">
+        <div class="ui-demo">
+          <span class="knop">Meld je gezin aan →</span>
+          <span class="knop knop--licht">Zo werkt het</span>
+          <div class="wa">
+            <p class="wa__in">Goeiemorgen! Sem is donderdag jarig. Zal ik woensdag een seintje geven voor het cadeau?<time>07:00</time></p>
+            <p class="wa__knop">↩ Akkoord</p>
+            <p class="wa__uit">Akkoord<time>07:02 ✓✓</time></p>
+          </div>
+        </div>
+        <div>
+          <h2 class="middel">Pillen met een harde schaduw.</h2>
+          <ul class="lijst">
+            <li><b>Knoppen</b> zijn pillen met een harde bordeaux schaduw van 4 px eronder. Bij hover komen ze iets omhoog.</li>
+            <li><b>Hoeken</b> zijn altijd rond: 12, 20, 28 of 40 px.</li>
+            <li><b>Product</b> laten we zien in een echte iPhone met een getrouwe WhatsApp-interface. Kees praat altijd in WhatsApp.</li>
+            <li><b>Beweging</b> is zacht en lang uitlopend, zonder doorschieten. Rust boven spektakel.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 Tone of voice -->
+    <section class="pagina">
+      <header class="kop"><span class="label">Tone of voice</span><span class="paginanr">{pagina()} / {totaal}</span></header>
+      <p class="tekst intro">
+        Kees is dat ene gezinslid dat overal aan denkt: behulpzaam, een beetje grappig en nooit betweterig. We spreken je aan met
+        "je" en "jullie", en we zeggen nooit "AI".
+      </p>
+      <div class="toon">
+        {
+          toon.map((t) => (
+            <div class="toon__rij">
+              <b class="toon__titel">{t.titel}</b>
+              <p class="toon__wel"><span>Wel</span>{t.wel}</p>
+              <p class="toon__niet"><span>Niet</span>{t.niet}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- 12 Beeld + afsluiting -->
+    <section class="pagina beeld">
+      <div class="beeld__foto">
+        <Image src={gezinFoto} alt="" widths={[1000]} class="beeld__img" />
+      </div>
+      <div class="beeld__tekst">
+        <span class="label">Fotografie</span>
+        <h2 class="middel">Echte gezinnen, echt licht.</h2>
+        <ul class="lijst">
+          <li>Echte momenten in plaats van geposeerde stockfoto's.</li>
+          <li>Warm daglicht, levendige kleuren en een beetje rommel mag.</li>
+          <li>Foto's altijd met afgeronde hoeken, eventueel met één sticker erop.</li>
+        </ul>
+        <div class="afsluiting">
+          <Logo />
+          <p class="tekst klein">Vragen over de huisstijl? Neem contact op met het Kees-team.</p>
+        </div>
+      </div>
+      <span class="paginanr paginanr--los">{pagina()} / {totaal}</span>
+    </section>
+  </body>
+</html>
+
+<style is:global>
+  @page {
+    size: 297mm 210mm;
+    margin: 0;
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: #ddd;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .pagina {
+    position: relative;
+    box-sizing: border-box;
+    width: 297mm;
+    height: 210mm;
+    margin: 0 auto 12px;
+    padding: 18mm 20mm;
+    overflow: hidden;
+    background: var(--achtergrond);
+    color: var(--bordeaux);
+    break-after: page;
+    page-break-after: always;
+  }
+
+  @media print {
+    html,
+    body {
+      background: none;
+    }
+    .pagina {
+      margin: 0;
+    }
+  }
+
+  /* ---------- Gedeeld ---------- */
+  .kop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12mm;
+    padding-bottom: 4mm;
+    border-bottom: 1px solid var(--lijn);
+  }
+
+  .label {
+    font-weight: 750;
+    font-size: 9pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .label.licht,
+  .licht {
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .paginanr {
+    font-size: 9pt;
+    font-weight: 600;
+    color: var(--ink-stil);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .paginanr--los {
+    position: absolute;
+    right: 20mm;
+    bottom: 12mm;
+  }
+
+  .groot,
+  .middel,
+  .kopfont {
+    font-family: var(--font-kop);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .groot {
+    font-size: 46pt;
+    margin-bottom: 8mm;
+  }
+
+  .middel {
+    font-size: 24pt;
+    margin-bottom: 5mm;
+  }
+
+  .tekst {
+    font-size: 11.5pt;
+    line-height: 1.55;
+    color: var(--ink-zacht);
+    margin: 0 0 4mm;
+    max-width: 34em;
+  }
+
+  .tekst.klein {
+    font-size: 9.5pt;
+  }
+
+  .tekst b {
+    color: var(--bordeaux);
+  }
+
+  .lijst {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 3mm;
+    font-size: 11pt;
+    line-height: 1.45;
+    color: var(--ink-zacht);
+  }
+
+  .lijst li {
+    position: relative;
+    padding-left: 6mm;
+  }
+
+  .lijst li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 2.2mm;
+    height: 2.2mm;
+    border-radius: 50%;
+    background: var(--tomaat);
+  }
+
+  .lijst b {
+    color: var(--bordeaux);
+  }
+
+  .twee {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16mm;
+    align-items: center;
+    height: calc(100% - 22mm);
+  }
+
+  /* ---------- Cover ---------- */
+  .cover {
+    display: grid;
+    place-items: center;
+    background: var(--achtergrond);
+  }
+
+  .cover .cover__bloem {
+    position: absolute;
+    width: 175mm;
+    height: 175mm;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+  }
+
+  .cover .cover__bloem-klein {
+    position: absolute;
+    width: 26mm;
+    height: 26mm;
+    left: 62mm;
+    top: 34mm;
+  }
+
+  .cover .cover__sticker {
+    position: absolute;
+    right: 72mm;
+    bottom: 40mm;
+    width: 38mm;
+    font-size: 13pt;
+    rotate: -12deg;
+  }
+
+  .cover__logo {
+    position: relative;
+  }
+
+  .cover__logo .logo {
+    font-size: 108pt;
+  }
+
+  .cover__voet {
+    position: absolute;
+    left: 20mm;
+    right: 20mm;
+    bottom: 14mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11pt;
+  }
+
+  .cover__voet p {
+    margin: 0;
+  }
+
+  .cover .paginanr {
+    position: absolute;
+    top: 14mm;
+    right: 20mm;
+  }
+
+  /* ---------- Merk ---------- */
+  .kernwaarden {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5mm 4mm;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .kernwaarde {
+    padding: 4mm 7mm;
+    border-radius: 999px;
+    font-family: var(--font-kop);
+    font-weight: 700;
+    font-size: 17pt;
+    letter-spacing: -0.03em;
+    box-shadow: 0 3px 0 var(--bordeaux);
+  }
+
+  /* ---------- Logo ---------- */
+  .logo-hoofd {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 14mm;
+    align-items: center;
+    height: calc(100% - 22mm);
+  }
+
+  .logo-groot {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    border-radius: 10mm;
+    background: var(--wit);
+    box-shadow: inset 0 0 0 1px var(--lijn);
+  }
+
+  .logo-groot .logo {
+    font-size: 96pt;
+  }
+
+  .varianten {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 5mm;
+    height: calc(100% - 22mm);
+  }
+
+  .variant {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 7mm;
+  }
+
+  .variant .logo {
+    font-size: 40pt;
+  }
+
+  .variant small {
+    position: absolute;
+    left: 5mm;
+    bottom: 4mm;
+    font-size: 8pt;
+    font-weight: 650;
+    opacity: 0.75;
+  }
+
+  /* ---------- Regels ---------- */
+  .regels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 14mm;
+    height: calc(100% - 22mm);
+  }
+
+  .vrijruimte {
+    display: grid;
+    align-content: center;
+    gap: 6mm;
+  }
+
+  .vrijruimte__kader {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: 18mm;
+    border-radius: 6mm;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 6px, rgb(79 79 193 / 0.08) 6px 7px),
+      var(--wit);
+    outline: 1.5px dashed var(--indigo);
+    outline-offset: -10mm;
+  }
+
+  .vrijruimte__kader .logo {
+    font-size: 48pt;
+  }
+
+  .vrijruimte__maat {
+    position: absolute;
+    font-family: var(--font-kop);
+    font-weight: 800;
+    font-size: 30pt;
+    color: rgb(79 79 193 / 0.35);
+    line-height: 1;
+  }
+
+  .vrijruimte__maat--boven {
+    top: 2mm;
+    left: 50%;
+  }
+
+  .vrijruimte__maat--links {
+    left: 3mm;
+    top: 40%;
+  }
+
+  .niet-doen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5mm;
+    align-content: center;
+  }
+
+  .niet__vlak {
+    display: grid;
+    place-items: center;
+    height: 34mm;
+    border-radius: 5mm;
+    background: var(--wit);
+    box-shadow: inset 0 0 0 1px var(--lijn);
+    overflow: hidden;
+  }
+
+  .niet__logo {
+    position: relative;
+    display: inline-block;
+  }
+
+  .niet__logo .logo {
+    font-size: 24pt;
+  }
+
+  .niet__vink {
+    position: absolute;
+    right: -9mm;
+    top: -3mm;
+    display: grid;
+    place-items: center;
+    width: 7mm;
+    height: 7mm;
+    border-radius: 50%;
+    background: #3ec5b8;
+    color: #fff;
+    font-size: 10pt;
+    font-weight: 800;
+  }
+
+  .niet p {
+    margin: 2.5mm 0 0;
+    font-size: 9pt;
+    font-weight: 650;
+  }
+
+  .kruis {
+    color: var(--tomaat);
+    font-weight: 800;
+  }
+
+  /* ---------- Vorm ---------- */
+  .vorm-demo {
+    position: relative;
+    height: 100%;
+  }
+
+  .vorm-demo .vorm-demo__bloem {
+    position: absolute;
+    width: 110mm;
+    height: 110mm;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+  }
+
+  .vorm-demo .vorm-demo__a {
+    position: absolute;
+    width: 46mm;
+    left: 18mm;
+    top: 24mm;
+    font-size: 15pt;
+    rotate: -12deg;
+  }
+
+  .vorm-demo .vorm-demo__b {
+    position: absolute;
+    width: 38mm;
+    right: 10mm;
+    bottom: 22mm;
+    font-size: 11pt;
+    rotate: 8deg;
+  }
+
+  .vorm-demo .vorm-demo__c {
+    position: absolute;
+    width: 22mm;
+    left: 34mm;
+    bottom: 22mm;
+    font-size: 16pt;
+  }
+
+  /* ---------- Kleur ---------- */
+  .kleur-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10mm;
+    margin-bottom: 7mm;
+  }
+
+  .kleur-intro .middel {
+    margin: 0;
+  }
+
+  .kleur-intro .tekst {
+    margin: 0;
+    max-width: 28em;
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3.5mm;
+    height: 92mm;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2mm;
+    padding: 5mm 4mm;
+    border-radius: 5mm;
+    box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.04);
+  }
+
+  .swatch b {
+    font-family: var(--font-kop);
+    font-size: 16pt;
+    letter-spacing: -0.03em;
+  }
+
+  .swatch__codes {
+    font-size: 8pt;
+    font-weight: 650;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .swatch__rol {
+    font-size: 8pt;
+    opacity: 0.8;
+    line-height: 1.35;
+  }
+
+  .basis {
+    display: flex;
+    gap: 10mm;
+    margin-top: 7mm;
+    font-size: 9pt;
+    color: var(--ink-zacht);
+  }
+
+  .basis__kleur {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+
+  .basis__stip {
+    width: 9mm;
+    height: 9mm;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px var(--lijn);
+  }
+
+  .basis b {
+    color: var(--bordeaux);
+  }
+
+  .verhouding-label {
+    display: block;
+    margin: 9mm 0 3mm;
+  }
+
+  .verhouding {
+    display: flex;
+    height: 14mm;
+    border-radius: 4mm;
+    overflow: hidden;
+  }
+
+  .verhouding span {
+    display: grid;
+    place-items: center;
+    font-size: 8pt;
+    font-weight: 700;
+  }
+
+  .combis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6mm 4mm;
+  }
+
+  .combi {
+    display: grid;
+    gap: 1.5mm;
+    padding: 5mm;
+    border-radius: 5mm;
+    font-size: 8.5pt;
+    font-weight: 600;
+    box-shadow: 0 8px 14px -8px rgb(30 30 90 / 0.4);
+  }
+
+  .combi b {
+    font-family: var(--font-kop);
+    font-size: 13pt;
+    letter-spacing: -0.03em;
+    padding-bottom: 2mm;
+    margin-bottom: 1mm;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  }
+
+  /* ---------- Type ---------- */
+  .type {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 6mm;
+    height: calc(100% - 34mm);
+  }
+
+  .type__kaart {
+    display: flex;
+    flex-direction: column;
+    padding: 7mm;
+    border-radius: 7mm;
+  }
+
+  .type__aa {
+    margin: auto 0 2mm;
+    font-size: 84pt;
+    line-height: 1;
+  }
+
+  .type__naam {
+    margin: 0 0 3mm;
+    font-size: 17pt;
+  }
+
+  .kopfont {
+    font-family: var(--font-kop);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+  }
+
+  .tekstfont {
+    font-family: var(--font-tekst);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .type__kaart .tekstfont.type__aa {
+    font-weight: 700;
+  }
+
+  .schaal {
+    display: grid;
+    align-content: space-between;
+  }
+
+  .schaal > div {
+    padding-bottom: 3mm;
+    border-bottom: 1px solid var(--lijn);
+  }
+
+  .schaal p {
+    margin: 1.5mm 0 0;
+  }
+
+  .s-hero {
+    font-size: 40pt;
+    line-height: 1;
+  }
+
+  .s-l {
+    font-size: 21pt;
+    line-height: 1.05;
+  }
+
+  .s-m {
+    font-size: 14pt;
+    letter-spacing: -0.02em;
+  }
+
+  .s-tekst {
+    font-size: 11pt;
+    font-weight: 400;
+    color: var(--ink-zacht);
+    line-height: 1.5;
+  }
+
+  .voetnoot {
+    position: absolute;
+    left: 20mm;
+    bottom: 10mm;
+    margin: 0;
+  }
+
+  /* ---------- Interface ---------- */
+  .ui-demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 6mm;
+    padding: 10mm;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 8mm;
+    background: var(--hemel);
+  }
+
+  .ui-demo .knop {
+    font-size: 11pt;
+  }
+
+  .wa {
+    display: grid;
+    gap: 2mm;
+    width: 100%;
+    margin-top: 4mm;
+    padding: 6mm;
+    border-radius: 6mm;
+    background: #efeae2;
+    font-family: -apple-system, 'Helvetica Neue', var(--font-tekst), sans-serif;
+    font-size: 10pt;
+    color: #111b21;
+  }
+
+  .wa p {
+    margin: 0;
+    padding: 2.5mm 3.5mm;
+    border-radius: 2.5mm;
+    max-width: 78%;
+    background: #fff;
+    box-shadow: 0 1px 0.5px rgb(11 20 26 / 0.13);
+  }
+
+  .wa time {
+    float: right;
+    margin: 2mm 0 0 3mm;
+    font-size: 7.5pt;
+    color: #667781;
+  }
+
+  .wa .wa__knop {
+    text-align: center;
+    color: #027eb5;
+    font-weight: 500;
+  }
+
+  .wa .wa__uit {
+    justify-self: end;
+    background: #d9fdd3;
+  }
+
+  /* ---------- Toon ---------- */
+  .intro {
+    max-width: 52em;
+    margin-bottom: 7mm;
+  }
+
+  .toon {
+    display: grid;
+    gap: 3.5mm;
+  }
+
+  .toon__rij {
+    display: grid;
+    grid-template-columns: 52mm 1fr 1fr;
+    gap: 4mm;
+    align-items: stretch;
+  }
+
+  .toon__titel {
+    align-self: center;
+    font-family: var(--font-kop);
+    font-size: 13pt;
+    letter-spacing: -0.025em;
+  }
+
+  .toon__wel,
+  .toon__niet {
+    display: grid;
+    gap: 1mm;
+    margin: 0;
+    padding: 3mm 4mm;
+    border-radius: 3.5mm;
+    font-size: 9.5pt;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .toon__wel span,
+  .toon__niet span {
+    font-size: 7pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  .toon__wel {
+    background: var(--lime);
+  }
+
+  .toon__niet {
+    background: var(--wit);
+    box-shadow: inset 0 0 0 1px var(--lijn);
+    color: var(--ink-zacht);
+    text-decoration: line-through;
+    text-decoration-color: var(--tomaat);
+  }
+
+  .toon__niet span {
+    text-decoration: none;
+    display: inline-block;
+    color: var(--tomaat);
+  }
+
+  /* ---------- Beeld ---------- */
+  .beeld {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14mm;
+    align-items: center;
+  }
+
+  .beeld__foto {
+    height: 100%;
+    border-radius: 8mm;
+    overflow: hidden;
+  }
+
+  .beeld__foto .beeld__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 62%;
+  }
+
+  .beeld__tekst {
+    display: grid;
+    gap: 4mm;
+    align-content: center;
+  }
+
+  .afsluiting {
+    display: grid;
+    gap: 3mm;
+    margin-top: 14mm;
+    padding-top: 6mm;
+    border-top: 1px solid var(--lijn);
+  }
+
+  .afsluiting .logo {
+    font-size: 30pt;
+  }
+</style>

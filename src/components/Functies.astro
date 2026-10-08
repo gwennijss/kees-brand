@@ -1,0 +1,1014 @@
+---
+// Functiesectie: links een lijst die openklapt, rechts een beeldvlak met een zwevende kaart per functie.
+const functies = [
+  {
+    id: 'agenda',
+    titel: 'Gezinsagenda',
+    tekst: 'Gekoppeld aan Google of Apple. Met verjaardagen, feestdagen en schoolvakanties er automatisch bij.',
+    kleur: 'var(--hemel)',
+    vlak: ['#4f4fc1', '#abc9fb', '#daa3e0'],
+    icoon: 'M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z',
+  },
+  {
+    id: 'ochtend',
+    titel: 'Ochtendbericht',
+    tekst: 'Om 7:00 een appje met wie waar moet zijn, wat er mee moet en wat er vanavond op tafel staat.',
+    kleur: 'var(--boter)',
+    vlak: ['#f4532c', '#fdf8a7', '#daa3e0'],
+    icoon: 'M12 3v2M5.6 5.6l1.4 1.4M3 12h2M19 12h2M17 7l1.4-1.4M7 16a5 5 0 1 1 10 0M3 20h18',
+  },
+  {
+    id: 'menu',
+    titel: 'Weekmenu en boodschappen',
+    tekst: 'Een weekmenu waar het hele gezin blij van wordt. Met de boodschappenlijst er meteen bij.',
+    kleur: 'var(--lime)',
+    vlak: ['#c4e252', '#fdf8a7', '#abc9fb'],
+    icoon: 'M4 7h16l-1.5 11a2 2 0 0 1-2 1.7h-9a2 2 0 0 1-2-1.7zM9 7a3 3 0 0 1 6 0',
+  },
+  {
+    id: 'herinnering',
+    titel: 'Herinneringen met een plan',
+    tekst: 'Moederdag, een kinderfeestje of de verjaardag van oma. Kees meldt het op tijd en heeft al een voorstel klaar.',
+    kleur: 'var(--tomaat-zacht)',
+    vlak: ['#67000a', '#f4532c', '#daa3e0'],
+    icoon: 'M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0',
+  },
+  {
+    id: 'tieners',
+    titel: 'Tieners appen zelf',
+    tekst: 'Noor appt Kees dat ze niet thuis eet. Het menu past zich aan en de rest van het gezin weet het meteen.',
+    kleur: 'var(--lila)',
+    vlak: ['#daa3e0', '#4f4fc1', '#fdf8a7'],
+    icoon: 'M4 5h16v11H8l-4 4zM8 10h8M8 13h5',
+  },
+  {
+    id: 'huizen',
+    titel: 'Ook met twee huizen',
+    tekst: 'Voor samengestelde gezinnen. Kees houdt bij wie wanneer waar is en wat er mee moet.',
+    kleur: 'var(--hemel)',
+    vlak: ['#abc9fb', '#c4e252', '#fdf8a7'],
+    icoon: 'M3 11l6-5 6 5v8H3zM13 9l4-3 4 3v10h-6M7 19v-4h4v4',
+  },
+];
+---
+
+<section class="sectie functies" id="functies" data-functies>
+  <div class="container">
+    <div class="sectie-kop" data-reveal>
+      <h2 class="kop-l">Eén assistent voor het hele huishouden.</h2>
+    </div>
+
+    <div class="functies__grid">
+      <ul class="functies__lijst" role="tablist" aria-label="Functies" aria-orientation="vertical">
+        {
+          functies.map((f, i) => (
+            <li>
+              <button
+                class="functie"
+                role="tab"
+                id={`functie-${f.id}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                aria-controls="functies-beeld"
+                tabindex={i === 0 ? 0 : -1}
+                data-functie={i}
+                style={`--k:${f.kleur}`}
+              >
+                <span class="functie__icoon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d={f.icoon} /></svg>
+                </span>
+                <span class="functie__titel">{f.titel}</span>
+                <span class="functie__tekst">
+                  <span>{f.tekst}</span>
+                </span>
+                <span class="functie__balk" aria-hidden="true"><span /></span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="beeld" id="functies-beeld" role="tabpanel" aria-live="polite" data-beeld>
+        {
+          functies.map((f, i) => (
+            <div class:list={['beeld__vlak', { 'is-actief': i === 0 }]} data-vlak={i} style={`--a:${f.vlak[0]};--b:${f.vlak[1]};--c:${f.vlak[2]}`} />
+          ))
+        }
+
+        <!-- Gezinsagenda -->
+        <div class="ui ui--agenda is-actief" data-ui="0">
+          <div class="ui__kop"><b>Deze week</b><span>okt</span></div>
+          <div class="agenda">
+            {
+              [
+                ['ma', [['Zwemles Sem', 'var(--hemel)', 2, 3]]],
+                ['di', [['Tandarts Noor', 'var(--lila)', 3, 2], ['Werk laat', 'var(--lijn)', 1, 2]]],
+                ['wo', [['Sem ophalen', 'var(--boter)', 1, 2]]],
+                ['do', [['Sem jarig', 'var(--tomaat)', 1, 5]]],
+                ['vr', [['Topotoets', 'var(--lila)', 1, 2], ['Pizza-avond', 'var(--lime)', 4, 2]]],
+              ].map(([dag, items]) => (
+                <div class="agenda__rij">
+                  <span class="agenda__dag">{dag}</span>
+                  <div class="agenda__spoor">
+                    {(items as [string, string, number, number][]).map(([t, k, s, w]) => (
+                      <span class="agenda__item" style={`--k:${k};grid-column:${s} / span ${w}`}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Ochtendbericht -->
+        <div class="ui ui--ochtend" data-ui="1">
+          <div class="melding">
+            <span class="melding__app">WhatsApp · 07:00</span>
+            <b>Kees</b>
+            <p>Goeiemorgen! Dit speelt er vandaag: gymtas voor Noor, om 16:15 zwemles en vanavond pasta pesto.</p>
+          </div>
+          <div class="melding melding--achter">
+            <span class="melding__app">Agenda · gisteren</span>
+            <b>3 afspraken morgen</b>
+          </div>
+        </div>
+
+        <!-- Weekmenu -->
+        <div class="ui ui--menu" data-ui="2">
+          <div class="ui__kop"><b>Weekmenu</b><span>week 42</span></div>
+          <ul class="menu">
+            {
+              [
+                ['ma', 'Pasta pesto'],
+                ['di', 'Wraps met kip'],
+                ['wo', 'Andijviestamppot'],
+                ['do', 'Pannenkoeken (Sem jarig)'],
+                ['vr', 'Pizza-avond'],
+              ].map(([d, g]) => (
+                <li>
+                  <span>{d}</span>
+                  {g}
+                </li>
+              ))
+            }
+          </ul>
+          <span class="ui__knop">14 boodschappen sturen</span>
+        </div>
+
+        <!-- Herinneringen -->
+        <div class="ui ui--herinnering" data-ui="3">
+          <span class="ui__label">Over 5 dagen</span>
+          <b class="ui__groot">Moederdag</b>
+          <p>Zal ik iets regelen? Dit zijn mijn ideeën:</p>
+          <div class="keuzes-rij">
+            <span class="is-gekozen">Ontbijt op bed</span>
+            <span>Bloemen</span>
+            <span>Kaartje van de kids</span>
+          </div>
+          <span class="ui__knop">Akkoord</span>
+        </div>
+
+        <!-- Tieners -->
+        <div class="ui ui--tieners" data-ui="4">
+          <div class="mini-chat">
+            <p class="mini-chat__naam">Noor → Kees</p>
+            <p class="mini-ballon mini-ballon--jij">ik eet vanavond bij Fenna</p>
+            <p class="mini-ballon">Top, ik geef het door. Fijne avond!</p>
+          </div>
+          <div class="mini-update">
+            <span class="mini-update__stip"></span>
+            Menu aangepast: <b>pasta voor drie</b>
+          </div>
+        </div>
+
+        <!-- Twee huizen -->
+        <div class="ui ui--huizen" data-ui="5">
+          <div class="ui__kop"><b>Wie is waar</b><span>deze week</span></div>
+          <div class="huizen">
+            {
+              ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'].map((d, i) => (
+                <div class:list={['huizen__dag', i < 3 ? 'is-a' : 'is-b']}>
+                  <span>{d}</span>
+                </div>
+              ))
+            }
+          </div>
+          <div class="huizen__legenda">
+            <span><i class="is-a"></i>Bij mama</span>
+            <span><i class="is-b"></i>Bij papa</span>
+          </div>
+          <p class="huizen__noot">Woensdag: gymtas ligt nog bij mama</p>
+        </div>
+      </div>
+
+      <!-- Mobiel: de uitleg van de gekozen functie staat onder het beeld (de tabs zijn dan een scrollrij) -->
+      <div class="functies__uitleg" aria-hidden="true">
+        {
+          functies.map((f, i) => (
+            <p class:list={['functies__uitleg-tekst', { 'is-actief': i === 0 }]} data-uitleg={i}>
+              {f.tekst}
+            </p>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const sectie = document.querySelector<HTMLElement>('[data-functies]')!;
+  const knoppen = [...sectie.querySelectorAll<HTMLButtonElement>('[data-functie]')];
+  const vlakken = [...sectie.querySelectorAll<HTMLElement>('[data-vlak]')];
+  const uis = [...sectie.querySelectorAll<HTMLElement>('[data-ui]')];
+  const beeld = sectie.querySelector<HTMLElement>('[data-beeld]')!;
+  const uitleg = [...sectie.querySelectorAll<HTMLElement>('[data-uitleg]')];
+  const rij = sectie.querySelector<HTMLElement>('.functies__lijst')!;
+
+  // Op mobiel is de lijst een horizontale scrollrij: schuif de actieve functie in beeld
+  function schuifInBeeld(i: number) {
+    if (rij.scrollWidth <= rij.clientWidth + 1) return;
+    const li = knoppen[i].parentElement!;
+    const marge = parseFloat(getComputedStyle(rij).scrollPaddingLeft) || 0;
+    const links = rij.scrollLeft + li.getBoundingClientRect().left - rij.getBoundingClientRect().left - marge;
+    rij.scrollTo({ left: links, behavior: rustig.matches ? 'auto' : 'smooth' });
+  }
+  const DUUR = 6500;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)');
+  let huidig = 0;
+  let timer: number | undefined;
+  let zichtbaar = false;
+  let gepauzeerd = false;
+
+  function kies(i: number, focus = false) {
+    huidig = i;
+    knoppen.forEach((k, n) => {
+      const actief = n === i;
+      k.setAttribute('aria-selected', String(actief));
+      k.tabIndex = actief ? 0 : -1;
+      // Herstart de voortgangsbalk
+      const balk = k.querySelector<HTMLElement>('.functie__balk span')!;
+      balk.style.animation = 'none';
+      void balk.offsetWidth;
+      balk.style.animation = '';
+    });
+    if (focus) knoppen[i].focus();
+    beeld.setAttribute('aria-labelledby', knoppen[i].id);
+    vlakken.forEach((v, n) => v.classList.toggle('is-actief', n === i));
+    uis.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    uitleg.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    if (zichtbaar) schuifInBeeld(i);
+    plan();
+  }
+
+  function plan() {
+    window.clearTimeout(timer);
+    // Niet automatisch doorschuiven als iemand minder beweging wil
+    if (!zichtbaar || gepauzeerd || rustig.matches || document.documentElement.classList.contains('alles-stil')) return;
+    timer = window.setTimeout(() => kies((huidig + 1) % knoppen.length), DUUR);
+  }
+
+  knoppen.forEach((k, i) =>
+    k.addEventListener('click', () => {
+      gepauzeerd = true;
+      sectie.classList.add('is-gepauzeerd');
+      kies(i);
+    }),
+  );
+
+  // Zelf door de scrollrij vegen: dan niet meer automatisch terugschuiven
+  rij.addEventListener(
+    'touchstart',
+    () => {
+      gepauzeerd = true;
+      sectie.classList.add('is-gepauzeerd');
+      window.clearTimeout(timer);
+    },
+    { passive: true },
+  );
+
+  sectie.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
+    const t = (e as KeyboardEvent).key;
+    const stap = ({ ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 } as Record<string, number>)[t];
+    if (!stap) return;
+    e.preventDefault();
+    gepauzeerd = true;
+    sectie.classList.add('is-gepauzeerd');
+    kies((huidig + stap + knoppen.length) % knoppen.length, true);
+  });
+
+  new IntersectionObserver(
+    ([e]) => {
+      zichtbaar = e.isIntersecting;
+      sectie.classList.toggle('is-in-beeld', zichtbaar);
+      if (zichtbaar) kies(huidig);
+      else window.clearTimeout(timer);
+    },
+    { threshold: 0.45 },
+  ).observe(sectie);
+</script>
+
+<style>
+  .functies {
+    padding-block: clamp(120px, 11vw, 160px) clamp(64px, 7vw, 104px);
+  }
+
+  .functies .sectie-kop {
+    max-width: none;
+  }
+
+  .functies__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(16px, 2vw, 24px);
+    align-items: stretch;
+  }
+
+  /* ---------- Lijst ---------- */
+  .functies__lijst {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .functie {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    column-gap: 18px;
+    align-items: center;
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 0.35s var(--zacht),
+      border-color 0.35s,
+      box-shadow 0.35s var(--veer);
+  }
+
+  .functie:hover {
+    background: color-mix(in srgb, var(--wit) 60%, transparent);
+  }
+
+  .functie[aria-selected='true'] {
+    padding-block: 20px 24px;
+    background: var(--wit);
+    box-shadow: 0 24px 50px -30px rgb(60 20 10 / 0.35);
+  }
+
+  .functie__icoon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--k);
+    color: var(--bordeaux);
+    transition: transform 0.5s var(--veer);
+  }
+
+  .functie[aria-selected='true'] .functie__icoon {
+    transform: none;
+  }
+
+  .functie__icoon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .functie__titel {
+    font-family: var(--font-kop);
+    font-weight: 650;
+    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+    letter-spacing: -0.025em;
+  }
+
+  .functie__tekst {
+    grid-column: 2;
+    display: grid;
+    grid-template-rows: 0fr;
+    color: var(--ink-zacht);
+    font-size: 0.98rem;
+    line-height: 1.5;
+    transition:
+      grid-template-rows 0.5s var(--zacht),
+      opacity 0.4s;
+    opacity: 0;
+  }
+
+  .functie__tekst > span {
+    overflow: hidden;
+  }
+
+  .functie[aria-selected='true'] .functie__tekst {
+    grid-template-rows: 1fr;
+    margin-top: 8px;
+    opacity: 1;
+  }
+
+  .functie__balk {
+    position: absolute;
+    left: 76px;
+    right: 22px;
+    bottom: 12px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--lijn);
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .functie[aria-selected='true'] .functie__balk {
+    opacity: 1;
+  }
+
+  .functie__balk span {
+    display: block;
+    height: 100%;
+    background: var(--indigo);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  .is-in-beeld:not(.is-gepauzeerd) .functie[aria-selected='true'] .functie__balk span {
+    animation: balk 6.5s linear forwards;
+  }
+
+  .is-gepauzeerd .functie__balk {
+    display: none;
+  }
+
+  @keyframes balk {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* ---------- Beeldvlak ---------- */
+  .beeld {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: clamp(420px, calc(100svh - 360px), 540px);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+  }
+
+  .beeld__vlak {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(60% 70% at 15% 20%, var(--b) 0%, transparent 70%),
+      radial-gradient(55% 65% at 85% 85%, var(--c) 0%, transparent 70%),
+      radial-gradient(40% 50% at 80% 15%, color-mix(in srgb, var(--c) 60%, white) 0%, transparent 70%),
+      var(--a);
+    opacity: 0;
+    transform: scale(1.08);
+    transition:
+      opacity 0.8s var(--zacht),
+      transform 1.6s var(--zacht);
+  }
+
+  .beeld__vlak.is-actief {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* ---------- Zwevende kaarten ---------- */
+  .ui {
+    position: absolute;
+    width: min(78%, 400px);
+    padding: 24px;
+    border-radius: 22px;
+    background: var(--wit);
+    color: var(--bordeaux);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.6) inset,
+      0 40px 70px -30px rgb(40 0 5 / 0.55);
+    opacity: 0;
+    transform: translateY(40px) scale(0.94) rotate(-2deg);
+    transition:
+      opacity 0.4s var(--zacht),
+      transform 0.7s var(--veer);
+    pointer-events: none;
+  }
+
+  .ui.is-actief {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.15s;
+    pointer-events: auto;
+  }
+
+  .ui__kop {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+
+  .ui__kop b {
+    font-family: var(--font-kop);
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+  }
+
+  .ui__kop span,
+  .ui__label {
+    font-weight: 750;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-zacht);
+  }
+
+  .ui__knop {
+    display: inline-flex;
+    margin-top: 16px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--primair);
+    color: var(--op-primair);
+    font-weight: 750;
+    font-size: 0.88rem;
+    box-shadow: 0 3px 0 var(--bordeaux);
+  }
+
+  /* Agenda */
+  .agenda {
+    display: grid;
+    gap: 8px;
+  }
+
+  .agenda__rij {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+  }
+
+  .agenda__dag {
+    font-weight: 750;
+    font-size: 0.8rem;
+    color: var(--ink-zacht);
+  }
+
+  .agenda__spoor {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    padding: 3px;
+    border-radius: 10px;
+    background: var(--achtergrond);
+  }
+
+  .agenda__item {
+    padding: 6px 9px;
+    border-radius: 7px;
+    background: var(--k);
+    font-weight: 700;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ui.is-actief .agenda__item {
+    animation: blok-in 0.6s var(--veer) both;
+  }
+
+  .ui.is-actief .agenda__rij:nth-child(2) .agenda__item {
+    animation-delay: 0.08s;
+  }
+  .ui.is-actief .agenda__rij:nth-child(3) .agenda__item {
+    animation-delay: 0.16s;
+  }
+  .ui.is-actief .agenda__rij:nth-child(4) .agenda__item {
+    animation-delay: 0.24s;
+  }
+  .ui.is-actief .agenda__rij:nth-child(5) .agenda__item {
+    animation-delay: 0.32s;
+  }
+
+  @keyframes blok-in {
+    from {
+      opacity: 0;
+      transform: scaleX(0.4);
+      transform-origin: left;
+    }
+  }
+
+  /* Ochtendbericht */
+  .ui--ochtend {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .melding {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: 22px;
+    background: rgb(255 255 255 / 0.9);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 40px 70px -30px rgb(40 0 5 / 0.55);
+    font-size: 0.95rem;
+  }
+
+  .melding b {
+    font-family: var(--font-kop);
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+  }
+
+  .melding__app {
+    font-weight: 750;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-zacht);
+  }
+
+  .melding--achter {
+    z-index: 1;
+    margin: -14px 18px 0;
+    padding-top: 26px;
+    background: rgb(255 255 255 / 0.55);
+    opacity: 0.9;
+  }
+
+  .ui.is-actief .melding {
+    animation: melding-val 0.8s var(--veer) both;
+  }
+
+  .ui.is-actief .melding--achter {
+    animation-delay: 0.15s;
+  }
+
+  @keyframes melding-val {
+    from {
+      opacity: 0;
+      transform: translateY(-30px) scale(0.95);
+    }
+  }
+
+  /* Weekmenu */
+  .menu {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu li {
+    display: flex;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--lijn);
+    font-weight: 650;
+  }
+
+  .menu li span {
+    width: 22px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    color: var(--ink-zacht);
+    line-height: 1.9;
+  }
+
+  .ui.is-actief .menu li {
+    animation: regel-in 0.5s var(--zacht) both;
+  }
+
+  .ui.is-actief .menu li:nth-child(2) { animation-delay: 0.06s; }
+  .ui.is-actief .menu li:nth-child(3) { animation-delay: 0.12s; }
+  .ui.is-actief .menu li:nth-child(4) { animation-delay: 0.18s; }
+  .ui.is-actief .menu li:nth-child(5) { animation-delay: 0.24s; }
+
+  @keyframes regel-in {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+  }
+
+  /* Herinneringen */
+  .ui--herinnering p {
+    margin: 4px 0 14px;
+    color: var(--ink-zacht);
+  }
+
+  .ui__groot {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-kop);
+    font-size: 2.2rem;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .keuzes-rij {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .keuzes-rij span {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--achtergrond);
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .keuzes-rij .is-gekozen {
+    background: var(--bordeaux);
+    color: var(--wit);
+  }
+
+  /* Tieners */
+  .ui--tieners {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mini-chat {
+    display: grid;
+    gap: 8px;
+  }
+
+  .mini-chat__naam {
+    font-weight: 750;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-zacht);
+  }
+
+  .mini-ballon {
+    justify-self: start;
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px 16px 16px 5px;
+    background: var(--achtergrond);
+    font-size: 0.92rem;
+  }
+
+  .mini-ballon--jij {
+    justify-self: end;
+    border-radius: 16px 16px 5px 16px;
+    background: #d9fdd3;
+  }
+
+  .ui.is-actief .mini-ballon {
+    animation: melding-val 0.6s var(--veer) both;
+  }
+
+  .ui.is-actief .mini-ballon:not(.mini-ballon--jij) {
+    animation-delay: 0.5s;
+  }
+
+  .mini-update {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--lime-zacht);
+    font-size: 0.9rem;
+  }
+
+  .mini-update__stip {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--indigo);
+  }
+
+  /* Twee huizen */
+  .huizen {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .huizen__dag {
+    display: grid;
+    place-items: center;
+    height: 64px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.8rem;
+  }
+
+  .is-a {
+    background: var(--hemel);
+  }
+
+  .is-b {
+    background: var(--lila-zacht);
+  }
+
+  .ui.is-actief .huizen__dag {
+    animation: blok-op 0.5s var(--veer) both;
+  }
+
+  .ui.is-actief .huizen__dag:nth-child(n + 4) {
+    animation-delay: 0.2s;
+  }
+
+  @keyframes blok-op {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  .huizen__legenda {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .huizen__legenda i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border-radius: 4px;
+    vertical-align: -1px;
+  }
+
+  .huizen__noot {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--boter);
+    font-weight: 650;
+    font-size: 0.88rem;
+  }
+
+  .functies__uitleg {
+    display: none;
+  }
+
+  /* ---------- Mobiel: kop → scrollrij met functies → beeld → uitleg ---------- */
+  @media (max-width: 900px) {
+    .functies {
+      padding-block: 56px;
+    }
+
+    .functies .sectie-kop {
+      margin-bottom: 20px;
+    }
+
+    .functies__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .functies__lijst {
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      gap: 8px;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 4px var(--gutter) 10px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .functies__lijst::-webkit-scrollbar {
+      display: none;
+    }
+
+    .functies__lijst li {
+      scroll-snap-align: start;
+    }
+
+    .functie {
+      grid-template-columns: 32px auto;
+      column-gap: 10px;
+      min-height: 48px;
+      padding: 7px 18px 7px 8px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--wit) 50%, transparent);
+      box-shadow: inset 0 0 0 1.5px var(--lijn);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .functie:hover {
+      background: color-mix(in srgb, var(--wit) 50%, transparent);
+    }
+
+    .functie[aria-selected='true'] {
+      padding-block: 7px;
+      background: var(--wit);
+      box-shadow: inset 0 0 0 1.5px var(--bordeaux);
+    }
+
+    .functie__icoon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .functie__icoon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .functie__titel {
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    /* De beschrijving blijft voor schermlezers in de tab, en staat zichtbaar onder het beeld */
+    .functie__tekst,
+    .functie[aria-selected='true'] .functie__tekst {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .functie__balk {
+      left: 50px;
+      right: 20px;
+      bottom: 6px;
+      height: 2px;
+    }
+
+    .beeld {
+      min-height: 400px;
+      border-radius: var(--radius-m);
+    }
+
+    .menu li {
+      padding-block: 7px;
+    }
+
+    .ui {
+      width: min(100% - 36px, 400px);
+      padding: 20px;
+    }
+
+    .ui--ochtend {
+      padding: 0;
+    }
+
+    /* Agenda: namen mogen op twee regels in plaats van afgekapt */
+    .agenda__item {
+      padding: 5px 7px;
+      font-size: 0.72rem;
+      line-height: 1.15;
+      white-space: normal;
+      hyphens: auto;
+    }
+
+    .huizen__dag {
+      height: 52px;
+    }
+
+    .functies__uitleg {
+      display: grid;
+      min-height: 3lh;
+      font-size: 1.0625rem;
+      line-height: 1.5;
+      color: var(--ink-zacht);
+    }
+
+    .functies__uitleg-tekst {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transform: translateY(6px);
+      transition:
+        opacity 0.35s var(--zacht),
+        transform 0.5s var(--zacht);
+    }
+
+    .functies__uitleg-tekst.is-actief {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.1s;
+    }
+  }
+</style>

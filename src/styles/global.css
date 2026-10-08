@@ -1,0 +1,386 @@
+@import '@fontsource-variable/bricolage-grotesque/opsz.css';
+@import '@fontsource-variable/figtree/wght.css';
+@import '@fontsource-variable/plus-jakarta-sans/wght.css';
+@import '@fontsource-variable/fraunces/soft.css';
+
+/* ------------------------------------------------------------------
+   Kees · huisstijl-tokens
+   Rustig en licht: een neutrale basis met bordeaux, kleur als accent.
+   Hoofdkleur is instelbaar (zie Ontwerpkeuzes). De Kees-sticker is tomaat.
+   ------------------------------------------------------------------ */
+:root {
+  /* Palet: vrolijk en bubbly. Bordeaux voor tekst, de rest om mee te spelen. */
+  --bordeaux: #67000a;
+  --indigo: #4f4fc1;
+  --tomaat: #f4532c;
+  --hemel: #abc9fb;
+  --lime: #c4e252;
+  --lila: #daa3e0;
+  --boter: #fdf8a7;
+
+  /* Zachte tinten van het palet */
+  --hemel-zacht: #dbe7fd;
+  --hemel-licht: #eef3fe;
+  --tomaat-zacht: #fde3db;
+  --lila-zacht: #f3e1f5;
+  --boter-zacht: #fefcd8;
+  --lime-zacht: #ecf5c4;
+  --indigo-zacht: #e4e4f7;
+  --indigo-diep: #2b2b6e;
+
+  /* Neutrale basis */
+  --achtergrond: #f6f5f2;
+  --licht: #fbfaf8;
+  --licht-diep: #ebe9e4;
+  --wit: #ffffff;
+
+  /* Rollen */
+  --primair: var(--tomaat);
+  --primair-tekst: #e8461f;
+  --op-primair: var(--wit);
+  --sticker: var(--tomaat);
+  --op-sticker: var(--wit);
+
+  --ink: var(--bordeaux);
+  --ink-zacht: color-mix(in srgb, var(--bordeaux) 70%, var(--achtergrond));
+  --ink-stil: color-mix(in srgb, var(--bordeaux) 48%, var(--achtergrond));
+  --lijn: color-mix(in srgb, var(--bordeaux) 11%, transparent);
+
+  --font-kop: 'Bricolage Grotesque Variable', system-ui, sans-serif;
+  --font-tekst: 'Figtree Variable', system-ui, sans-serif;
+  --kop-gewicht: 650;
+  --kop-spatiering: -0.04em;
+  --kop-variatie: normal;
+
+  --radius-s: 12px;
+  --radius-m: 20px;
+  --radius-l: 32px;
+  --container: 1180px;
+  --gutter: clamp(20px, 4vw, 48px);
+
+  /* Beweging: lang uitlopend, zonder doorschieten */
+  --uit: cubic-bezier(0.16, 1, 0.3, 1);
+  --in-uit: cubic-bezier(0.65, 0, 0.35, 1);
+  --veer: cubic-bezier(0.34, 1.25, 0.64, 1);
+  --zacht: var(--uit);
+}
+
+/* Hoofdkleur-varianten */
+html[data-kleur='indigo'] {
+  --primair: var(--indigo);
+  --primair-tekst: var(--indigo);
+  --op-primair: var(--wit);
+}
+
+html[data-kleur='bordeaux'] {
+  --primair: var(--bordeaux);
+  --primair-tekst: var(--bordeaux);
+  --op-primair: var(--wit);
+}
+
+
+/* Font-varianten */
+html[data-font='jakarta'] {
+  --font-kop: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --font-tekst: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+  --kop-gewicht: 700;
+  --kop-spatiering: -0.045em;
+}
+
+html[data-font='fraunces'] {
+  --font-kop: 'Fraunces Variable', Georgia, serif;
+  --kop-gewicht: 550;
+  --kop-spatiering: -0.025em;
+  --kop-variatie: 'SOFT' 100;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: 90px;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Lenis (smooth scroll) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  background: var(--achtergrond);
+  color: var(--ink);
+  font-family: var(--font-tekst);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+.kop-xl,
+.kop-l,
+.kop-m {
+  font-family: var(--font-kop);
+  font-weight: var(--kop-gewicht);
+  font-variation-settings: var(--kop-variatie);
+  line-height: 1.04;
+  letter-spacing: var(--kop-spatiering);
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--boter);
+  color: var(--bordeaux);
+}
+
+:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+.container {
+  width: min(100% - 2 * var(--gutter), var(--container));
+  margin-inline: auto;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Typografie ---------- */
+.kop-xl {
+  font-size: clamp(2.6rem, 4.9vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.kop-l {
+  font-size: clamp(2rem, 3.6vw, 3.25rem);
+  line-height: 1.02;
+}
+
+.kop-m {
+  font-size: clamp(1.2rem, 1.6vw, 1.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  font-size: clamp(1.075rem, 1.3vw, 1.2rem);
+  line-height: 1.6;
+  color: var(--ink-zacht);
+  max-width: 32em;
+}
+
+/* ---------- Knoppen ---------- */
+.knop {
+  --knop-bg: var(--primair);
+  --knop-fg: var(--op-primair);
+  --knop-schaduw: var(--bordeaux);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 52px;
+  padding: 0.7em 1.45em;
+  border: 0;
+  border-radius: 999px;
+  background: var(--knop-bg);
+  color: var(--knop-fg);
+  font-family: var(--font-tekst);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--knop-schaduw);
+  transition:
+    transform 0.5s var(--uit),
+    box-shadow 0.5s var(--uit),
+    background-color 0.3s;
+}
+
+html[data-kleur='bordeaux'] .knop {
+  --knop-schaduw: #2a0004;
+}
+
+.knop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--knop-schaduw);
+}
+
+.knop:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--knop-schaduw);
+  transition-duration: 0.12s;
+}
+
+.knop svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+  transition: transform 0.5s var(--uit);
+}
+
+.knop:hover svg {
+  transform: translateX(3px);
+}
+
+.knop--licht {
+  --knop-bg: var(--wit);
+  --knop-fg: var(--bordeaux);
+  box-shadow:
+    inset 0 0 0 1.5px var(--bordeaux),
+    0 4px 0 var(--bordeaux);
+}
+
+.knop--licht:hover {
+  box-shadow:
+    inset 0 0 0 1.5px var(--bordeaux),
+    0 6px 0 var(--bordeaux);
+}
+
+.knop--licht:active {
+  box-shadow:
+    inset 0 0 0 1.5px var(--bordeaux),
+    0 1px 0 var(--bordeaux);
+}
+
+.knop--klein {
+  min-height: 42px;
+  padding: 0.55em 1.05em;
+  font-size: 0.95rem;
+}
+
+/* ---------- Secties: één idee per scherm, veel lucht ---------- */
+.sectie {
+  position: relative;
+  padding-block: clamp(88px, 10vw, 144px);
+}
+
+/* Mobiel: minder lucht boven en onder, zodat een sectie sneller in beeld staat */
+@media (max-width: 640px) {
+  .sectie {
+    padding-block: 72px;
+  }
+}
+
+.sectie-kop {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+  max-width: 640px;
+  margin-bottom: clamp(32px, 4vw, 48px);
+}
+
+.sectie-kop--midden {
+  margin-inline: auto;
+  text-align: center;
+  justify-items: center;
+}
+
+/* ---------- Scroll-reveal: zacht en lang uitlopend ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(8px);
+  transition:
+    opacity 1.1s var(--uit),
+    transform 1.4s var(--uit),
+    filter 1.1s var(--uit);
+  transition-delay: calc(var(--d, 0) * 110ms);
+}
+
+[data-reveal].is-zichtbaar {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* ---------- Kees-bloem ---------- */
+.bloem {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+  animation: draai var(--duur, 40s) linear infinite;
+}
+
+@keyframes draai {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ---------- "Eén knop en alles staat stil" ---------- */
+html.alles-stil *,
+html.alles-stil *::before,
+html.alles-stil *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}

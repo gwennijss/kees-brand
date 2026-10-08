@@ -1,0 +1,578 @@
+---
+import Sticker from './Sticker.astro';
+import { flowerPath } from '../lib/flower';
+import { AANMELDINGEN, DOEL } from '../lib/data';
+
+const gezin = ['Baby of peuter', 'Basisschoolkind', 'Tiener', 'Twee huizen'];
+const eerst = ['De agenda', 'Wat eten we?', 'Verjaardagen en cadeaus', 'Alles eigenlijk'];
+const bron = ['Instagram', 'Via vrienden of familie', 'LinkedIn', 'Ergens anders'];
+---
+
+<section
+  class="sectie wachtlijst"
+  id="aanmelden"
+  data-wachtlijst
+  data-aantal={AANMELDINGEN}
+  data-doel={DOEL}
+  data-bloem={flowerPath()}
+>
+  <div class="container wachtlijst__grid">
+    <div class="wachtlijst__intro" data-reveal>
+      <h2 class="kop-l">Bij 1.000 gezinnen gaan we van start.</h2>
+      <p class="lead">
+        Founding families zijn als eerste aan de beurt en denken mee over hoe Kees wordt. Aanmelden is gratis en kost je een
+        minuutje.
+      </p>
+
+      <div class="teller" aria-live="polite">
+        <p class="teller__getal">
+          <span data-teller>0</span><span class="teller__doel"> / {DOEL.toLocaleString('nl-NL')}</span>
+        </p>
+        <div class="teller__balk" role="progressbar" aria-label="Aanmeldingen" aria-valuemin="0" aria-valuemax={DOEL} aria-valuenow={AANMELDINGEN}>
+          <span class="teller__vulling" data-vulling></span>
+        </div>
+        <p class="teller__uitleg">gezinnen staan al op de lijst</p>
+      </div>
+    </div>
+
+    <div class="kaart" data-reveal style="--d:1">
+      <form class="formulier" data-formulier novalidate>
+        <div class="veld-rij">
+          <label class="veld">
+            <span>Voornaam</span>
+            <input type="text" name="naam" autocomplete="given-name" required placeholder="Bijv. Lenneke" />
+          </label>
+          <label class="veld">
+            <span>E-mailadres</span>
+            <input type="email" name="email" autocomplete="email" required placeholder="jij@voorbeeld.nl" />
+          </label>
+        </div>
+
+        <fieldset class="vraag">
+          <legend><span class="vraag__nr">1</span> Wie wonen er bij jullie? <small>Kies wat past</small></legend>
+          <div class="chips">
+            {
+              gezin.map((g) => (
+                <label class="chip">
+                  <input type="checkbox" name="gezin" value={g} />
+                  <span>{g}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="vraag">
+          <legend><span class="vraag__nr">2</span> Waar mag Kees als eerste mee helpen?</legend>
+          <div class="chips">
+            {
+              eerst.map((g) => (
+                <label class="chip">
+                  <input type="radio" name="eerst" value={g} />
+                  <span>{g}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <fieldset class="vraag">
+          <legend><span class="vraag__nr">3</span> Hoe heb je Kees leren kennen?</legend>
+          <div class="chips">
+            {
+              bron.map((g) => (
+                <label class="chip">
+                  <input type="radio" name="bron" value={g} />
+                  <span>{g}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <label class="akkoord">
+          <input type="checkbox" name="privacy" required />
+          <span>
+            Ik vind het goed dat Kees mijn gegevens gebruikt om mij op de hoogte te houden. Ze blijven in Europa, worden nooit verkocht
+            en je kunt je altijd weer afmelden. <a href="#">Privacyverklaring</a>
+          </span>
+        </label>
+
+        <p class="fout" data-fout role="alert" hidden></p>
+
+        <button type="submit" class="knop formulier__knop">
+          Zet ons op de lijst
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+      </form>
+
+      <div class="gelukt" data-gelukt hidden tabindex="-1">
+        <Sticker class="gelukt__stempel">Klaar!</Sticker>
+        <h3 class="kop-l">Klaar is Kees!</h3>
+        <p class="lead">
+          <span data-gelukt-naam>Jullie</span> zijn founding family nr. <strong data-gelukt-nr></strong>. We mailen je zodra
+          we van start gaan.
+        </p>
+        <button class="knop knop--licht knop--klein" data-nog-een>Nog een gezin aanmelden</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const sectie = document.querySelector<HTMLElement>('[data-wachtlijst]')!;
+  const doel = Number(sectie.dataset.doel);
+  let aantal = Number(sectie.dataset.aantal);
+  const tellerEl = sectie.querySelector<HTMLElement>('[data-teller]')!;
+  const vulling = sectie.querySelector<HTMLElement>('[data-vulling]')!;
+  const balk = sectie.querySelector<HTMLElement>('[role="progressbar"]')!;
+  const form = sectie.querySelector<HTMLFormElement>('[data-formulier]')!;
+  const fout = sectie.querySelector<HTMLElement>('[data-fout]')!;
+  const gelukt = sectie.querySelector<HTMLElement>('[data-gelukt]')!;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nl = new Intl.NumberFormat('nl-NL');
+
+  function zetTeller(n: number) {
+    tellerEl.textContent = nl.format(Math.round(n));
+    vulling.style.width = `${(n / doel) * 100}%`;
+  }
+
+  function telOp(van: number, tot: number, duur = 1600) {
+    if (rustig) return zetTeller(tot);
+    const start = performance.now();
+    const frame = (nu: number) => {
+      const t = Math.min(1, (nu - start) / duur);
+      const e = 1 - Math.pow(1 - t, 4);
+      zetTeller(van + (tot - van) * e);
+      if (t < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
+  new IntersectionObserver(
+    ([e], io) => {
+      if (!e.isIntersecting) return;
+      telOp(0, aantal);
+      io.disconnect();
+    },
+    { threshold: 0.4 },
+  ).observe(sectie.querySelector('.teller')!);
+
+  // Confetti van Kees-bloemetjes
+  const kleuren = ['#f4532c', '#abc9fb', '#4f4fc1', '#daa3e0', '#fdf8a7', '#c4e252'];
+  function confetti(bron: HTMLElement) {
+    if (rustig) return;
+    const r = bron.getBoundingClientRect();
+    for (let i = 0; i < 36; i++) {
+      const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      s.setAttribute('viewBox', '0 0 100 100');
+      s.innerHTML = `<path d="${sectie.dataset.bloem}" fill="${kleuren[i % kleuren.length]}"/>`;
+      const maat = 14 + Math.random() * 22;
+      Object.assign(s.style, {
+        position: 'fixed',
+        left: `${r.left + r.width / 2}px`,
+        top: `${r.top + r.height / 3}px`,
+        width: `${maat}px`,
+        height: `${maat}px`,
+        zIndex: '200',
+        pointerEvents: 'none',
+      });
+      document.body.append(s);
+      const hoek = Math.random() * Math.PI * 2;
+      const kracht = 120 + Math.random() * 260;
+      s.animate(
+        [
+          { transform: 'translate(-50%,-50%) scale(0) rotate(0deg)', opacity: 1 },
+          {
+            transform: `translate(calc(-50% + ${Math.cos(hoek) * kracht}px), calc(-50% + ${Math.sin(hoek) * kracht - 80}px)) scale(1) rotate(${Math.random() * 360}deg)`,
+            opacity: 1,
+            offset: 0.45,
+          },
+          {
+            transform: `translate(calc(-50% + ${Math.cos(hoek) * kracht * 1.3}px), calc(-50% + ${Math.sin(hoek) * kracht + 260}px)) scale(0.8) rotate(${Math.random() * 720}deg)`,
+            opacity: 0,
+          },
+        ],
+        { duration: 1600 + Math.random() * 800, easing: 'cubic-bezier(.2,.7,.4,1)' },
+      ).onfinish = () => s.remove();
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const naam = String(data.get('naam') ?? '').trim();
+    const email = form.elements.namedItem('email') as HTMLInputElement;
+
+    let melding = '';
+    if (!naam) melding = 'Hoe mogen we je noemen? Vul je voornaam even in.';
+    else if (!email.value || !email.validity.valid) melding = 'Dat e-mailadres klopt nog niet helemaal.';
+    else if (!data.get('privacy')) melding = 'Vink het privacyvakje nog even aan, dan zetten we jullie op de lijst.';
+
+    if (melding) {
+      fout.textContent = melding;
+      fout.hidden = false;
+      return;
+    }
+
+    // Mock: hier komt later de echte koppeling (bijv. Tally, Formspree of Supabase).
+    fout.hidden = true;
+    aantal += 1;
+    telOp(aantal - 1, aantal, 600);
+    balk.setAttribute('aria-valuenow', String(aantal));
+    sectie.querySelector('[data-gelukt-naam]')!.textContent = `${naam}, jullie`;
+    sectie.querySelector('[data-gelukt-nr]')!.textContent = nl.format(aantal);
+    form.hidden = true;
+    gelukt.hidden = false;
+    gelukt.focus({ preventScroll: true });
+    confetti(gelukt);
+  });
+
+  sectie.querySelector('[data-nog-een]')!.addEventListener('click', () => {
+    form.reset();
+    gelukt.hidden = true;
+    form.hidden = false;
+    (form.elements.namedItem('naam') as HTMLInputElement).focus();
+  });
+</script>
+
+<style>
+  .wachtlijst {
+    color: var(--ink);
+  }
+
+  /* Gekleurd vlak, net als de andere secties: afgeronde hoeken binnen de marges */
+  .wachtlijst__grid {
+    padding: clamp(32px, 5vw, 72px);
+    border-radius: 40px;
+    background: var(--boter);
+    width: min(100% - 2 * var(--gutter), calc(var(--container) + 2 * clamp(32px, 5vw, 72px)));
+  }
+
+  .wachtlijst__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+
+  .wachtlijst__intro {
+    display: grid;
+    gap: 16px;
+    justify-items: start;
+  }
+
+  .wachtlijst .lead {
+    color: var(--bordeaux);
+    opacity: 0.85;
+  }
+
+  /* Teller */
+  .teller {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .teller__getal {
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    letter-spacing: var(--kop-spatiering);
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .teller__doel {
+    font-size: 0.4em;
+    opacity: 0.75;
+  }
+
+  .teller__balk {
+    height: 16px;
+    margin-top: 12px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.55);
+    overflow: hidden;
+  }
+
+  .teller__vulling {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--indigo);
+  }
+
+  .teller__uitleg {
+    margin-top: 8px;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+
+  /* Kaart & formulier */
+  .kaart {
+    padding: clamp(22px, 3vw, 36px);
+    border-radius: var(--radius-l);
+    background: var(--wit);
+    color: var(--bordeaux);
+    box-shadow:
+      0 0 0 1px var(--lijn),
+      0 40px 80px -40px rgb(60 20 10 / 0.3);
+  }
+
+  .formulier {
+    display: grid;
+    gap: 18px;
+  }
+
+  .veld-rij {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .veld {
+    display: grid;
+    gap: 6px;
+    font-weight: 750;
+    font-size: 0.92rem;
+  }
+
+  .veld input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--achtergrond);
+    box-shadow: inset 0 0 0 2px var(--lijn);
+    font: inherit;
+    font-family: var(--font-tekst);
+    font-weight: 600;
+    color: var(--bordeaux);
+    transition: box-shadow 0.2s;
+  }
+
+  .veld input::placeholder {
+    color: color-mix(in srgb, var(--bordeaux) 40%, transparent);
+  }
+
+  .veld input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2.5px var(--indigo);
+  }
+
+  .vraag {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .vraag legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 750;
+    font-size: 0.98rem;
+  }
+
+  .vraag legend small {
+    font-family: var(--font-tekst);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-zacht);
+  }
+
+  .vraag__nr {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--boter);
+    font-size: 0.8rem;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .chip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: var(--achtergrond);
+    box-shadow: inset 0 0 0 1.5px var(--lijn);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.35s var(--veer);
+  }
+
+  .chip:hover span {
+    box-shadow: inset 0 0 0 2px var(--bordeaux);
+  }
+
+  .chip input:checked + span {
+    background: var(--bordeaux);
+    color: var(--licht);
+    box-shadow: none;
+    transform: rotate(-2deg) scale(1.04);
+  }
+
+  .chip input:checked + span::before {
+    content: '✓';
+    font-weight: 900;
+  }
+
+  .chip input:focus-visible + span {
+    outline: 3px solid var(--indigo);
+    outline-offset: 2px;
+  }
+
+  .akkoord {
+    display: flex;
+    gap: 10px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ink-zacht);
+    cursor: pointer;
+  }
+
+  .akkoord input {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    accent-color: var(--bordeaux);
+  }
+
+  .fout {
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: var(--boter);
+    font-weight: 700;
+  }
+
+  .formulier__knop {
+    justify-self: start;
+  }
+
+  /* Gelukt */
+  .gelukt {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    padding-block: 24px;
+    text-align: center;
+    outline: none;
+  }
+
+  .gelukt:not([hidden]) {
+    animation: gelukt-in 0.6s var(--veer);
+  }
+
+  .gelukt :global(.gelukt__stempel) {
+    width: 128px;
+    font-size: 1.6rem;
+    rotate: -12deg;
+    animation: stempel-in 0.7s var(--veer);
+  }
+
+  .gelukt .lead {
+    color: var(--ink-zacht);
+  }
+
+  @keyframes gelukt-in {
+    from {
+      opacity: 0;
+      transform: scale(0.94);
+    }
+  }
+
+  @keyframes stempel-in {
+    from {
+      transform: scale(2.2) rotate(-50deg);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .wachtlijst {
+      padding-block: 56px;
+    }
+
+    .wachtlijst__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+      padding: 36px 14px 14px;
+      border-radius: 28px;
+    }
+
+    .wachtlijst__intro {
+      position: static;
+      padding-inline: 8px;
+    }
+
+    .teller {
+      margin-top: 4px;
+    }
+
+    .kaart {
+      padding: 22px 18px;
+      border-radius: var(--radius-m);
+      box-shadow:
+        0 0 0 1px var(--lijn),
+        0 20px 40px -28px rgb(60 20 10 / 0.3);
+    }
+
+    /* 16px voorkomt dat iOS inzoomt bij het tikken in een veld */
+    .veld input {
+      min-height: 48px;
+      font-size: 16px;
+    }
+
+    .chip span {
+      min-height: 44px;
+      padding: 0 16px;
+      font-size: 0.92rem;
+    }
+
+    .akkoord {
+      gap: 12px;
+      font-size: 0.86rem;
+    }
+
+    .akkoord input {
+      width: 22px;
+      height: 22px;
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .veld-rij {
+      grid-template-columns: 1fr;
+    }
+    .formulier__knop {
+      justify-self: stretch;
+    }
+  }
+</style>

@@ -1,0 +1,635 @@
+---
+import Sticker from './Sticker.astro';
+
+// Realistische iPhone (15/16 Pro-verhoudingen) met een WhatsApp-gesprek.
+// Alle maten binnen het scherm zijn in iOS-punten (--u): het scherm is 393 punten breed.
+interface Props {
+  naam?: string;
+  status?: string;
+  tijd?: string;
+  class?: string;
+  style?: string;
+}
+
+// Eigen avatar (bijvoorbeeld voor een groepsapp) via <Fragment slot="avatar">
+const { naam = 'Kees', status = 'online', tijd = '07:00', class: className, style } = Astro.props;
+const eigenAvatar = Astro.slots.has('avatar');
+
+// Rustig doodle-behang, zoals WhatsApp
+const behang = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none' stroke='#000' stroke-opacity='.032' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><circle cx='22' cy='24' r='8'/><path d='M60 14l6 10h-12z'/><path d='M104 20c4-6 12-6 14 0s-6 10-7 12c-1-2-11-6-7-12z'/><rect x='136' y='12' width='14' height='18' rx='3'/><path d='M14 70h18M23 61v18'/><path d='M58 64a10 10 0 1 0 14 14'/><circle cx='110' cy='72' r='3'/><circle cx='120' cy='66' r='2'/><path d='M140 60l10 10M150 60l-10 10'/><path d='M18 116c6-8 16-8 22 0'/><rect x='56' y='106' width='20' height='14' rx='4'/><path d='M100 110l8 8 12-14'/><path d='M138 104q8 14 16 0'/><path d='M20 150h12l-6-10z'/><circle cx='70' cy='150' r='6'/><path d='M104 146h16v8h-16z'/><path d='M140 148c4 0 4-6 8-6s4 6 8 6'/></svg>`,
+)}")`;
+---
+
+<div class:list={['iphone', className]} style={style}>
+  <span class="iphone__knop iphone__knop--actie" aria-hidden="true"></span>
+  <span class="iphone__knop iphone__knop--hoger" aria-hidden="true"></span>
+  <span class="iphone__knop iphone__knop--lager" aria-hidden="true"></span>
+  <span class="iphone__knop iphone__knop--aan" aria-hidden="true"></span>
+
+  <div class="iphone__rand">
+    <div class="iphone__bezel">
+      <div class="iphone__scherm" style={`--behang:${behang}`}>
+        <!-- Statusbalk -->
+        <div class="ios-status" aria-hidden="true">
+          <span class="ios-status__tijd" data-klok>{tijd}</span>
+          <span class="ios-status__iconen">
+            <svg viewBox="0 0 18 12" class="ios-bereik"><rect x="0" y="8" width="3" height="4" rx="0.8"></rect><rect x="5" y="5.5" width="3" height="6.5" rx="0.8"></rect><rect x="10" y="3" width="3" height="9" rx="0.8"></rect><rect x="15" y="0" width="3" height="12" rx="0.8"></rect></svg>
+            <svg viewBox="0 0 17 12" class="ios-wifi"><path d="M8.5 2.3c2.4 0 4.6.9 6.3 2.5l1.2-1.2A10.6 10.6 0 0 0 8.5.6 10.6 10.6 0 0 0 1 3.6l1.2 1.2a8.9 8.9 0 0 1 6.3-2.5zm0 3.4c1.5 0 2.9.6 3.9 1.5l1.2-1.2A7.3 7.3 0 0 0 8.5 4a7.3 7.3 0 0 0-5.1 2l1.2 1.2c1-.9 2.4-1.5 3.9-1.5zm0 3.4c.6 0 1.2.2 1.6.6L8.5 11.3 6.9 9.7c.4-.4 1-.6 1.6-.6z"></path></svg>
+            <svg viewBox="0 0 27 13" class="ios-batterij"><rect x="0.5" y="0.5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity="0.4"></rect><rect x="2" y="2" width="17" height="9" rx="2.4"></rect><path d="M25 4.5v4c.8-.3 1.4-1.1 1.4-2s-.6-1.7-1.4-2z" fill-opacity="0.45"></path></svg>
+          </span>
+        </div>
+        <div class="ios-eiland" aria-hidden="true"><span></span></div>
+
+        <!-- WhatsApp-kop -->
+        <div class="wa-kop">
+          <svg class="wa-terug" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2L2 10l8 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span class="wa-terug__aantal" aria-hidden="true">3</span>
+          {eigenAvatar ? <span class="wa-avatar wa-avatar--eigen"><slot name="avatar" /></span> : <Sticker class="wa-avatar">k</Sticker>}
+          <span class="wa-kop__naam">
+            <b>{naam}</b>
+            <span data-status>{status}</span>
+          </span>
+          <svg class="wa-kop__icoon" viewBox="0 0 26 18" aria-hidden="true"><rect x="1" y="2" width="16" height="14" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.8"></rect><path d="M17 7.2l6.2-3.6c.6-.3 1.3.1 1.3.8v9.2c0 .7-.7 1.1-1.3.8L17 10.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+          <svg class="wa-kop__icoon" viewBox="0 0 22 22" aria-hidden="true"><path d="M6.2 1.9l2.4 4.4c.3.6.2 1.3-.3 1.7L7 9.1c1.2 2.5 3.4 4.7 5.9 5.9l1.1-1.3c.4-.5 1.1-.6 1.7-.3l4.4 2.4c.6.3.9 1.1.6 1.7l-.9 2c-.5 1-1.5 1.6-2.6 1.4C9.9 19.8 2.2 12.1 1.1 4.8 1 3.7 1.6 2.7 2.6 2.2l2-.9c.6-.3 1.3 0 1.6.6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+        </div>
+
+        <!-- Gesprek -->
+        <div class="wa-chat" data-chat>
+          <div class="wa-chat__spoor">
+            <div class="wa-rij wa-rij--datum"><div class="wa-rij__binnen"><span class="wa-datum">Vandaag</span></div></div>
+            <slot />
+          </div>
+        </div>
+
+        <!-- Invoerbalk -->
+        <div class="wa-invoer" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+          <span class="wa-invoer__veld">
+            <svg viewBox="0 0 24 24"><path d="M14.5 21H9a6 6 0 0 1-6-6V9a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v5.5L14.5 21z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path><path d="M14.5 21v-3.5a3 3 0 0 1 3-3H21" fill="none" stroke="currentColor" stroke-width="1.7"></path></svg>
+          </span>
+          <svg viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path><circle cx="12" cy="12.3" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"></circle></svg>
+          <svg viewBox="0 0 24 24"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.7"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path></svg>
+        </div>
+        <span class="ios-thuis" aria-hidden="true"></span>
+        <span class="iphone__glans" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .iphone {
+    --titaan: linear-gradient(145deg, #e9e5df 0%, #a7a199 22%, #dcd7cf 46%, #8f8a82 72%, #d3cec6 100%);
+    position: relative;
+    width: min(100%, 340px);
+    aspect-ratio: 418 / 877;
+    container-type: inline-size;
+    flex: none;
+  }
+
+  /* ---------- Behuizing ---------- */
+  .iphone__rand {
+    /* 1 iOS-punt: het scherm is 94% van de toestelbreedte en 393 punten breed */
+    --u: calc(100cqw * 0.94 / 393);
+    position: absolute;
+    inset: 0;
+    border-radius: calc(68 * var(--u));
+    background: var(--titaan);
+    box-shadow:
+      inset 0 0 0 calc(0.6 * var(--u)) rgb(255 255 255 / 0.55),
+      inset 0 0 calc(3 * var(--u)) rgb(0 0 0 / 0.35),
+      0 calc(2 * var(--u)) calc(3 * var(--u)) rgb(0 0 0 / 0.2),
+      0 calc(70 * var(--u)) calc(110 * var(--u)) calc(-40 * var(--u)) rgb(40 10 10 / 0.45),
+      0 calc(30 * var(--u)) calc(50 * var(--u)) calc(-20 * var(--u)) rgb(40 10 10 / 0.25);
+  }
+
+  .iphone__bezel {
+    --u: calc(100cqw * 0.94 / 393);
+    position: absolute;
+    inset: calc(4.5 * var(--u));
+    border-radius: calc(63 * var(--u));
+    background: #060607;
+    box-shadow: inset 0 0 0 calc(1 * var(--u)) #1c1c1e;
+  }
+
+  .iphone__knop {
+    position: absolute;
+    width: 1.1%;
+    border-radius: 2px;
+    background: var(--titaan);
+    box-shadow: inset 0 0 1px rgb(0 0 0 / 0.4);
+  }
+
+  .iphone__knop--actie {
+    left: -0.7%;
+    top: 17.5%;
+    height: 3.6%;
+  }
+
+  .iphone__knop--hoger {
+    left: -0.7%;
+    top: 24%;
+    height: 7%;
+  }
+
+  .iphone__knop--lager {
+    left: -0.7%;
+    top: 32.5%;
+    height: 7%;
+  }
+
+  .iphone__knop--aan {
+    right: -0.7%;
+    top: 27%;
+    height: 11%;
+  }
+
+  /* ---------- Scherm ---------- */
+  .iphone__scherm {
+    --u: calc(100cqw * 0.94 / 393);
+    position: absolute;
+    inset: calc(8 * var(--u));
+    display: flex;
+    flex-direction: column;
+    border-radius: calc(55 * var(--u));
+    overflow: hidden;
+    background-color: #efeae2;
+    background-image: var(--behang);
+    background-size: calc(160 * var(--u));
+    color: #111b21;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', var(--font-tekst), sans-serif;
+    font-size: calc(16 * var(--u));
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .iphone__glans {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    border-radius: inherit;
+    background: linear-gradient(118deg, rgb(255 255 255 / 0.16) 0%, rgb(255 255 255 / 0.04) 26%, transparent 27%);
+    pointer-events: none;
+  }
+
+  /* Statusbalk en Dynamic Island */
+  .ios-status {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: none;
+    height: calc(54 * var(--u));
+    padding: calc(4 * var(--u)) calc(30 * var(--u)) 0 calc(44 * var(--u));
+    background: #f6f6f6;
+    color: #000;
+  }
+
+  .ios-status__tijd {
+    font-weight: 600;
+    font-size: calc(17 * var(--u));
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ios-status__iconen {
+    display: flex;
+    align-items: center;
+    gap: calc(6 * var(--u));
+  }
+
+  .ios-status__iconen svg {
+    fill: currentColor;
+  }
+
+  .ios-bereik {
+    width: calc(18 * var(--u));
+  }
+
+  .ios-wifi {
+    width: calc(17 * var(--u));
+  }
+
+  .ios-batterij {
+    width: calc(27 * var(--u));
+  }
+
+  .ios-eiland {
+    position: absolute;
+    z-index: 4;
+    top: calc(11 * var(--u));
+    left: 50%;
+    width: calc(124 * var(--u));
+    height: calc(36 * var(--u));
+    margin-left: calc(-62 * var(--u));
+    border-radius: calc(20 * var(--u));
+    background: #000;
+  }
+
+  .ios-eiland span {
+    position: absolute;
+    right: calc(20 * var(--u));
+    top: 50%;
+    width: calc(11 * var(--u));
+    height: calc(11 * var(--u));
+    margin-top: calc(-5.5 * var(--u));
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #2b3448 0 25%, #0b0e16 60%);
+  }
+
+  /* WhatsApp-kop */
+  .wa-kop {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    flex: none;
+    gap: calc(8 * var(--u));
+    height: calc(52 * var(--u));
+    padding: 0 calc(16 * var(--u)) calc(4 * var(--u)) calc(10 * var(--u));
+    background: #f6f6f6;
+    box-shadow: 0 calc(0.5 * var(--u)) 0 rgb(0 0 0 / 0.15);
+    color: #111b21;
+  }
+
+  .wa-terug {
+    width: calc(11 * var(--u));
+    color: #111b21;
+  }
+
+  .wa-terug__aantal {
+    margin-left: calc(-2 * var(--u));
+    font-size: calc(16 * var(--u));
+  }
+
+  .wa-kop :global(.wa-avatar) {
+    width: calc(36 * var(--u));
+    font-size: calc(17 * var(--u));
+    margin-left: calc(4 * var(--u));
+  }
+
+  .wa-avatar--eigen {
+    display: grid;
+    place-items: center;
+    flex: none;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .wa-kop__naam {
+    display: grid;
+    flex: 1;
+    line-height: 1.15;
+  }
+
+  .wa-kop__naam b {
+    font-weight: 600;
+    font-size: calc(16.5 * var(--u));
+  }
+
+  .wa-kop__naam span {
+    font-size: calc(12.5 * var(--u));
+    color: #667781;
+  }
+
+  .wa-kop__icoon {
+    width: calc(24 * var(--u));
+    margin-left: calc(14 * var(--u));
+    color: #111b21;
+  }
+
+  /* Gesprek */
+  .wa-chat {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .wa-chat__spoor {
+    display: flex;
+    flex-direction: column;
+    padding: calc(6 * var(--u)) calc(8 * var(--u)) calc(8 * var(--u));
+  }
+
+  /* Invoerbalk */
+  .wa-invoer {
+    display: flex;
+    align-items: center;
+    gap: calc(14 * var(--u));
+    flex: none;
+    padding: calc(7 * var(--u)) calc(14 * var(--u)) calc(34 * var(--u));
+    background: #f6f6f6;
+    box-shadow: 0 calc(-0.5 * var(--u)) 0 rgb(0 0 0 / 0.12);
+    color: #111b21;
+  }
+
+  .wa-invoer > svg {
+    width: calc(25 * var(--u));
+    flex: none;
+  }
+
+  .wa-invoer__veld {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+    height: calc(34 * var(--u));
+    padding-right: calc(8 * var(--u));
+    border-radius: calc(17 * var(--u));
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(0.6 * var(--u)) rgb(0 0 0 / 0.14);
+    color: #8696a0;
+  }
+
+  .wa-invoer__veld svg {
+    width: calc(21 * var(--u));
+  }
+
+  .ios-thuis {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    bottom: calc(8 * var(--u));
+    width: calc(134 * var(--u));
+    height: calc(5 * var(--u));
+    margin-left: calc(-67 * var(--u));
+    border-radius: calc(3 * var(--u));
+    background: #000;
+  }
+
+  /* ---------- Berichten (ook door scripts aangemaakt) ---------- */
+  .iphone :global(.wa-rij) {
+    display: grid;
+    grid-template-rows: 1fr;
+    margin-inline: calc(-8 * var(--u));
+    opacity: 1;
+    transition:
+      grid-template-rows 0.7s var(--uit),
+      opacity 0.5s var(--uit);
+  }
+
+  .iphone :global(.wa-rij__binnen) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding: calc(2 * var(--u)) calc(16 * var(--u)) calc(2 * var(--u));
+  }
+
+  .iphone :global(.wa-rij.is-verborgen) {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .iphone :global(.wa-rij > .wa-rij__binnen > *) {
+    transition: transform 0.7s var(--uit);
+  }
+
+  .iphone :global(.wa-rij.is-verborgen > .wa-rij__binnen > *) {
+    transform: translateY(calc(14 * var(--u))) scale(0.97);
+  }
+
+  .iphone :global(.wa-rij--nieuw-afzender) {
+    margin-top: calc(6 * var(--u));
+  }
+
+  .iphone :global(.wa-datum) {
+    align-self: center;
+    margin: calc(4 * var(--u)) 0 calc(8 * var(--u));
+    padding: calc(5 * var(--u)) calc(11 * var(--u));
+    border-radius: calc(8 * var(--u));
+    background: rgb(255 255 255 / 0.92);
+    font-size: calc(12.5 * var(--u));
+    font-weight: 500;
+    color: #54656f;
+    box-shadow: 0 calc(1 * var(--u)) calc(0.5 * var(--u)) rgb(11 20 26 / 0.13);
+  }
+
+  .iphone :global(.wa-bubbel) {
+    position: relative;
+    align-self: flex-start;
+    max-width: 80%;
+    padding: calc(6 * var(--u)) calc(9 * var(--u)) calc(7 * var(--u));
+    border-radius: calc(8 * var(--u));
+    background: #fff;
+    box-shadow: 0 calc(1 * var(--u)) calc(0.5 * var(--u)) rgb(11 20 26 / 0.13);
+    transform-origin: left bottom;
+  }
+
+  .iphone :global(.wa-afzender) {
+    display: block;
+    margin-bottom: calc(1 * var(--u));
+    font-weight: 600;
+    font-size: calc(13 * var(--u));
+  }
+
+  .iphone :global(.wa-bubbel--uit) {
+    align-self: flex-end;
+    background: #d9fdd3;
+    transform-origin: right bottom;
+  }
+
+  /* Staartje op het eerste bericht van een reeks */
+  .iphone :global(.wa-bubbel--staart) {
+    border-top-left-radius: 0;
+  }
+
+  .iphone :global(.wa-bubbel--staart::before) {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(-8 * var(--u));
+    width: calc(8 * var(--u));
+    height: calc(13 * var(--u));
+    background: inherit;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 75% 70%);
+    border-radius: calc(2 * var(--u)) 0 0 0;
+  }
+
+  .iphone :global(.wa-bubbel--uit.wa-bubbel--staart) {
+    border-top-left-radius: calc(8 * var(--u));
+    border-top-right-radius: 0;
+  }
+
+  .iphone :global(.wa-bubbel--uit.wa-bubbel--staart::before) {
+    left: auto;
+    right: calc(-8 * var(--u));
+    clip-path: polygon(0 0, 100% 0, 25% 70%, 0 100%);
+    border-radius: 0 calc(2 * var(--u)) 0 0;
+  }
+
+  .iphone :global(.wa-meta) {
+    float: right;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(3 * var(--u));
+    margin: calc(6 * var(--u)) calc(-2 * var(--u)) calc(-4 * var(--u)) calc(10 * var(--u));
+    font-size: calc(11 * var(--u));
+    color: #667781;
+    line-height: 1;
+  }
+
+  .iphone :global(.wa-vinkjes) {
+    width: calc(16 * var(--u));
+    color: #53bdeb;
+  }
+
+  .iphone :global(.wa-bubbel ul) {
+    margin: calc(4 * var(--u)) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .iphone :global(.wa-bubbel li) {
+    display: flex;
+    gap: calc(6 * var(--u));
+    margin-top: calc(3 * var(--u));
+  }
+
+  .iphone :global(.wa-bubbel b) {
+    font-weight: 600;
+  }
+
+  .iphone :global(.wa-citaat) {
+    display: block;
+    margin: calc(-2 * var(--u)) calc(-5 * var(--u)) calc(6 * var(--u));
+    padding: calc(6 * var(--u)) calc(8 * var(--u));
+    border-left: calc(4 * var(--u)) solid #a5b337;
+    border-radius: calc(6 * var(--u));
+    background: rgb(0 0 0 / 0.05);
+    font-size: calc(14 * var(--u));
+    color: #54656f;
+  }
+
+  .iphone :global(.wa-citaat b) {
+    display: block;
+    color: #7d8a16;
+    font-size: calc(13 * var(--u));
+  }
+
+  .iphone :global(.wa-lijst) {
+    display: block;
+    margin: calc(-2 * var(--u)) calc(-5 * var(--u)) calc(4 * var(--u));
+    padding: calc(8 * var(--u)) calc(10 * var(--u));
+    border-radius: calc(6 * var(--u));
+    background: rgb(0 0 0 / 0.04);
+    font-size: calc(14 * var(--u));
+    color: #3b4a54;
+  }
+
+  .iphone :global(.wa-lijst b) {
+    display: block;
+    color: #111b21;
+    font-size: calc(15 * var(--u));
+  }
+
+  /* WhatsApp-antwoordknoppen onder een bericht */
+  .iphone :global(.wa-knoppen) {
+    display: grid;
+    gap: calc(2 * var(--u));
+    align-self: flex-start;
+    width: 80%;
+    margin-top: calc(2 * var(--u));
+  }
+
+  .iphone :global(.wa-knop) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(6 * var(--u));
+    height: calc(38 * var(--u));
+    padding: 0;
+    border: 0;
+    border-radius: calc(8 * var(--u));
+    background: #fff;
+    box-shadow: 0 calc(1 * var(--u)) calc(0.5 * var(--u)) rgb(11 20 26 / 0.13);
+    font: inherit;
+    font-size: calc(15.5 * var(--u));
+    font-weight: 500;
+    color: #027eb5;
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      transform 0.3s var(--uit);
+  }
+
+  .iphone :global(.wa-knop svg) {
+    width: calc(15 * var(--u));
+  }
+
+  .iphone :global(.wa-knop:hover) {
+    background: #f7f8f8;
+  }
+
+  .iphone :global(.wa-knop.is-getikt) {
+    background: #e9edef;
+    transform: scale(0.98);
+  }
+
+  .iphone :global(.wa-knoppen.is-beantwoord .wa-knop) {
+    color: #8696a0;
+    pointer-events: none;
+  }
+
+  .iphone :global(.wa-knop--hint) {
+    animation: knop-hint 2.4s var(--in-uit) infinite;
+  }
+
+  @keyframes knop-hint {
+    0%,
+    100% {
+      box-shadow:
+        0 calc(1 * var(--u)) calc(0.5 * var(--u)) rgb(11 20 26 / 0.13),
+        0 0 0 0 rgb(2 126 181 / 0);
+    }
+    50% {
+      box-shadow:
+        0 calc(1 * var(--u)) calc(0.5 * var(--u)) rgb(11 20 26 / 0.13),
+        0 0 0 calc(4 * var(--u)) rgb(2 126 181 / 0.14);
+    }
+  }
+
+  /* Typ-indicator */
+  .iphone :global(.wa-typen) {
+    display: flex;
+    gap: calc(4 * var(--u));
+    padding: calc(12 * var(--u)) calc(13 * var(--u));
+  }
+
+  .iphone :global(.wa-typen i) {
+    width: calc(7 * var(--u));
+    height: calc(7 * var(--u));
+    border-radius: 50%;
+    background: #8696a0;
+    animation: wa-stip 1.2s var(--in-uit) infinite;
+  }
+
+  .iphone :global(.wa-typen i:nth-child(2)) {
+    animation-delay: 0.15s;
+  }
+
+  .iphone :global(.wa-typen i:nth-child(3)) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes wa-stip {
+    0%,
+    60%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(calc(-3 * var(--u)));
+    }
+  }
+</style>

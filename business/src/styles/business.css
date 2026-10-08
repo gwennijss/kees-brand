@@ -1,0 +1,135 @@
+@import '../../../src/styles/global.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+
+/* ------------------------------------------------------------------
+   Business Kees · bovenop de Kees-tokens
+   Zelfde merk, zakelijker: nachtblauw als inkt, indigo als hoofdkleur,
+   meer wit en minder accentkleur. De tomaat-sticker blijft de handtekening.
+   ------------------------------------------------------------------ */
+:root {
+  /* Business: Poppins voor tekst en UI, Bricolage blijft voor koppen */
+  --font-tekst: 'Poppins', system-ui, sans-serif;
+
+  --nacht: var(--indigo-diep);
+
+  --ink: var(--nacht);
+  --ink-zacht: color-mix(in srgb, var(--nacht) 72%, var(--achtergrond));
+  --ink-stil: color-mix(in srgb, var(--nacht) 50%, var(--achtergrond));
+  --lijn: color-mix(in srgb, var(--nacht) 11%, transparent);
+
+  --primair: var(--indigo);
+  --primair-tekst: var(--indigo);
+  --op-primair: var(--wit);
+}
+
+/* Vergelijken: Business met de bordeaux inkt van Kees */
+html[data-inkt='bordeaux'] {
+  --ink: var(--bordeaux);
+  --ink-zacht: color-mix(in srgb, var(--bordeaux) 70%, var(--achtergrond));
+  --ink-stil: color-mix(in srgb, var(--bordeaux) 48%, var(--achtergrond));
+  --lijn: color-mix(in srgb, var(--bordeaux) 11%, transparent);
+}
+
+.knop {
+  --knop-schaduw: var(--ink);
+}
+
+.knop--licht {
+  --knop-fg: var(--ink);
+  box-shadow:
+    inset 0 0 0 1.5px var(--ink),
+    0 4px 0 var(--ink);
+}
+
+.knop--licht:hover {
+  box-shadow:
+    inset 0 0 0 1.5px var(--ink),
+    0 6px 0 var(--ink);
+}
+
+.knop--licht:active {
+  box-shadow:
+    inset 0 0 0 1.5px var(--ink),
+    0 1px 0 var(--ink);
+}
+
+/* ---------- Business-bouwstenen ---------- */
+
+/* Kleine kopregel boven een sectiekop */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 750;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primair);
+}
+
+.label::before {
+  content: '';
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+/* Woord onderstrepen met een zachte kleur (zoals in Kees, hier hemelsblauw) */
+.streep {
+  background: linear-gradient(var(--hemel), var(--hemel)) no-repeat 0 88% / 100% 0.2em;
+  padding-inline: 0.02em;
+}
+
+/* Donkere sectie in nachtblauw */
+.sectie--nacht {
+  background: var(--nacht);
+  color: var(--wit);
+  --lijn: rgb(255 255 255 / 0.12);
+}
+
+.sectie--nacht .lead {
+  color: rgb(255 255 255 / 0.72);
+}
+
+.sectie--nacht .label {
+  color: var(--hemel);
+}
+
+.sectie--nacht .knop {
+  --knop-bg: var(--wit);
+  --knop-fg: var(--nacht);
+  --knop-schaduw: var(--hemel);
+}
+
+.sectie--wit {
+  background: var(--wit);
+}
+
+/* Kaart: wit vlak met een dunne rand */
+.kaart {
+  border-radius: var(--radius-m);
+  background: var(--wit);
+  box-shadow:
+    0 0 0 1px var(--lijn),
+    0 18px 40px -30px rgb(20 20 60 / 0.35);
+}
+
+/* Poppins loopt breder dan Figtree: iets kleiner zetten */
+body {
+  font-size: 1rem;
+}
+
+.lead {
+  font-size: clamp(1rem, 1.2vw, 1.12rem);
+}
+
+/* Mobiel: secties iets compacter, zodat er niet te veel lege ruimte tussen zit */
+@media (max-width: 600px) {
+  .sectie {
+    padding-block: 64px;
+  }
+}

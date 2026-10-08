@@ -1,0 +1,229 @@
+---
+import Bloem from './Bloem.astro';
+
+// Business Kees-woordmerk: het Kees-woordmerk ("kees" met de bloem als punt),
+// aangevuld met "business". Acht varianten om uit te kiezen, zie /logo.
+export type Variant = 'pil' | 'stapel' | 'regel' | 'pas' | 'super' | 'boven' | 'boven-licht' | 'boven-pil';
+
+interface Props {
+  variant?: Variant;
+  kleur?: string;
+  punt?: string;
+  accent?: string;
+  opAccent?: string;
+  class?: string;
+}
+
+const {
+  variant = 'pil',
+  kleur = 'var(--ink)',
+  punt = 'var(--sticker)',
+  accent = 'var(--indigo)',
+  opAccent = 'var(--wit)',
+  class: className,
+} = Astro.props;
+
+// Bij deze varianten staat "business" vóór (of boven) "kees"
+const businessEerst = variant === 'regel' || variant.startsWith('boven');
+---
+
+<span
+  class:list={['blogo', `blogo--${variant}`, className]}
+  style={`--blogo-kleur:${kleur};--blogo-accent:${accent};--blogo-op-accent:${opAccent}`}
+  role="img"
+  aria-label="Business Kees"
+>
+  {businessEerst && <span class="blogo__business">business</span>}
+  <span class="blogo__kees">
+    <span class="blogo__woord">kees</span>
+    <Bloem class="blogo__punt" kleur={punt} lobes={10} amp={0.11} />
+  </span>
+  {!businessEerst && <span class="blogo__business">business</span>}
+</span>
+
+<style>
+  .blogo {
+    display: inline-flex;
+    align-items: baseline;
+    color: var(--blogo-kleur);
+    line-height: 1;
+    font-size: 2rem;
+    white-space: nowrap;
+  }
+
+  .blogo__kees {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .blogo__woord {
+    font-family: var(--font-kop);
+    font-weight: 800;
+    letter-spacing: -0.055em;
+    line-height: 0.8;
+  }
+
+  .blogo :global(.blogo__punt) {
+    flex: none;
+    width: 0.3em;
+    max-width: none;
+    height: 0.3em;
+    margin-left: 0.05em;
+    align-self: flex-end;
+    margin-bottom: 0.01em;
+    transition:
+      rotate 0.6s var(--veer),
+      scale 0.6s var(--veer);
+  }
+
+  .blogo:hover :global(.blogo__punt) {
+    rotate: 90deg;
+    scale: 1.25;
+  }
+
+  .blogo__business {
+    font-family: var(--font-tekst);
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  /* 1. Pil: "business" als label in de accentkleur */
+  .blogo--pil .blogo__business {
+    align-self: center;
+    margin-left: 0.32em;
+    padding: 0.32em 0.62em 0.3em;
+    border-radius: 999px;
+    background: var(--blogo-accent);
+    color: var(--blogo-op-accent);
+    font-size: 0.3em;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    translate: 0 0.1em;
+  }
+
+  /* 2. Stapel: "business" klein en gespatieerd onder het woordmerk */
+  .blogo--stapel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2em;
+  }
+
+  .blogo--stapel .blogo__business {
+    padding-left: 0.12em;
+    font-size: 0.215em;
+    letter-spacing: 0.37em;
+    color: var(--blogo-accent);
+  }
+
+  /* 3. Regel: "business kees." op één regel, business licht */
+  .blogo--regel .blogo__business {
+    margin-right: 0.2em;
+    font-family: var(--font-kop);
+    font-weight: 350;
+    text-transform: none;
+    letter-spacing: -0.045em;
+    line-height: 0.8;
+  }
+
+  /* 4. Pas: een kantoorpasje, met een band onderin */
+  .blogo--pas {
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.42em 0.45em 0;
+    border-radius: 0.2em;
+    background: var(--wit);
+    box-shadow: inset 0 0 0 0.045em var(--blogo-kleur);
+    overflow: hidden;
+  }
+
+  .blogo--pas::before {
+    content: '';
+    position: absolute;
+    top: 0.14em;
+    left: 50%;
+    width: 0.42em;
+    height: 0.09em;
+    border-radius: 999px;
+    background: var(--blogo-kleur);
+    opacity: 0.85;
+    translate: -50% 0;
+  }
+
+  .blogo--pas .blogo__kees {
+    padding-bottom: 0.22em;
+  }
+
+  .blogo--pas .blogo__business {
+    align-self: stretch;
+    margin-inline: -0.45em;
+    padding: 0.42em 0 0.38em;
+    background: var(--blogo-accent);
+    color: var(--blogo-op-accent);
+    font-size: 0.2em;
+    letter-spacing: 0.32em;
+    text-align: center;
+    text-indent: 0.32em;
+  }
+
+  /* 5. Super: "business" klein rechtsboven, als een voetnoot */
+  .blogo--super .blogo__business {
+    align-self: flex-start;
+    margin-left: 0.18em;
+    margin-top: -0.05em;
+    font-size: 0.2em;
+    letter-spacing: 0.16em;
+    color: var(--blogo-accent);
+  }
+
+  /* 6-8. Boven: "business" boven het woordmerk */
+  .blogo--boven,
+  .blogo--boven-licht,
+  .blogo--boven-pil {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* 6. Boven: klein en gespatieerd, als een kopregel */
+  .blogo--boven {
+    gap: 0.24em;
+  }
+
+  .blogo--boven .blogo__business {
+    padding-left: 0.12em;
+    font-size: 0.215em;
+    letter-spacing: 0.37em;
+    color: var(--blogo-accent);
+  }
+
+  /* 7. Boven, licht: "business" in de koppenletter, licht en kleiner */
+  .blogo--boven-licht {
+    gap: 0.06em;
+  }
+
+  .blogo--boven-licht .blogo__business {
+    padding-left: 0.03em;
+    font-family: var(--font-kop);
+    font-weight: 350;
+    font-size: 0.5em;
+    text-transform: none;
+    letter-spacing: -0.035em;
+    line-height: 0.9;
+  }
+
+  /* 8. Boven, pil: het indigo label boven het woordmerk */
+  .blogo--boven-pil {
+    gap: 0.16em;
+  }
+
+  .blogo--boven-pil .blogo__business {
+    margin-left: 0.04em;
+    padding: 0.36em 0.66em 0.33em;
+    border-radius: 999px;
+    background: var(--blogo-accent);
+    color: var(--blogo-op-accent);
+    font-size: 0.22em;
+    letter-spacing: 0.14em;
+    line-height: 1;
+  }
+</style>

@@ -1,0 +1,146 @@
+---
+import { Image } from 'astro:assets';
+import Sticker from './Sticker.astro';
+import lennekeFoto from '../assets/lenneke-gezin.jpg';
+---
+
+<section class="sectie founder">
+  <div class="container founder__grid">
+    <figure class="foto" data-reveal>
+      <Image
+        src={lennekeFoto}
+        alt="Lenneke van Ingen met haar gezin aan de picknicktafel"
+        widths={[600, 900, 1400]}
+        sizes="(max-width: 860px) 100vw, 540px"
+        class="foto__beeld"
+      />
+      <Sticker class="foto__sticker" kleur="var(--boter)" tekst="var(--bordeaux)">Bedacht<br />in Marokko</Sticker>
+    </figure>
+
+    <div class="founder__tekst" data-reveal style="--d:1">
+      <h2 class="kop-l">Bedacht door de ultieme klant.</h2>
+      <p class="lead">
+        Oprichter Lenneke van Ingen runt zelf een druk gezin, en ze weet hoe het is als alles in één hoofd zit. Tijdens House of
+        Founders in Marokko besloot ze dat het anders kon. Zo werd Kees geboren: een assistent die het hele huishouden onthoudt, zodat
+        jij dat niet meer hoeft.
+      </p>
+      <blockquote class="quote">
+        <p>"Ik wilde iemand die overal aan denkt. Dus maakten we Kees."</p>
+        <footer>Lenneke van Ingen, oprichter</footer>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<style>
+  .founder__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+
+  .foto {
+    position: relative;
+    margin: 0;
+  }
+
+  .foto :global(.foto__beeld) {
+    width: 100%;
+    height: clamp(360px, calc(100svh - 280px), 520px);
+    object-fit: cover;
+    object-position: 50% 64%;
+    border-radius: var(--radius-l);
+    rotate: -1.5deg;
+  }
+
+  .foto :global(.foto__sticker) {
+    position: absolute;
+    right: -18px;
+    top: -22px;
+    width: 128px;
+    font-size: 1.05rem;
+    rotate: 10deg;
+    animation: sticker-wiebel 5s ease-in-out infinite;
+  }
+
+  @keyframes sticker-wiebel {
+    0%,
+    100% {
+      rotate: 10deg;
+    }
+    50% {
+      rotate: 2deg;
+    }
+  }
+
+  .founder__tekst {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+  }
+
+  .quote {
+    margin: 4px 0 0;
+    padding: 18px 22px;
+    border-radius: var(--radius-m);
+    background: var(--wit);
+    box-shadow: inset 4px 0 0 var(--sticker);
+  }
+
+  .quote p {
+    font-family: var(--font-kop);
+    font-weight: var(--kop-gewicht);
+    font-variation-settings: var(--kop-variatie);
+    letter-spacing: -0.02em;
+    font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+    line-height: 1.25;
+  }
+
+  .quote footer {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: var(--ink-zacht);
+  }
+
+  /* Mobiel: kop → foto → verhaal → quote */
+  @media (max-width: 860px) {
+    .founder {
+      padding-block: 56px;
+    }
+
+    .founder__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .founder__tekst {
+      display: contents;
+    }
+
+    .founder__tekst .kop-l {
+      order: -1;
+    }
+
+    .foto {
+      margin-block: 6px 4px;
+    }
+
+    .foto :global(.foto__beeld) {
+      height: auto;
+      aspect-ratio: 5 / 4;
+      rotate: -1deg;
+    }
+
+    .foto :global(.foto__sticker) {
+      top: -18px;
+      right: -4px;
+      width: 96px;
+      font-size: 0.85rem;
+    }
+
+    .quote {
+      margin-top: 0;
+    }
+  }
+</style>

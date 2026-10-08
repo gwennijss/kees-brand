@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+.DS_Store
+.context/
+business/dist/
+business/.astro/
+business/node_modules/
+.vercel
+.env*
