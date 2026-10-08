@@ -7,3 +7,5 @@ dist/
 business/dist/
 business/.astro/
 business/node_modules/
+.vercel
+.env*

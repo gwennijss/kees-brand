@@ -32,9 +32,12 @@ npm run build:business   # bouwt naar business/dist/
 
 - `/logo`: de logo-varianten voor Business Kees
 - De sites linken naar elkaar via `src/lib/sites.ts`. Zet daar de echte domeinen.
-- Vercel: maak een tweede project van dezelfde repo, met Build Command `npm run build:business` en Output Directory `business/dist`.
+- Live op https://business-kees.vercel.app (Vercel-project `business-kees`, gebouwd vanuit de hoofdmap met Build Command `npm run build:business` en Output Directory `business/dist`).
 
 ## Deploy naar Vercel
+
+Live op https://kees.vercel.app (Vercel-project `kees`).
+
 
 Push naar GitHub en importeer de repo in Vercel. Astro wordt automatisch herkend, configuratie is niet nodig.
 Of via de CLI: `npx vercel`.

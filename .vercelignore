@@ -1,0 +1,8 @@
+.context
+node_modules
+dist
+.astro
+business/node_modules
+business/dist
+business/.astro
+.env*
