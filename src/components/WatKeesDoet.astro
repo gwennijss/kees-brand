@@ -311,22 +311,85 @@ import Sticker from './Sticker.astro';
     }
   }
 
+  /* Mobiel: één kolom, compacte tegels met het beeldje naast of onder de tekst */
   @media (max-width: 640px) {
+    .watdoet {
+      padding-block: 64px;
+    }
+    .watdoet .sectie-kop {
+      margin-bottom: 28px;
+    }
     .bento {
       grid-template-columns: 1fr;
+      gap: 12px;
     }
     .bento > .tegel {
       grid-column: auto;
       min-height: 0;
+      gap: 16px;
+      padding: 22px 20px;
+      border-radius: 24px;
     }
-    .tegel--agenda,
-    .tegel--huizen {
+    .tegel__tekst p {
+      font-size: 0.97rem;
+    }
+    @media (hover: none) {
+      .tegel:hover {
+        transform: none;
+      }
+    }
+
+    /* Agenda: rijen compact boven de tekst */
+    .tegel--agenda {
       flex-direction: column;
       align-items: stretch;
     }
     .mini-agenda {
       width: 100%;
       order: -1;
+      gap: 6px;
+    }
+    .mini-agenda__item {
+      padding: 7px 12px;
+    }
+
+    /* Ochtendbericht en twee huizen: beeldje rechtsboven naast de kop */
+    .tegel--ochtend,
+    .tegel--huizen {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .tegel--ochtend .tegel__tekst,
+    .tegel--huizen .tegel__tekst {
+      max-width: none;
+    }
+    .tegel--ochtend .tegel__tekst {
+      padding-right: 64px;
+    }
+    .tegel--huizen .kop-m {
+      padding-right: 84px;
+    }
+    .tegel--ochtend :global(.klok) {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      width: 60px;
+      font-size: 0.95rem;
+    }
+    .huizen {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      gap: 6px;
+    }
+    .huizen svg {
+      width: 34px;
+    }
+
+    /* Tiener: ballon rechts onder de tekst */
+    .tiener-ballon {
+      margin-top: -4px;
+      padding: 9px 15px;
     }
   }
 </style>

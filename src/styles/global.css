@@ -309,6 +309,13 @@ html[data-kleur='bordeaux'] .knop {
   padding-block: clamp(88px, 10vw, 144px);
 }
 
+/* Mobiel: minder lucht boven en onder, zodat een sectie sneller in beeld staat */
+@media (max-width: 640px) {
+  .sectie {
+    padding-block: 72px;
+  }
+}
+
 .sectie-kop {
   display: grid;
   gap: 18px;

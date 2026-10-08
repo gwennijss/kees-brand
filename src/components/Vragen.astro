@@ -159,11 +159,29 @@ const vragen = [
   }
 
   @media (max-width: 860px) {
-    .vragen__grid {
-      grid-template-columns: 1fr;
+    .vragen {
+      padding-block: 56px 64px;
     }
+
+    .vragen__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+
     .vragen .sectie-kop {
       position: static;
+      gap: 12px;
+      margin-bottom: 0;
+    }
+
+    summary {
+      min-height: 60px;
+      padding: 14px 14px 14px 18px;
+    }
+
+    .vraag-item__antwoord {
+      padding: 0 18px 18px;
+      font-size: 1rem;
     }
   }
 </style>

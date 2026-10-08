@@ -668,6 +668,13 @@ const euro = (n: number) => `€${n}`;
       grid-template-columns: 1fr;
     }
 
+    /* Groter tikvlak rond de schakelaars (minstens 44px hoog) */
+    .vg-schakel::after {
+      content: '';
+      position: absolute;
+      inset: -10px -6px;
+    }
+
     .vg__rechts {
       width: min(100%, 560px);
     }

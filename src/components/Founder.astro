@@ -103,17 +103,44 @@ import lennekeFoto from '../assets/lenneke-gezin.jpg';
     color: var(--ink-zacht);
   }
 
+  /* Mobiel: kop → foto → verhaal → quote */
   @media (max-width: 860px) {
+    .founder {
+      padding-block: 56px;
+    }
+
     .founder__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
     }
+
+    .founder__tekst {
+      display: contents;
+    }
+
+    .founder__tekst .kop-l {
+      order: -1;
+    }
+
+    .foto {
+      margin-block: 6px 4px;
+    }
+
     .foto :global(.foto__beeld) {
-      height: 340px;
+      height: auto;
+      aspect-ratio: 5 / 4;
+      rotate: -1deg;
     }
+
     .foto :global(.foto__sticker) {
-      right: 4px;
-      width: 104px;
-      font-size: 0.9rem;
+      top: -18px;
+      right: -4px;
+      width: 96px;
+      font-size: 0.85rem;
+    }
+
+    .quote {
+      margin-top: 0;
     }
   }
 </style>

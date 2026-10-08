@@ -5,6 +5,14 @@ import BusinessLogo from './BusinessLogo.astro';
 import { BUSINESS_URL, BUSINESS_LOGO } from '../lib/sites';
 import stelFoto from '../assets/stel-keuken.jpg';
 
+// Links in het mobiele uitklapmenu
+const mobielLinks = [
+  { href: '/#een-dag', label: 'Hoe het werkt' },
+  { href: '/#functies', label: 'Functies' },
+  { href: '/#veiligheid', label: 'Veiligheid' },
+  { href: '/#vragen', label: 'Vragen' },
+];
+
 const functies = [
   { href: '/#functies', label: 'Gezinsagenda' },
   { href: '/#functies', label: 'Ochtendbericht' },
@@ -53,6 +61,40 @@ const functies = [
     <a href="/#aanmelden" class="nav__cta">
       <span class="rol"><span>Aanmelden</span></span>
     </a>
+
+    <button
+      class="nav__menuknop"
+      aria-expanded="false"
+      aria-controls="menu-mobiel"
+      aria-label="Menu openen"
+      data-mobiel-knop
+    >
+      <span class="nav__streep" aria-hidden="true"></span>
+      <span class="nav__streep" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- Uitklapmenu op mobiel -->
+  <div class="mobiel" id="menu-mobiel" data-mobiel>
+    <nav aria-label="Menu">
+      <ul class="mobiel__links">
+        {
+          mobielLinks.map((l, i) => (
+            <li style={`--n:${i}`}>
+              <a href={l.href} data-mobiel-link>
+                {l.label}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a href={BUSINESS_URL} class="mobiel__business" style={`--n:${mobielLinks.length}`} aria-label="Business Kees: Kees voor kantoren">
+      <BusinessLogo variant="regel" kleur="var(--indigo-diep)" />
+      <span class="mobiel__business-label">Voor kantoren</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"></path></svg>
+    </a>
   </div>
   <a href={BUSINESS_URL} class="nav__business" aria-label="Business Kees: Kees voor kantoren">
     <BusinessLogo variant={BUSINESS_LOGO} kleur="var(--indigo-diep)" />
@@ -81,10 +123,36 @@ const functies = [
     item.addEventListener('pointerenter', () => open(true));
     item.addEventListener('pointerleave', () => (sluitTimer = window.setTimeout(() => open(false), 160)));
   }
-  nav.querySelector('[data-dimmer]')!.addEventListener('click', () => open(false));
+  // ---------- Mobiel uitklapmenu ----------
+  const mobielKnop = nav.querySelector<HTMLButtonElement>('[data-mobiel-knop]')!;
+  const lenis = () => (window as unknown as { lenis?: { stop(): void; start(): void } }).lenis;
+
+  function mobiel(waarde: boolean) {
+    nav.classList.toggle('mobiel-open', waarde);
+    mobielKnop.setAttribute('aria-expanded', String(waarde));
+    mobielKnop.setAttribute('aria-label', waarde ? 'Menu sluiten' : 'Menu openen');
+    document.documentElement.classList.toggle('nav-mobiel-open', waarde);
+    if (waarde) lenis()?.stop();
+    else lenis()?.start();
+  }
+
+  mobielKnop.addEventListener('click', () => mobiel(!nav.classList.contains('mobiel-open')));
+  nav.querySelectorAll('[data-mobiel-link]').forEach((a) => a.addEventListener('click', () => mobiel(false)));
+  // Groter scherm? Dan hoort het mobiele menu dicht.
+  matchMedia('(min-width: 861px)').addEventListener('change', (e) => e.matches && mobiel(false));
+
+  nav.querySelector('[data-dimmer]')!.addEventListener('click', () => {
+    open(false);
+    mobiel(false);
+  });
   nav.querySelectorAll('.mega a').forEach((a) => a.addEventListener('click', () => open(false)));
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') open(false);
+    if (e.key !== 'Escape') return;
+    open(false);
+    if (nav.classList.contains('mobiel-open')) {
+      mobiel(false);
+      mobielKnop.focus();
+    }
   });
 </script>
 
@@ -384,9 +452,20 @@ const functies = [
     transition: opacity 0.3s;
   }
 
-  .menu-open .nav__dimmer {
+  .menu-open .nav__dimmer,
+  .mobiel-open .nav__dimmer {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  :global(html.nav-mobiel-open) {
+    overflow: hidden;
+  }
+
+  /* ---------- Menuknop en uitklapmenu (alleen mobiel) ---------- */
+  .nav__menuknop,
+  .mobiel {
+    display: none;
   }
 
   @media (max-width: 1260px) {
@@ -407,9 +486,203 @@ const functies = [
       display: none;
     }
 
+    .nav {
+      padding-top: 12px;
+    }
+
     .nav__pil {
       width: 100%;
+      gap: 4px;
+      padding: 6px 6px 6px 18px;
+    }
+
+    .nav__logo {
+      margin-right: auto;
+    }
+
+    .nav__logo :global(.logo) {
+      font-size: 1.6rem;
+    }
+
+    .nav__cta {
+      height: 44px;
+      margin-left: 0;
+      padding: 0 18px;
+    }
+
+    /* Menuknop: twee strepen die een kruisje worden */
+    .nav__menuknop {
+      position: relative;
+      display: grid;
+      place-items: center;
+      flex: none;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--achtergrond);
+      color: var(--bordeaux);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.3s var(--uit);
+    }
+
+    .nav__streep {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 2px;
+      margin: -1px 0 0 -9px;
+      border-radius: 2px;
+      background: currentColor;
+      translate: 0 -3.5px;
+      transition:
+        translate 0.4s var(--uit),
+        rotate 0.4s var(--uit);
+    }
+
+    .nav__streep + .nav__streep {
+      translate: 0 3.5px;
+    }
+
+    .mobiel-open .nav__menuknop {
+      background: var(--bordeaux);
+      color: var(--wit);
+    }
+
+    .mobiel-open .nav__streep {
+      translate: 0 0;
+      rotate: 45deg;
+    }
+
+    .mobiel-open .nav__streep + .nav__streep {
+      rotate: -45deg;
+    }
+
+    /* Uitklapmenu: een witte kaart onder de pil */
+    .mobiel {
+      position: absolute;
+      z-index: 2;
+      top: calc(100% + 8px);
+      left: var(--gutter);
+      right: var(--gutter);
+      display: grid;
+      gap: 4px;
+      max-height: calc(100svh - 100px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 8px 8px 8px;
+      border-radius: 28px;
+      background: var(--wit);
+      box-shadow:
+        0 0 0 1px var(--lijn),
+        0 30px 60px -25px rgb(40 10 10 / 0.45);
+      pointer-events: auto;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px) scale(0.98);
+      transform-origin: top center;
+      transition:
+        opacity 0.25s var(--uit),
+        transform 0.4s var(--uit),
+        visibility 0s 0.4s;
+    }
+
+    .mobiel-open .mobiel {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      transition-delay: 0s;
+    }
+
+    .mobiel__links {
+      margin: 0;
+      padding: 0 12px;
+      list-style: none;
+    }
+
+    .mobiel__links li + li {
+      border-top: 1px solid var(--lijn);
+    }
+
+    .mobiel__links a {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
+      min-height: 58px;
+      font-family: var(--font-kop);
+      font-weight: var(--kop-gewicht);
+      font-variation-settings: var(--kop-variatie);
+      font-size: 1.55rem;
+      letter-spacing: -0.03em;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobiel__links svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primair-tekst);
+    }
+
+    .mobiel__links a:active {
+      color: var(--primair-tekst);
+    }
+
+    /* Link naar Business Kees */
+    .mobiel__business {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+      padding: 0 18px;
+      border-radius: 20px;
+      background: var(--indigo-zacht);
+      color: var(--indigo-diep);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobiel__business :global(.blogo) {
+      font-size: 1.45rem;
+    }
+
+    .mobiel__business-label {
+      margin-left: auto;
+      font-weight: 700;
+      font-size: 0.9rem;
+      opacity: 0.75;
+    }
+
+    .mobiel__business svg {
+      flex: none;
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Inhoud schuift één voor één binnen */
+    .mobiel__links li,
+    .mobiel__business {
+      opacity: 0;
+      translate: 0 8px;
+      transition:
+        opacity 0.3s var(--uit),
+        translate 0.5s var(--uit);
+    }
+
+    .mobiel-open .mobiel__links li,
+    .mobiel-open .mobiel__business {
+      opacity: 1;
+      translate: 0 0;
+      transition-delay: calc(var(--n) * 35ms + 60ms);
+    }
+  }
+
+  @media (max-width: 359px) {
+    .nav__cta {
+      padding: 0 14px;
     }
   }
 </style>

@@ -347,33 +347,63 @@ const SLOT =
   }
 
   @media (max-width: 600px) {
-    .ctr-paneel__kop {
-      padding-right: 18px;
+    .ctr__grid {
+      gap: 64px;
     }
 
+    .ctr-paneel__kop {
+      padding: 14px 14px 14px 12px;
+    }
+
+    .ctr-paneel__titel {
+      gap: 10px;
+    }
+
+    /* Per contract drie compacte regels: naam en kosten, einddatum en status, de balk */
     .ctr-rij {
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: auto minmax(0, 1fr) auto;
       grid-template-areas:
-        'naam kosten'
-        'status status'
-        'balk balk';
+        'naam naam kosten'
+        'einde status status'
+        'balk balk balk';
+      column-gap: 10px;
+      row-gap: 6px;
+      padding: 12px 14px 14px 12px;
     }
 
     .ctr-rij__naam {
-      flex-direction: column;
-      gap: 0;
+      display: contents;
+    }
+
+    .ctr-rij__naam b {
+      grid-area: naam;
+      font-size: 1rem;
+    }
+
+    .ctr-rij__naam small {
+      grid-area: einde;
+      font-size: 0.85rem;
+    }
+
+    .ctr-rij__kosten {
+      font-size: 1rem;
+    }
+
+    .ctr-balk {
+      margin-top: 4px;
     }
 
     .ctr-status {
-      justify-self: start;
+      justify-self: end;
       min-width: 0;
+      padding: 3px 9px;
     }
 
     .ctr-podium :global(.ctr__sticker) {
-      width: 96px;
-      font-size: 0.82rem;
-      right: -8px;
-      top: -56px;
+      width: 84px;
+      font-size: 0.74rem;
+      right: -6px;
+      top: -72px;
     }
   }
 </style>

@@ -201,6 +201,17 @@ const functies = [
           <p class="huizen__noot">Woensdag: gymtas ligt nog bij mama</p>
         </div>
       </div>
+
+      <!-- Mobiel: de uitleg van de gekozen functie staat onder het beeld (de tabs zijn dan een scrollrij) -->
+      <div class="functies__uitleg" aria-hidden="true">
+        {
+          functies.map((f, i) => (
+            <p class:list={['functies__uitleg-tekst', { 'is-actief': i === 0 }]} data-uitleg={i}>
+              {f.tekst}
+            </p>
+          ))
+        }
+      </div>
     </div>
   </div>
 </section>
@@ -211,7 +222,19 @@ const functies = [
   const vlakken = [...sectie.querySelectorAll<HTMLElement>('[data-vlak]')];
   const uis = [...sectie.querySelectorAll<HTMLElement>('[data-ui]')];
   const beeld = sectie.querySelector<HTMLElement>('[data-beeld]')!;
+  const uitleg = [...sectie.querySelectorAll<HTMLElement>('[data-uitleg]')];
+  const rij = sectie.querySelector<HTMLElement>('.functies__lijst')!;
+
+  // Op mobiel is de lijst een horizontale scrollrij: schuif de actieve functie in beeld
+  function schuifInBeeld(i: number) {
+    if (rij.scrollWidth <= rij.clientWidth + 1) return;
+    const li = knoppen[i].parentElement!;
+    const marge = parseFloat(getComputedStyle(rij).scrollPaddingLeft) || 0;
+    const links = rij.scrollLeft + li.getBoundingClientRect().left - rij.getBoundingClientRect().left - marge;
+    rij.scrollTo({ left: links, behavior: rustig.matches ? 'auto' : 'smooth' });
+  }
   const DUUR = 6500;
+  const rustig = matchMedia('(prefers-reduced-motion: reduce)');
   let huidig = 0;
   let timer: number | undefined;
   let zichtbaar = false;
@@ -233,12 +256,15 @@ const functies = [
     beeld.setAttribute('aria-labelledby', knoppen[i].id);
     vlakken.forEach((v, n) => v.classList.toggle('is-actief', n === i));
     uis.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    uitleg.forEach((u, n) => u.classList.toggle('is-actief', n === i));
+    if (zichtbaar) schuifInBeeld(i);
     plan();
   }
 
   function plan() {
     window.clearTimeout(timer);
-    if (!zichtbaar || gepauzeerd || document.documentElement.classList.contains('alles-stil')) return;
+    // Niet automatisch doorschuiven als iemand minder beweging wil
+    if (!zichtbaar || gepauzeerd || rustig.matches || document.documentElement.classList.contains('alles-stil')) return;
     timer = window.setTimeout(() => kies((huidig + 1) % knoppen.length), DUUR);
   }
 
@@ -250,13 +276,25 @@ const functies = [
     }),
   );
 
+  // Zelf door de scrollrij vegen: dan niet meer automatisch terugschuiven
+  rij.addEventListener(
+    'touchstart',
+    () => {
+      gepauzeerd = true;
+      sectie.classList.add('is-gepauzeerd');
+      window.clearTimeout(timer);
+    },
+    { passive: true },
+  );
+
   sectie.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
     const t = (e as KeyboardEvent).key;
-    if (t !== 'ArrowDown' && t !== 'ArrowUp') return;
+    const stap = ({ ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 } as Record<string, number>)[t];
+    if (!stap) return;
     e.preventDefault();
     gepauzeerd = true;
     sectie.classList.add('is-gepauzeerd');
-    kies((huidig + (t === 'ArrowDown' ? 1 : -1) + knoppen.length) % knoppen.length, true);
+    kies((huidig + stap + knoppen.length) % knoppen.length, true);
   });
 
   new IntersectionObserver(
@@ -823,13 +861,154 @@ const functies = [
     font-size: 0.88rem;
   }
 
+  .functies__uitleg {
+    display: none;
+  }
+
+  /* ---------- Mobiel: kop → scrollrij met functies → beeld → uitleg ---------- */
   @media (max-width: 900px) {
-    .functies__grid {
-      grid-template-columns: 1fr;
+    .functies {
+      padding-block: 56px;
     }
+
+    .functies .sectie-kop {
+      margin-bottom: 20px;
+    }
+
+    .functies__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .functies__lijst {
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      gap: 8px;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 4px var(--gutter) 10px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+
+    .functies__lijst::-webkit-scrollbar {
+      display: none;
+    }
+
+    .functies__lijst li {
+      scroll-snap-align: start;
+    }
+
+    .functie {
+      grid-template-columns: 32px auto;
+      column-gap: 10px;
+      min-height: 48px;
+      padding: 7px 18px 7px 8px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--wit) 50%, transparent);
+      box-shadow: inset 0 0 0 1.5px var(--lijn);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .functie:hover {
+      background: color-mix(in srgb, var(--wit) 50%, transparent);
+    }
+
+    .functie[aria-selected='true'] {
+      padding-block: 7px;
+      background: var(--wit);
+      box-shadow: inset 0 0 0 1.5px var(--bordeaux);
+    }
+
+    .functie__icoon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .functie__icoon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .functie__titel {
+      font-size: 1rem;
+      white-space: nowrap;
+    }
+
+    /* De beschrijving blijft voor schermlezers in de tab, en staat zichtbaar onder het beeld */
+    .functie__tekst,
+    .functie[aria-selected='true'] .functie__tekst {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .functie__balk {
+      left: 50px;
+      right: 20px;
+      bottom: 6px;
+      height: 2px;
+    }
+
     .beeld {
-      min-height: 420px;
-      order: -1;
+      min-height: 400px;
+      border-radius: var(--radius-m);
+    }
+
+    .menu li {
+      padding-block: 7px;
+    }
+
+    .ui {
+      width: min(100% - 36px, 400px);
+      padding: 20px;
+    }
+
+    .ui--ochtend {
+      padding: 0;
+    }
+
+    /* Agenda: namen mogen op twee regels in plaats van afgekapt */
+    .agenda__item {
+      padding: 5px 7px;
+      font-size: 0.72rem;
+      line-height: 1.15;
+      white-space: normal;
+      hyphens: auto;
+    }
+
+    .huizen__dag {
+      height: 52px;
+    }
+
+    .functies__uitleg {
+      display: grid;
+      min-height: 3lh;
+      font-size: 1.0625rem;
+      line-height: 1.5;
+      color: var(--ink-zacht);
+    }
+
+    .functies__uitleg-tekst {
+      grid-area: 1 / 1;
+      opacity: 0;
+      transform: translateY(6px);
+      transition:
+        opacity 0.35s var(--zacht),
+        transform 0.5s var(--zacht);
+    }
+
+    .functies__uitleg-tekst.is-actief {
+      opacity: 1;
+      transform: none;
+      transition-delay: 0.1s;
     }
   }
 </style>

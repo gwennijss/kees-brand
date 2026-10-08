@@ -166,7 +166,22 @@ import { KEES_URL } from '../../../src/lib/sites';
 
   @media (max-width: 640px) {
     .footer {
-      padding-top: 104px;
+      padding-top: 80px;
+    }
+
+    /* Links met een tikvlak van 44px hoog */
+    .footer__onder {
+      row-gap: 8px;
+    }
+
+    .footer__onder ul {
+      gap: 0 24px;
+      margin-block: -4px -10px;
+    }
+
+    .footer__onder a {
+      display: inline-block;
+      padding-block: 12px;
     }
 
     .footer__groot {

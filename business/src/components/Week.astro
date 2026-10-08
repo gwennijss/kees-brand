@@ -141,9 +141,15 @@ const bedragen = dagen.map((d) => d.bedrag);
     });
   }
 
+  const pin = ag.querySelector<HTMLElement>('.ag__pin')!;
+
+  // Afstand die de sectie vastgepind blijft. De hoogte van de pin (100svh) is stabieler
+  // dan innerHeight, die op mobiel meebeweegt met de adresbalk.
+  const pinAfstand = () => Math.max(1, ag.offsetHeight - pin.offsetHeight);
+
   function voortgang() {
     const r = ag.getBoundingClientRect();
-    return klem(-r.top / (ag.offsetHeight - innerHeight)) * N * 0.99999;
+    return klem(-r.top / pinAfstand()) * N * 0.99999;
   }
 
   const stil = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -162,7 +168,7 @@ const bedragen = dagen.map((d) => d.bedrag);
     // Klik op een tab: rustig naar het moment waarop die dag geregeld is
     tabs.forEach((t, i) =>
       t.addEventListener('click', () => {
-        const afstand = ag.offsetHeight - innerHeight;
+        const afstand = pinAfstand();
         const top = ag.getBoundingClientRect().top + scrollY;
         const doel = top + ((i + 0.42) / N) * afstand;
         const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: object) => void } }).lenis;
@@ -420,33 +426,43 @@ const bedragen = dagen.map((d) => d.bedrag);
 
   /* ---------- Mobiel: één pagina, de ringband bovenaan ---------- */
   @media (max-width: 820px) {
+    /* De pagina vult de ruimte onder de kop (100svh: ook met adresbalk past alles) */
     .ag {
-      --pw: calc(100vw - 2 * var(--gutter) - 12px);
-      --ph: min(calc(100svh - 330px), 560px);
+      --pw: min(calc(100vw - 2 * var(--gutter) - 12px), 500px);
+      --ph: clamp(380px, calc(100svh - 204px), 480px);
+      height: calc(100svh + var(--n) * 48svh);
+    }
+
+    /* Kop en agenda samen verticaal gecentreerd onder de navigatie */
+    .ag__pin {
+      grid-template-rows: auto auto;
+      align-content: center;
+      padding-top: 84px;
     }
 
     .ag__podium {
-      align-items: start;
-      padding-top: 26px;
+      padding: 20px 0 36px;
     }
 
     .ag__sticker {
-      top: auto;
-      right: auto;
-      left: 7%;
-      bottom: 6%;
-      width: calc(var(--ph) * 0.22);
+      top: 20px;
+      right: 5%;
+      width: 88px;
+    }
+
+    .ag__sticker :global(.ag__sticker-vorm) {
+      font-size: 0.82rem;
     }
 
     .ag__kop .kop-l {
-      font-size: 1.85rem;
+      font-size: clamp(1.6rem, 7.4vw, 1.85rem);
     }
-
 
     .ag__boek {
       width: var(--pw);
       rotate: none;
-      perspective: 1800px;
+      perspective: 3400px;
+      perspective-origin: 50% 0;
     }
 
     .ag__boek > .ag__pagina--links,
@@ -459,6 +475,12 @@ const bedragen = dagen.map((d) => d.bedrag);
     .ag__blad {
       left: 0;
       border-radius: 14px;
+    }
+
+    .ag__pagina--rechts {
+      background:
+        repeating-linear-gradient(transparent 0 29px, color-mix(in srgb, var(--hemel) 45%, transparent) 29px 30px),
+        #fffdf8;
     }
 
     .ag__blad {
@@ -486,22 +508,25 @@ const bedragen = dagen.map((d) => d.bedrag);
     }
 
     .ag__lint {
-      left: 78%;
+      left: 80%;
+      top: calc(var(--ph) - 14px);
+      width: 16px;
+      height: 52px;
     }
 
     .ag :global(.ar__mobiel) {
       display: grid;
       gap: 6px;
-      margin-top: 8px;
     }
 
     .ag :global(.ar__mobiel p) {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
+      line-height: 1.2;
     }
 
     .ag :global(.ar__mobiel b) {
       font-family: var(--font-kop);
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       letter-spacing: -0.03em;
     }
 
@@ -511,12 +536,31 @@ const bedragen = dagen.map((d) => d.bedrag);
       border-radius: 8px;
       background: var(--indigo);
       color: var(--wit);
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       font-weight: 600;
     }
 
     .ag :global(.ar__notities) {
       display: none;
+    }
+  }
+
+  /* Lage schermen (adresbalk zichtbaar, kleine telefoons): kop en pagina iets compacter */
+  @media (max-width: 820px) and (max-height: 720px) {
+    .ag {
+      --ph: clamp(380px, calc(100svh - 194px), 500px);
+    }
+
+    .ag__pin {
+      padding-top: 80px;
+    }
+
+    .ag__kop .kop-l {
+      font-size: 1.5rem;
+    }
+
+    .ag__podium {
+      padding: 18px 0 32px;
     }
   }
 
@@ -535,6 +579,38 @@ const bedragen = dagen.map((d) => d.bedrag);
 
     .ag__blad {
       transition: transform 0.001ms;
+    }
+  }
+
+  /* Zonder beweging op mobiel: de dagen als tikbare tabs onder de agenda */
+  @media (prefers-reduced-motion: reduce) and (max-width: 820px) {
+    .ag__podium {
+      padding-bottom: 110px;
+    }
+
+    .ag__boek .ag__tabs {
+      z-index: 1;
+      top: calc(100% + 52px);
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .ag__tab,
+    .ag__tab:hover,
+    .ag__tab.is-actief {
+      min-width: 52px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-align: center;
+      translate: none;
+    }
+
+    .ag__tab.is-actief {
+      box-shadow: 0 0 0 3px var(--hemel-licht), 0 0 0 5px var(--nacht);
     }
   }
 </style>

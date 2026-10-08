@@ -95,8 +95,37 @@ import { BUSINESS_URL } from '../lib/sites';
   }
 
   @media (max-width: 640px) {
+    .footer {
+      padding-block: 64px 24px;
+    }
+    .footer__groot {
+      gap: 24px;
+      padding-bottom: 48px;
+    }
+    .footer__slogan {
+      font-size: clamp(3rem, 15.5vw, 4.5rem);
+    }
+    .footer__onder {
+      gap: 8px 24px;
+    }
+    .footer__onder p {
+      flex-basis: 100%;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+    /* Links als ruime tikvlakken in twee kolommen */
     .footer__onder ul {
-      margin-left: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+      width: 100%;
+      margin: 8px 0 0;
+    }
+    .footer__onder li a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      border-bottom: 1px solid rgb(255 255 255 / 0.22);
     }
   }
 </style>

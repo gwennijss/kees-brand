@@ -369,9 +369,9 @@ const ontvangers = [18, 46, 74, 102];
     }
 
     .kn__item {
-      grid-template-columns: 112px 1fr;
+      grid-template-columns: 96px minmax(0, 1fr);
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       margin-top: 0;
       padding: 16px 18px;
       border-radius: 22px;
@@ -387,7 +387,8 @@ const ontvangers = [18, 46, 74, 102];
     }
 
     .kn__item p {
-      font-size: 0.85rem;
+      font-size: 0.92rem;
+      line-height: 1.45;
     }
 
     .kn__item :global(.kn__sticker) {

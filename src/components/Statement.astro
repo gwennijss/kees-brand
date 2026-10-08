@@ -185,4 +185,39 @@ import Bloem from './Bloem.astro';
       width: 220px;
     }
   }
+
+  /* Mobiel: het embleem klein rechtsboven, naast het label */
+  @media (max-width: 640px) {
+    .statement {
+      padding-block: 64px;
+    }
+    .statement__grid {
+      gap: 0;
+    }
+    .statement__tekst {
+      grid-row: 1;
+      grid-column: 1;
+      gap: 20px;
+    }
+    .statement__label {
+      min-height: 124px;
+      align-items: flex-end;
+      padding-bottom: 6px;
+      white-space: nowrap;
+    }
+    .statement__zin {
+      font-size: clamp(1.8rem, 8.4vw, 2.2rem);
+      line-height: 1.08;
+    }
+    .embleem {
+      grid-row: 1;
+      grid-column: 1;
+      justify-self: end;
+      align-self: start;
+      width: 124px;
+    }
+    .embleem :global(.logo) {
+      font-size: 1.5rem;
+    }
+  }
 </style>

@@ -126,3 +126,10 @@ body {
 .lead {
   font-size: clamp(1rem, 1.2vw, 1.12rem);
 }
+
+/* Mobiel: secties iets compacter, zodat er niet te veel lege ruimte tussen zit */
+@media (max-width: 600px) {
+  .sectie {
+    padding-block: 64px;
+  }
+}

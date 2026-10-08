@@ -673,5 +673,15 @@ const standaard = pakketten.find((p) => p.uitgelicht) ?? pakketten[0];
     .rk__voet .knop {
       width: 100%;
     }
+
+    .rk__sluit {
+      width: 44px;
+      height: 44px;
+    }
+
+    /* Minstens 16px, anders zoomt iOS in bij het tikken in het veld */
+    .rk__invoer input {
+      font-size: max(1rem, 16px);
+    }
   }
 </style>

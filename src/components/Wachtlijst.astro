@@ -515,11 +515,55 @@ const bron = ['Instagram', 'Via vrienden of familie', 'LinkedIn', 'Ergens anders
   }
 
   @media (max-width: 900px) {
-    .wachtlijst__grid {
-      grid-template-columns: 1fr;
+    .wachtlijst {
+      padding-block: 56px;
     }
+
+    .wachtlijst__grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+      padding: 36px 14px 14px;
+      border-radius: 28px;
+    }
+
     .wachtlijst__intro {
       position: static;
+      padding-inline: 8px;
+    }
+
+    .teller {
+      margin-top: 4px;
+    }
+
+    .kaart {
+      padding: 22px 18px;
+      border-radius: var(--radius-m);
+      box-shadow:
+        0 0 0 1px var(--lijn),
+        0 20px 40px -28px rgb(60 20 10 / 0.3);
+    }
+
+    /* 16px voorkomt dat iOS inzoomt bij het tikken in een veld */
+    .veld input {
+      min-height: 48px;
+      font-size: 16px;
+    }
+
+    .chip span {
+      min-height: 44px;
+      padding: 0 16px;
+      font-size: 0.92rem;
+    }
+
+    .akkoord {
+      gap: 12px;
+      font-size: 0.86rem;
+    }
+
+    .akkoord input {
+      width: 22px;
+      height: 22px;
+      margin-top: 0;
     }
   }
 

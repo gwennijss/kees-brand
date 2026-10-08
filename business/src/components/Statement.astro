@@ -181,4 +181,31 @@ import Bloem from '../../../src/components/Bloem.astro';
       font-size: 1.3rem;
     }
   }
+
+  @media (max-width: 600px) {
+    .bst {
+      padding-block: 48px 64px;
+      overflow-x: clip;
+    }
+
+    .bst__grid {
+      gap: 20px;
+    }
+
+    .bst__zin {
+      font-size: clamp(1.75rem, 8.2vw, 2.1rem);
+      line-height: 1.08;
+    }
+
+    /* Stempel kleiner en rechts, als een stempel onder de zin */
+    .bst__stempel {
+      justify-self: end;
+      width: 200px;
+      margin-right: 4px;
+    }
+
+    .bst__stempel :global(.bst__logo) {
+      font-size: 1.1rem;
+    }
+  }
 </style>

@@ -810,19 +810,64 @@ import Bloem from './Bloem.astro';
     }
   }
 
+  @media (max-width: 640px) {
+    .hero {
+      padding-block: 96px 48px;
+    }
+    .hero__grid {
+      gap: 36px;
+    }
+    .hero__tekst {
+      gap: 20px;
+    }
+    .hero__kop {
+      font-size: clamp(2.6rem, 12.4vw, 3.5rem);
+    }
+    .hero__knoppen {
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .hero__knoppen .knop {
+      padding-inline: 1.15em;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .hero__knoppen .knop {
+      padding-inline: 0.95em;
+      font-size: 0.95rem;
+    }
+  }
+
   @media (max-width: 480px) {
     .hero__beeld {
-      height: 560px;
+      height: 540px;
+    }
+    /* Telefoon gecentreerd, met de melding als iOS-banner over de bovenkant */
+    .hero__toestel {
+      justify-self: center;
+      margin-left: 0;
     }
     .stempel {
-      right: -12%;
-      top: 22%;
+      right: -16%;
+      top: 30%;
       width: 96px;
     }
     .stempel :global(.stempel__sticker) {
       font-size: 0.9rem;
     }
-    .melding,
+    .melding {
+      top: 9%;
+      left: 50%;
+      width: min(300px, calc(100vw - 2 * var(--gutter)));
+      margin-left: calc(min(300px, calc(100vw - 2 * var(--gutter))) / -2);
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    .melding__app {
+      width: 34px;
+      height: 34px;
+    }
     .vandaag {
       display: none;
     }

@@ -326,39 +326,60 @@ const info = dag.map(({ bg, donker, tijd }) => ({ bg, donker: !!donker, tijd }))
       k.classList.toggle('is-geweest', i < m);
     });
     // Zon over de gebogen tijdlijn, met een ingevulde boog erachter
-    const lengte = boog.getTotalLength();
-    boog.style.strokeDasharray = `${lengte}`;
-    boog.style.strokeDashoffset = `${lengte * (1 - P)}`;
-    const punt = boog.getPointAtLength(P * lengte);
+    boog.style.strokeDasharray = `${maat.lengte}`;
+    boog.style.strokeDashoffset = `${maat.lengte * (1 - P)}`;
+    const punt = boog.getPointAtLength(P * maat.lengte);
+    zon.style.transform = `translate(${(maat.x + (punt.x / 1000) * maat.b).toFixed(1)}px, ${(maat.y + (punt.y / 80) * maat.h).toFixed(1)}px)`;
+  }
+
+  // Boogmaten alleen bij laden en resize meten, niet elk scrollframe (scheelt layout-werk op mobiel)
+  const maat = { lengte: 0, x: 0, y: 0, b: 0, h: 0 };
+  function meetBoog() {
     const svg = boog.ownerSVGElement!.getBoundingClientRect();
     const kader = lijn.getBoundingClientRect();
-    zon.style.transform = `translate(${(svg.left - kader.left + (punt.x / 1000) * svg.width).toFixed(1)}px, ${(svg.top - kader.top + (punt.y / 80) * svg.height).toFixed(1)}px)`;
+    Object.assign(maat, { lengte: boog.getTotalLength(), x: svg.left - kader.left, y: svg.top - kader.top, b: svg.width, h: svg.height });
   }
+  meetBoog();
+
+  // Voortgang meten tegen de hoogte van het vastgepinde vlak (100svh) in plaats van innerHeight:
+  // op mobiel verandert innerHeight als de adresbalk in- of uitschuift, de sticky hoogte niet.
+  const sticky = sectie.querySelector<HTMLElement>('.dag__sticky')!;
+  const reis = () => Math.max(1, sectie.offsetHeight - sticky.offsetHeight);
 
   function voortgang() {
     const r = sectie.getBoundingClientRect();
-    return klem(-r.top / (sectie.offsetHeight - innerHeight));
+    return klem(-r.top / reis());
   }
 
   let frame = 0;
+  let laatst = -1;
   const opScroll = () => {
     cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(() => render(voortgang()));
+    frame = requestAnimationFrame(() => {
+      const P = voortgang();
+      // Buiten de sectie blijft P op 0 of 1 staan: dan hoeft er niets opnieuw getekend te worden
+      if (P === laatst) return;
+      laatst = P;
+      render(P);
+    });
   };
 
   knoppenNav.forEach((k, i) =>
     k.addEventListener('click', () => {
-      const totaal = sectie.offsetHeight - innerHeight;
-      const doel = sectie.offsetTop + ((i + (i === N - 1 ? 0.95 : 0.8)) / N) * totaal;
+      const doel = sectie.offsetTop + ((i + (i === N - 1 ? 0.95 : 0.8)) / N) * reis();
       const lenis = (window as unknown as { lenis?: { scrollTo: (y: number, o?: object) => void } }).lenis;
       if (lenis) lenis.scrollTo(doel, { duration: 1.6 });
       else scrollTo({ top: doel, behavior: 'smooth' });
     }),
   );
 
-  render(voortgang());
+  render((laatst = voortgang()));
   addEventListener('scroll', opScroll, { passive: true });
-  addEventListener('resize', opScroll);
+  addEventListener('resize', () => {
+    meetBoog();
+    laatst = -1;
+    opScroll();
+  });
 </script>
 
 <style>
@@ -733,17 +754,24 @@ const info = dag.map(({ bg, donker, tijd }) => ({ bg, donker: !!donker, tijd }))
     color: var(--wit);
   }
 
-  /* ---------- Mobiel ---------- */
+  /* ---------- Mobiel ----------
+     Korter scrollpad (75svh per moment), alles past binnen 100svh: de telefoon
+     schaalt mee met de ruimte die tussen kop en tijdlijn overblijft. */
   @media (max-width: 860px) {
+    .dag {
+      height: calc(var(--momenten) * 75svh + 100svh);
+    }
+
     .dag__sticky {
-      padding-top: 84px;
+      grid-template-rows: minmax(0, 1fr) auto;
+      padding-top: 88px;
     }
 
     .dag__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto minmax(0, 1fr);
-      gap: 12px;
-      align-items: start;
+      gap: 14px;
+      align-items: stretch;
     }
 
     .dag__links {
@@ -751,19 +779,27 @@ const info = dag.map(({ bg, donker, tijd }) => ({ bg, donker: !!donker, tijd }))
     }
 
     .dag__tijd {
-      font-size: 2.4rem;
+      font-size: 2.25rem;
     }
 
     .dag__tekst .kop-l {
-      font-size: 1.4rem;
+      font-size: clamp(1.3rem, 5.6vw, 1.55rem);
+      line-height: 1.12;
     }
 
     .dag__tekst .lead {
       display: none;
     }
 
+    /* Telefoon vult de resterende hoogte, nooit groter dan 540px */
+    .dag__rechts {
+      height: auto;
+      container-type: size;
+    }
+
     .dag__toestel {
-      height: min(470px, calc(100svh - 280px));
+      height: min(540px, 100cqh - 28px);
+      transform: rotate(calc(3deg - var(--p) * 6deg));
     }
 
     .dag__chip {
@@ -771,17 +807,125 @@ const info = dag.map(({ bg, donker, tijd }) => ({ bg, donker: !!donker, tijd }))
     }
 
     .dag__stempel {
-      right: -18%;
-      top: 4%;
-      width: 92px;
+      top: 6%;
+      right: -22%;
+      width: 88px;
     }
 
     .dag__stempel :global(.dag__sticker) {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+    }
+
+    /* Compacte tijdlijn met tikbare tijden (44px hoog) */
+    .dag__lijn {
+      padding-block: 2px max(6px, env(safe-area-inset-bottom));
+    }
+
+    .dag__boog {
+      height: 30px;
+    }
+
+    .dag__zon {
+      width: 22px;
+      height: 22px;
+      margin: -11px 0 0 -11px;
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--sticker) 20%, transparent);
+    }
+
+    .is-donker .dag__zon {
+      box-shadow:
+        inset -6px -2px 0 0 #7fa6e8,
+        0 0 0 6px rgb(171 201 251 / 0.18);
+    }
+
+    .dag__momenten {
+      margin-top: 0;
+    }
+
+    .dag__moment {
+      min-height: 44px;
+      align-content: center;
     }
 
     .dag__moment span {
       display: none;
+    }
+  }
+
+  /* Lage schermen (adresbalk zichtbaar, kleine telefoons): kop compacter */
+  @media (max-width: 860px) and (max-height: 720px) {
+    .dag__sticky {
+      padding-top: 82px;
+    }
+
+    .dag__grid {
+      gap: 10px;
+    }
+
+    .dag__links {
+      gap: 6px;
+    }
+
+    .dag__tijd {
+      font-size: 1.85rem;
+    }
+
+    .dag__tekst .kop-l {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Telefoon liggend (of een heel laag venster): tekst links, telefoon rechts */
+  @media (max-height: 520px) and (orientation: landscape) {
+    .dag__sticky {
+      padding-top: 72px;
+    }
+
+    .dag__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+      grid-template-rows: minmax(0, 1fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .dag__links {
+      align-self: center;
+      gap: 8px;
+    }
+
+    .dag__tijd {
+      font-size: 1.85rem;
+    }
+
+    .dag__tekst .kop-l {
+      font-size: 1.35rem;
+    }
+
+    .dag__tekst .lead {
+      display: none;
+    }
+
+    .dag__rechts {
+      height: auto;
+      container-type: size;
+    }
+
+    .dag__toestel {
+      height: min(540px, 100cqh - 12px);
+    }
+
+    .dag__chip {
+      display: none;
+    }
+
+    .dag__stempel {
+      top: 4%;
+      right: -30%;
+      width: 76px;
+    }
+
+    .dag__stempel :global(.dag__sticker) {
+      font-size: 0.75rem;
     }
   }
 </style>

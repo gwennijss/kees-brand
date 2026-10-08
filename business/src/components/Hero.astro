@@ -29,7 +29,7 @@ import WachtlijstForm from './WachtlijstForm.astro';
         contract dat bijna afloopt: Kees regelt het, jij keurt goed.
       </p>
 
-      <div class="hero__in" style="--i:4">
+      <div class="hero__in hero__form" style="--i:4">
         <WachtlijstForm id="wl-hero" />
       </div>
 
@@ -550,18 +550,92 @@ import WachtlijstForm from './WachtlijstForm.astro';
     }
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 600px) {
+    .hero {
+      padding-block: 100px 32px;
+    }
+
+    .hero__grid {
+      gap: 8px;
+    }
+
+    .hero__tekst {
+      gap: 20px;
+    }
+
+    /* Langste wisselwoord ("Kantoor geregeld?") moet op 360px op één regel passen */
+    .hero__kop {
+      font-size: min(2.8rem, calc((100vw - 2 * var(--gutter)) / 7.9));
+    }
+
+    .hero__form {
+      justify-self: stretch;
+    }
+
+    .hero__form :global(.wl) {
+      width: 100%;
+    }
+
     .hero__beeld {
-      height: 520px;
+      height: 500px;
+    }
+
+    .hero__decor :global(.hero__bloem) {
+      width: 112%;
+    }
+
+    .zweef {
+      font-size: 0.8rem;
     }
 
     .zweef--bestelling {
-      left: -22%;
-      width: 200px;
+      top: 9%;
+      left: -11%;
+      width: 204px;
+      padding: 12px 14px 10px;
+    }
+
+    .zweef__kop {
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .zweef__kop b {
+      font-size: 0.92rem;
+    }
+
+    .zweef__kop > span:last-child {
+      font-size: 0.7rem;
+    }
+
+    .zweef__icoon {
+      width: 26px;
+      height: 26px;
     }
 
     .zweef--taak {
-      right: -20%;
+      right: -11%;
+      bottom: 9%;
+      gap: 10px;
+      padding: 10px 14px 10px 10px;
+    }
+
+    .zweef__taak b {
+      font-size: 0.9rem;
+    }
+
+    .zweef__taak span {
+      font-size: 0.74rem;
+    }
+
+    .stempel {
+      top: 1%;
+      right: -9%;
+      width: 88px;
+    }
+
+    .stempel :global(.stempel__sticker) {
+      font-size: 0.9rem;
     }
   }
 </style>

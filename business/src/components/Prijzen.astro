@@ -296,14 +296,28 @@ const pakketten = [
   }
 
   @media (max-width: 640px) {
+    .pakketten {
+      gap: 18px;
+    }
+
+    /* Op mobiel maar een klein beetje scheef, zodat geen hoek buiten beeld valt */
     .pk {
+      --kantel: -0.8deg;
       padding: 24px 22px 26px;
     }
 
+    .pk--team {
+      --kantel: 0.6deg;
+    }
+
+    .pk--bedrijf {
+      --kantel: -0.5deg;
+    }
+
     .pk__sticker {
-      top: -24px;
-      right: -8px;
-      width: 88px;
+      top: -26px;
+      right: -2px;
+      width: 84px;
     }
 
     .pk--team .pk__kop {
